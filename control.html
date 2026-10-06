@@ -12,7 +12,7 @@
 <script src="js/tailwind-config.js"></script>
 <link rel="stylesheet" href="css/control.css">
 </head>
-<body class="bg-surface-container-lowest text-on-surface min-h-screen flex flex-col font-body-md select-none overflow-x-hidden antialiased pb-16">
+<body class="bg-surface-container-lowest text-on-surface h-screen flex flex-col font-body-md select-none overflow-hidden antialiased">
 <!-- ==================== TOP BAR (MATCH SETUP & QUICK CATEGORY SWITCHER) ==================== -->
 <header class="flex justify-between items-center w-full px-space-md py-space-sm bg-surface-container-lowest z-50 border-b-2 border-surface-container-highest">
 <!-- Brand Anchor & Tatami Badge -->
@@ -138,7 +138,7 @@
 <!-- Massive Point Scoring Buttons Grid -->
 <div class="grid grid-cols-1 gap-2.5">
 <!-- +1 Yuko -->
-<button class="tactile-bevel w-full py-3 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
+<button class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">
               +1
@@ -151,7 +151,7 @@
 <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
 </button>
 <!-- +2 Waza-Ari -->
-<button class="tactile-bevel w-full py-3 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
+<button class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">
               +2
@@ -164,7 +164,7 @@
 <span class="material-symbols-outlined text-2xl">flash_on</span>
 </button>
 <!-- +3 Ippon -->
-<button class="tactile-bevel w-full py-3.5 px-space-md bg-primary-container hover:bg-error text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(255,84,81,0.4)] transition-all">
+<button class="tactile-bevel w-full py-2 px-space-md bg-primary-container hover:bg-error text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(255,84,81,0.4)] transition-all">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-primary-container px-3.5 py-1 rounded border border-white">
               +3
@@ -208,7 +208,7 @@
 <!-- Master START / STOP Push Actuators -->
 <div class="grid grid-cols-2 gap-space-sm">
 <!-- Giant START Button -->
-<button class="tactile-bevel py-space-lg px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg border-2 border-tertiary flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(0,165,114,0.4)] transition-all">
+<button class="tactile-bevel py-2 px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg border-2 border-tertiary flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(0,165,114,0.4)] transition-all">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
 <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">START</span>
@@ -216,7 +216,7 @@
 <span class="font-label-micro text-label-micro font-bold uppercase tracking-widest text-on-tertiary">Timepiece Run</span>
 </button>
 <!-- Giant STOP Button -->
-<button class="tactile-bevel py-space-lg px-space-sm bg-error-container hover:bg-primary-container text-white rounded-lg border-2 border-primary-container flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(255,84,81,0.35)] transition-all">
+<button class="tactile-bevel py-2 px-space-sm bg-error-container hover:bg-primary-container text-white rounded-lg border-2 border-primary-container flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(255,84,81,0.35)] transition-all">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">pause</span>
 <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">STOP</span>
@@ -225,7 +225,7 @@
 </button>
 </div>
 <!-- Prominent Referee MANUAL HORN / BUZZER Key -->
-<button class="tactile-bevel w-full py-4 px-space-md bg-amber-500 hover:bg-amber-400 text-surface-container-lowest border-2 border-amber-300 rounded-lg flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all active:scale-98">
+<button class="tactile-bevel w-full py-2 px-space-md bg-amber-500 hover:bg-amber-400 text-surface-container-lowest border-2 border-amber-300 rounded-lg flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all active:scale-98">
 <span class="material-symbols-outlined text-3xl font-black" style="font-variation-settings: 'FILL' 1;">volume_up</span>
 <span class="font-headline-md text-headline-md font-extrabold tracking-wider leading-none">📢 MANUAL BUZZER / HORN</span>
 </button>
@@ -319,7 +319,7 @@
 <!-- Massive Point Scoring Buttons Grid -->
 <div class="grid grid-cols-1 gap-2.5">
 <!-- +1 Yuko -->
-<button class="tactile-bevel w-full py-3 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
+<button class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">
               +1
@@ -332,7 +332,7 @@
 <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
 </button>
 <!-- +2 Waza-Ari -->
-<button class="tactile-bevel w-full py-3 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
+<button class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">
               +2
@@ -345,7 +345,7 @@
 <span class="material-symbols-outlined text-2xl">flash_on</span>
 </button>
 <!-- +3 Ippon -->
-<button class="tactile-bevel w-full py-3.5 px-space-md bg-secondary-fixed hover:bg-blue-400 text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(0,83,219,0.4)] transition-all">
+<button class="tactile-bevel w-full py-2 px-space-md bg-secondary-fixed hover:bg-blue-400 text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(0,83,219,0.4)] transition-all">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-secondary-container px-3.5 py-1 rounded border border-white">
               +3
@@ -363,7 +363,7 @@
 </section>
 </main>
 <!-- ==================== BOTTOM SAFETY & TRANSMISSION ACTION BAR ==================== -->
-<footer class="fixed bottom-0 left-0 w-full z-40 flex flex-wrap justify-between items-center px-space-lg py-space-sm bg-surface-container-lowest border-t-2 border-surface-container-highest shadow-[0_-4px_16px_rgba(0,0,0,0.8)]">
+<footer class="w-full mt-auto z-40 flex flex-wrap justify-between items-center px-space-lg py-1 bg-surface-container-lowest border-t-2 border-surface-container-highest shadow-[0_-4px_16px_rgba(0,0,0,0.8)]">
 <!-- Left Safety Reset -->
 <div class="flex items-center gap-space-sm">
 <button class="tactile-bevel px-space-md py-2 bg-surface-container border border-surface-container-highest hover:border-error-container text-on-surface hover:text-error rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase">
