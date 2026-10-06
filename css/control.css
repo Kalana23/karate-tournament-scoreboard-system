@@ -1,0 +1,21 @@
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+}
+.hazard-stripes-yellow {
+  background: repeating-linear-gradient(
+    -45deg,
+    #0c0e14,
+    #0c0e14 10px,
+    #332305 10px,
+    #332305 20px
+  );
+}
+.tactile-bevel {
+  box-shadow: 0 4px 0 #07080b, inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.tactile-bevel:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #07080b, inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
