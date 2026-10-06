@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Karate Kumite Arena Display</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&amp;family=Montserrat:ital,wght@0,700;0,800;0,900;1,900&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+<style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Montserrat', sans-serif;
+      user-select: none;
+      background-color: #050507;
+    }
+    .font-timer {
+      font-family: 'Chakra Petch', monospace, sans-serif;
+    }
+    .score-glow-red {
+      text-shadow: 0 0 60px rgba(255, 255, 255, 0.45);
+    }
+    .score-glow-blue {
+      text-shadow: 0 0 60px rgba(255, 255, 255, 0.45);
+    }
+    .timer-glow {
+      text-shadow: 0 0 35px rgba(255, 255, 255, 0.75), 0 0 70px rgba(255, 220, 100, 0.3);
+    }
+    .senshu-glow {
+      box-shadow: 0 0 25px rgba(250, 204, 21, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.5);
+    }
+    .penalty-circle {
+      transition: all 0.2s ease;
+    }
+  </style>
+</head>
+<body class="w-screen h-screen flex flex-col bg-black text-white">
+<!-- Full-Screen 3-Column Kumite Arena Layout -->
+<header class="w-full bg-[#0B0B0E] border-b border-white/20 px-8 py-2.5 flex items-center text-center z-30 shadow-md select-none justify-between"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full border border-amber-400/80 bg-black/60 flex items-center justify-center shadow-md"><svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" fill="none" r="10" stroke="currentColor" stroke-width="1.5"></circle><path d="M12 4v16M4 12h16M7 7l10 10M17 7L7 17" opacity="0.5" stroke="currentColor" stroke-width="1"></path><circle cx="12" cy="12" fill="#D31327" r="3.5"></circle></svg></div><div class="flex flex-col text-left leading-none"><span class="text-[10px] tracking-widest text-amber-400 font-bold uppercase">JAPAN KARATE-DO</span><span class="text-[9px] tracking-wider text-white/70 font-mono">HAYASHI-HA</span></div></div><h1 class="text-xs sm:text-sm md:text-base font-black tracking-[0.25em] text-white uppercase drop-shadow text-center flex-1 px-4">2028 10th JAPAN KARATE-DO HAYASHI HA SHITORYU KAI WORLD KARATE TOURNAMENT — SRI LANKA</h1><div class="flex items-center"><div class="bg-white/10 border border-white/20 px-3 py-1 rounded text-[11px] font-mono font-bold tracking-widest text-amber-400 uppercase">JKHK-SL</div></div></header><main class="w-full flex-1 grid grid-cols-12 overflow-hidden">
+<!-- LEFT COLUMN: AKA (RED) - 4 cols -->
+<section class="col-span-4 lg:col-span-4 bg-[#D31327] relative flex flex-col justify-between p-6 xl:p-8 shadow-[inset_-10px_0_30px_rgba(0,0,0,0.35)] z-10 border-r-2 border-black/30">
+<!-- Top Left Label & Corner Accent -->
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<div class="flex items-center gap-3">
+<span class="w-3 h-3 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
+<span class="text-xs tracking-[0.3em] uppercase font-bold text-white/80">Competitor 1</span>
+</div>
+<h1 class="text-6xl sm:text-7xl xl:text-8xl 2xl:text-9xl font-black uppercase tracking-tight text-white leading-none drop-shadow-md">
+            AKA
+          </h1>
+<p class="text-sm xl:text-base font-bold tracking-widest text-white/80 uppercase">赤 / RED</p>
+<div class="pt-2">
+<div class="flex items-center gap-3 border-b-2 border-white/40 pb-1">
+<div class="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded border border-white/20">
+<svg class="w-6 h-4 rounded-sm overflow-hidden shadow-sm" viewBox="0 0 60 30">
+<rect fill="#FFBE29" height="30" width="60"></rect>
+<rect fill="#00534E" height="24" width="8" x="4" y="3"></rect>
+<rect fill="#EB7400" height="24" width="8" x="13" y="3"></rect>
+<rect fill="#8D153A" height="24" width="33" x="23" y="3"></rect>
+<circle cx="27" cy="7" fill="#FFBE29" r="1.5"></circle>
+<circle cx="52" cy="7" fill="#FFBE29" r="1.5"></circle>
+<circle cx="27" cy="23" fill="#FFBE29" r="1.5"></circle>
+<circle cx="52" cy="23" fill="#FFBE29" r="1.5"></circle>
+<path d="M36 10h8v4h-6v2h6v2h-8zm3 2h3v1h-3z" fill="#FFBE29"></path>
+</svg>
+<span class="text-xs font-mono font-bold tracking-wider text-white">SRI</span>
+</div>
+<span class="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-wider text-white drop-shadow block">PLAYER 1 NAME</span>
+</div>
+</div>
+</div>
+<div class="bg-black/20 backdrop-blur-md px-4 py-1.5 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white">
+          CORNER 1
+        </div>
+</div>
+<!-- Center Massive Score & Senshu Badge -->
+<div class="flex flex-col items-center justify-center my-auto transform -translate-y-2">
+<div class="leading-none text-[15rem] sm:text-[18rem] md:text-[22rem] lg:text-[24rem] 2xl:text-[28rem] font-black text-white score-glow-red select-none tabular-nums tracking-tighter">
+          6
+        </div>
+<div class="mt-2 flex items-center gap-3 px-8 py-2.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.25em] text-lg sm:text-xl uppercase senshu-glow border-2 border-white/90">
+<svg class="w-5 h-5 fill-neutral-950" viewBox="0 0 24 24">
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+<span class="">SENSHU</span>
+<svg class="w-5 h-5 fill-neutral-950" viewBox="0 0 24 24">
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+</div>
+</div>
+<!-- Bottom Penalties Section (CH1, CH2, CH3 / HC, H) -->
+<div class="w-full flex flex-col items-center gap-2 pb-2">
+<span class="text-xs tracking-wider font-extrabold uppercase text-white/90">AKA PENALTIES</span>
+<div class="flex flex-col items-center gap-2">
+<div class="flex items-center justify-center gap-3 sm:gap-4">
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH1</div>
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH2</div>
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH3</div>
+</div>
+<div class="flex items-center justify-center gap-3 sm:gap-4">
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">HC</div>
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">H</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CENTER COLUMN: TIMER & MATCH INFO - 4 cols -->
+<section class="col-span-4 lg:col-span-4 bg-[#0B0B0E] relative flex flex-col justify-between items-center p-6 xl:p-8 z-20">
+<!-- Top Tatami Card -->
+<div class="w-full flex justify-center pt-2">
+<div class="bg-white text-neutral-950 font-black text-2xl sm:text-3xl xl:text-4xl 2xl:text-5xl px-8 sm:px-12 py-3 rounded-2xl shadow-[0_10px_35px_rgba(255,255,255,0.18)] tracking-tight uppercase border-2 border-white flex items-center gap-3">
+<span class="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
+<span class="">Tatami 1</span>
+</div>
+</div>
+<!-- Center Match Digital Timer -->
+<div class="flex flex-col items-center justify-center my-auto text-center w-full">
+<div class="mb-3 flex items-center justify-center">
+<div class="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black px-6 py-1.5 rounded-full text-sm sm:text-base xl:text-lg tracking-[0.2em] uppercase shadow-[0_0_20px_rgba(250,204,21,0.5)] border border-white/80">
+            Ages 6–7 - 22 Kg
+          </div>
+</div>
+<div class="font-timer text-[8.5rem] sm:text-[11rem] md:text-[13rem] lg:text-[14rem] 2xl:text-[17rem] font-bold tracking-tighter text-white timer-glow tabular-nums leading-none select-none py-2">
+          0:53
+        </div>
+<div class="flex items-center gap-2 text-white/40 text-xs tracking-widest uppercase font-mono mt-1">
+<span class="">MINUTES</span>
+<span class="">:</span>
+<span class="">SECONDS</span>
+</div>
+</div>
+<!-- Bottom Match Status -->
+<div class="w-full flex flex-col items-center gap-2 pb-2">
+<div class="w-full max-w-sm border-t border-white/10 pt-3 flex flex-col items-center justify-center text-center">
+<div class="text-white font-extrabold text-lg sm:text-xl xl:text-2xl tracking-[0.25em] uppercase">
+            MATCH IN PROGRESS
+          </div>
+</div>
+</div>
+</section>
+<!-- RIGHT COLUMN: AO (BLUE) - 4 cols -->
+<section class="col-span-4 lg:col-span-4 bg-[#1453DC] relative flex flex-col justify-between p-6 xl:p-8 shadow-[inset_10px_0_30px_rgba(0,0,0,0.35)] z-10 border-l-2 border-black/30">
+<!-- Top Right Label & Corner Accent -->
+<div class="flex items-start justify-between">
+<div class="bg-black/20 backdrop-blur-md px-4 py-1.5 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white">
+          CORNER 2
+        </div>
+<div class="space-y-1 text-right">
+<div class="flex items-center justify-end gap-3">
+<span class="text-xs tracking-[0.3em] uppercase font-bold text-white/80">Competitor 2</span>
+<span class="w-3 h-3 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
+</div>
+<h1 class="text-6xl sm:text-7xl xl:text-8xl 2xl:text-9xl font-black uppercase tracking-tight text-white leading-none drop-shadow-md">
+            AO
+          </h1>
+<p class="text-sm xl:text-base font-bold tracking-widest text-white/80 uppercase">青 / BLUE</p>
+<div class="pt-2">
+<div class="flex items-center justify-end gap-3 border-b-2 border-white/40 pb-1">
+<span class="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-wider text-white drop-shadow block">PLAYER 2 NAME</span>
+<div class="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded border border-white/20">
+<svg class="w-6 h-4 rounded-sm overflow-hidden shadow-sm bg-white" viewBox="0 0 60 40">
+<rect fill="#FFFFFF" height="40" width="60"></rect>
+<circle cx="30" cy="20" fill="#BC002D" r="12"></circle>
+</svg>
+<span class="text-xs font-mono font-bold tracking-wider text-white">JPN</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Center Massive Score -->
+<div class="flex flex-col items-center justify-center my-auto transform -translate-y-2">
+<div class="leading-none text-[15rem] sm:text-[18rem] md:text-[22rem] lg:text-[24rem] 2xl:text-[28rem] font-black text-white score-glow-blue select-none tabular-nums tracking-tighter">
+          3
+        </div>
+<div class="mt-2 px-8 py-2.5 rounded-full opacity-0 pointer-events-none text-lg sm:text-xl font-black tracking-[0.25em]">
+          SENSHU
+        </div>
+</div>
+<!-- Bottom Penalties Section (CH1, CH2, CH3 / HC, H) -->
+<div class="w-full flex flex-col items-center gap-2 pb-2">
+<span class="text-xs tracking-wider font-extrabold uppercase text-white/90">AO PENALTIES</span>
+<div class="flex flex-col items-center gap-2">
+<div class="flex items-center justify-center gap-3 sm:gap-4">
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH1</div>
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH2</div>
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH3</div>
+</div>
+<div class="flex items-center justify-center gap-3 sm:gap-4">
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">HC</div>
+<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">H</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="w-full bg-[#0B0B0E] border-t-2 border-white/20 px-8 py-2 z-30 select-none shadow-[0_-10px_25px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center">
+<div class="flex items-center gap-3 mb-1.5">
+<div class="h-[1px] w-12 bg-white/20"></div>
+<span class="text-[10px] xl:text-[11px] font-black uppercase tracking-[0.3em] text-white/80">OFFICIAL TOURNAMENT SPONSORS &amp; PARTNERS</span>
+<div class="h-[1px] w-12 bg-white/20"></div>
+</div>
+<div class="w-full flex items-center justify-center gap-3 xl:gap-4 max-w-7xl">
+<!-- MAJOR SPONSOR CARD -->
+<div class="flex-1 flex items-center justify-center gap-2.5 py-2 px-4 rounded-xl bg-gradient-to-r from-amber-400/20 via-white/10 to-amber-400/20 border-2 border-amber-400/80 shadow-[0_0_15px_rgba(250,204,21,0.25)] backdrop-blur-md">
+<svg class="w-4 h-4 text-amber-400 drop-shadow" fill="currentColor" viewBox="0 0 24 24">
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+<div class="flex flex-col text-left leading-none">
+<span class="text-[9px] font-bold tracking-[0.2em] text-amber-400 uppercase font-mono">TITLE</span>
+<span class="text-xs xl:text-sm font-black uppercase tracking-wider text-white">MAJOR SPONSOR</span>
+</div>
+</div>
+<!-- PLATINUM PARTNER -->
+<div class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/5 border border-white/20 backdrop-blur-md shadow-sm">
+<div class="w-2 h-2 rounded-full bg-cyan-400/80"></div>
+<span class="text-[11px] xl:text-xs font-black uppercase tracking-wider text-white/90">PLATINUM PARTNER</span>
+</div>
+<!-- GOLD PARTNER -->
+<div class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/5 border border-white/20 backdrop-blur-md shadow-sm">
+<div class="w-2 h-2 rounded-full bg-amber-400"></div>
+<span class="text-[11px] xl:text-xs font-black uppercase tracking-wider text-white/90">GOLD PARTNER</span>
+</div>
+<!-- SILVER SPONSOR -->
+<div class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/5 border border-white/20 backdrop-blur-md shadow-sm">
+<div class="w-2 h-2 rounded-full bg-slate-300"></div>
+<span class="text-[11px] xl:text-xs font-black uppercase tracking-wider text-white/90">SILVER SPONSOR</span>
+</div>
+<!-- ASSOCIATION PARTNER -->
+<div class="flex-1 flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-white/5 border border-white/20 backdrop-blur-md shadow-sm">
+<div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+<span class="text-[11px] xl:text-xs font-black uppercase tracking-wider text-white/90">ASSOCIATION PARTNER</span>
+</div>
+</div>
+</footer></body></html>
