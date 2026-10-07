@@ -194,8 +194,7 @@
 <div class="bg-surface-container-lowest border-4 border-tertiary/60 rounded-xl p-space-md flex flex-col items-center justify-center relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.95)] overflow-hidden">
 <div class="absolute inset-0 bg-tertiary/5 pointer-events-none"></div>
 <div class="flex items-baseline justify-center tracking-tight text-white leading-none">
-<span class="font-timer-display text-timer-display font-black tracking-normal">0:53</span>
-<span class="font-headline-lg text-headline-lg font-bold text-tertiary ml-1">.4</span>
+<span id="timer-display-main" class="font-timer-display text-timer-display font-black tracking-normal transition-colors duration-300">2:00</span>
 </div>
 <div class="mt-2 flex items-center gap-space-md text-outline font-label-tactical text-label-tactical">
 <span class="flex items-center gap-1">
@@ -208,7 +207,7 @@
 <!-- Master START / STOP Push Actuators -->
 <div class="grid grid-cols-2 gap-space-sm">
 <!-- Giant START Button -->
-<button class="tactile-bevel py-2 px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg border-2 border-tertiary flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(0,165,114,0.4)] transition-all">
+<button id="btn-timer-start" class="tactile-bevel py-2 px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg border-2 border-tertiary flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(0,165,114,0.4)] transition-all">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
 <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">START</span>
@@ -216,7 +215,7 @@
 <span class="font-label-micro text-label-micro font-bold uppercase tracking-widest text-on-tertiary">Timepiece Run</span>
 </button>
 <!-- Giant STOP Button -->
-<button class="tactile-bevel py-2 px-space-sm bg-error-container hover:bg-primary-container text-white rounded-lg border-2 border-primary-container flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(255,84,81,0.35)] transition-all">
+<button id="btn-timer-stop" class="tactile-bevel py-2 px-space-sm bg-error-container hover:bg-primary-container text-white rounded-lg border-2 border-primary-container flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(255,84,81,0.35)] transition-all">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">pause</span>
 <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">STOP</span>
@@ -233,16 +232,16 @@
 <div class="bg-surface-container-lowest border border-surface-container-highest p-space-sm rounded-lg flex flex-col gap-1.5">
 <div class="font-label-micro text-label-micro text-outline text-center uppercase tracking-wider">Clock Stepper Trim</div>
 <div class="grid grid-cols-4 gap-2">
-<button class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
+<button id="btn-time-minus-10" class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
             -10s
           </button>
-<button class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
+<button id="btn-time-minus-1" class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
             -1s
           </button>
-<button class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
+<button id="btn-time-plus-1" class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
             +1s
           </button>
-<button class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
+<button id="btn-time-plus-10" class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">
             +10s
           </button>
 </div>
