@@ -128,12 +128,12 @@
 </button>
 </div>
 <!-- Senshu Advantage Toggle -->
-<button class="w-full py-2.5 px-space-md bg-amber-500/10 border-2 border-amber-400 text-amber-300 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel">
+<button id="btn-aka-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-colors">
 <div class="flex items-center gap-2">
-<span class="material-symbols-outlined text-amber-300" style="font-variation-settings: 'FILL' 1;">stars</span>
-<span class="font-bold">★ SENSHU ACTIVE (First Uncontested Score)</span>
+<span class="material-symbols-outlined text-outline">stars</span>
+<span class="">★ SENSHU READY (Click to Award)</span>
 </div>
-<span class="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_8px_#f59e0b] animate-ping"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-surface-container-highest"></span>
 </button>
 <!-- Massive Point Scoring Buttons Grid -->
 <div class="grid grid-cols-1 gap-2.5">
@@ -178,7 +178,26 @@
 </button>
 </div>
 <!-- WKF Standard Penalty Ladder Grid -->
-<div class="bg-surface-container-lowest border-2 border-primary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]"><div class="flex items-center justify-between border-b border-surface-container-highest pb-1"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-base text-amber-400">warning</span><span class="font-label-tactical text-label-tactical text-amber-300 uppercase font-bold tracking-wider">WKF PENALTIES (AKA)</span></div><button class="font-label-micro text-label-micro text-outline hover:text-error transition-colors uppercase font-bold underline flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">close</span>CLEAR</button></div><div class="grid grid-cols-3 gap-2"><button class="tactile-bevel py-2.5 px-2 bg-amber-500/10 border-2 border-amber-400 text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-black hover:bg-amber-400 hover:text-surface-container-lowest transition-colors">CH1<span class="block text-[9px] font-normal tracking-tight text-amber-200">WARN 1 (ACTIVE)</span></button><button class="tactile-bevel py-2.5 px-2 bg-amber-500/10 border-2 border-amber-400 text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-black hover:bg-amber-400 hover:text-surface-container-lowest transition-colors">CH2<span class="block text-[9px] font-normal tracking-tight text-amber-200">WARN 2 (ACTIVE)</span></button><button class="tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span></button></div><div class="grid grid-cols-2 gap-2"><button class="tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span></button><button class="tactile-bevel py-2.5 px-2 bg-error-container/40 border-2 border-primary-container text-primary-fixed hover:bg-error-container rounded font-label-tactical text-label-tactical uppercase text-center font-black transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-black text-white">H</span><span class="text-[10px] font-bold text-primary uppercase">HANSOKU (ALERT)</span></button></div></div>
+<div class="bg-surface-container-lowest border-2 border-primary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]">
+  <div class="flex items-center justify-between border-b border-surface-container-highest pb-1">
+    <div class="flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-base text-amber-400">warning</span>
+      <span class="font-label-tactical text-label-tactical text-amber-300 uppercase font-bold tracking-wider">WKF PENALTIES (AKA)</span>
+    </div>
+    <button id="btn-aka-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors uppercase font-bold underline flex items-center gap-0.5">
+      <span class="material-symbols-outlined text-xs">close</span>CLEAR
+    </button>
+  </div>
+  <div class="grid grid-cols-3 gap-2">
+    <button id="btn-aka-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH1<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 1</span></button>
+    <button id="btn-aka-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH2<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 2</span></button>
+    <button id="btn-aka-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span></button>
+  </div>
+  <div class="grid grid-cols-2 gap-2">
+    <button id="btn-aka-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span></button>
+    <button id="btn-aka-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-extrabold">H</span><span class="text-[10px] font-normal text-outline uppercase">HANSOKU</span></button>
+  </div>
+</div>
 </section>
 <!-- ==================== CENTER COLUMN: TACTICAL MATCH TIMER COCKPIT ==================== -->
 <section class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-surface-container-highest rounded-lg p-space-sm relative">
@@ -308,7 +327,7 @@
 </button>
 </div>
 <!-- Senshu Advantage Toggle -->
-<button class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-colors">
+<button id="btn-ao-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-colors">
 <div class="flex items-center gap-2">
 <span class="material-symbols-outlined text-outline">stars</span>
 <span class="">★ SENSHU READY (Click to Award)</span>
@@ -358,7 +377,26 @@
 </button>
 </div>
 <!-- WKF Standard Penalty Ladder Grid -->
-<div class="bg-surface-container-lowest border-2 border-secondary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]"><div class="flex items-center justify-between border-b border-surface-container-highest pb-1"><div class="flex items-center gap-1.5"><span class="material-symbols-outlined text-base text-secondary">warning</span><span class="font-label-tactical text-label-tactical text-secondary-fixed font-bold uppercase tracking-wider">WKF PENALTIES (AO)</span></div><button class="font-label-micro text-label-micro text-outline hover:text-error transition-colors uppercase font-bold underline flex items-center gap-0.5"><span class="material-symbols-outlined text-xs">close</span>CLEAR</button></div><div class="grid grid-cols-3 gap-2"><button class="tactile-bevel py-2.5 px-2 bg-amber-500/10 border-2 border-amber-400 text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-black hover:bg-amber-400 hover:text-surface-container-lowest transition-colors">CH1<span class="block text-[9px] font-normal tracking-tight text-amber-200">WARN 1 (ACTIVE)</span></button><button class="tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH2<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 2</span></button><button class="tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span></button></div><div class="grid grid-cols-2 gap-2"><button class="tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span></button><button class="tactile-bevel py-2.5 px-2 bg-secondary-container/40 border-2 border-secondary-container text-secondary-fixed hover:bg-secondary-container rounded font-label-tactical text-label-tactical uppercase text-center font-black transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-black text-white">H</span><span class="text-[10px] font-bold text-secondary uppercase">HANSOKU (ALERT)</span></button></div></div>
+<div class="bg-surface-container-lowest border-2 border-secondary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]">
+  <div class="flex items-center justify-between border-b border-surface-container-highest pb-1">
+    <div class="flex items-center gap-1.5">
+      <span class="material-symbols-outlined text-base text-secondary">warning</span>
+      <span class="font-label-tactical text-label-tactical text-secondary-fixed font-bold uppercase tracking-wider">WKF PENALTIES (AO)</span>
+    </div>
+    <button id="btn-ao-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors uppercase font-bold underline flex items-center gap-0.5">
+      <span class="material-symbols-outlined text-xs">close</span>CLEAR
+    </button>
+  </div>
+  <div class="grid grid-cols-3 gap-2">
+    <button id="btn-ao-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH1<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 1</span></button>
+    <button id="btn-ao-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH2<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 2</span></button>
+    <button id="btn-ao-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span></button>
+  </div>
+  <div class="grid grid-cols-2 gap-2">
+    <button id="btn-ao-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span></button>
+    <button id="btn-ao-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight"><span class="font-extrabold">H</span><span class="text-[10px] font-normal text-outline uppercase">HANSOKU</span></button>
+  </div>
+</div>
 </section>
 </main>
 <!-- ==================== BOTTOM SAFETY & TRANSMISSION ACTION BAR ==================== -->
