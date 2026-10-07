@@ -117,11 +117,11 @@
 <span class="font-label-micro text-label-micro text-outline">Lead by +3 Points</span>
 </div>
 <!-- Score Digit -->
-<div class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(255,84,81,0.65)] px-space-md">
-          6
+<div id="aka-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(255,84,81,0.65)] px-space-md">
+          0
         </div>
 <!-- Tactical Undo Button -->
-<button class="tactile-bevel flex flex-col items-center justify-center px-space-md py- space-sm bg-surface-container-high border-2 border-primary/60 hover:border-primary text-primary-fixed rounded transition-all">
+<button id="btn-aka-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py- space-sm bg-surface-container-high border-2 border-primary/60 hover:border-primary text-primary-fixed rounded transition-all">
 <span class="material-symbols-outlined text-2xl font-bold">undo</span>
 <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
 <span class="font-label-micro text-label-micro text-outline">(REVERT LAST)</span>
@@ -138,7 +138,7 @@
 <!-- Massive Point Scoring Buttons Grid -->
 <div class="grid grid-cols-1 gap-2.5">
 <!-- +1 Yuko -->
-<button class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
+<button id="btn-aka-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">
               +1
@@ -151,7 +151,7 @@
 <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
 </button>
 <!-- +2 Waza-Ari -->
-<button class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
+<button id="btn-aka-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">
               +2
@@ -164,7 +164,7 @@
 <span class="material-symbols-outlined text-2xl">flash_on</span>
 </button>
 <!-- +3 Ippon -->
-<button class="tactile-bevel w-full py-2 px-space-md bg-primary-container hover:bg-error text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(255,84,81,0.4)] transition-all">
+<button id="btn-aka-ippon" class="tactile-bevel w-full py-2 px-space-md bg-primary-container hover:bg-error text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(255,84,81,0.4)] transition-all">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-primary-container px-3.5 py-1 rounded border border-white">
               +3
@@ -298,11 +298,11 @@
 <span class="font-label-micro text-label-micro text-outline">Deficit by -3 Points</span>
 </div>
 <!-- Score Digit -->
-<div class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(0,83,219,0.7)] px-space-md">
-          3
+<div id="ao-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(0,83,219,0.7)] px-space-md">
+          0
         </div>
 <!-- Tactical Undo Button -->
-<button class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-secondary/60 hover:border-secondary text-secondary-fixed rounded transition-all">
+<button id="btn-ao-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-secondary/60 hover:border-secondary text-secondary-fixed rounded transition-all">
 <span class="material-symbols-outlined text-2xl font-bold">undo</span>
 <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
 <span class="font-label-micro text-label-micro text-outline">(REVERT LAST)</span>
@@ -319,7 +319,7 @@
 <!-- Massive Point Scoring Buttons Grid -->
 <div class="grid grid-cols-1 gap-2.5">
 <!-- +1 Yuko -->
-<button class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
+<button id="btn-ao-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">
               +1
@@ -332,7 +332,7 @@
 <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
 </button>
 <!-- +2 Waza-Ari -->
-<button class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
+<button id="btn-ao-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">
               +2
@@ -345,7 +345,7 @@
 <span class="material-symbols-outlined text-2xl">flash_on</span>
 </button>
 <!-- +3 Ippon -->
-<button class="tactile-bevel w-full py-2 px-space-md bg-secondary-fixed hover:bg-blue-400 text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(0,83,219,0.4)] transition-all">
+<button id="btn-ao-ippon" class="tactile-bevel w-full py-2 px-space-md bg-secondary-fixed hover:bg-blue-400 text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(0,83,219,0.4)] transition-all">
 <div class="flex items-center gap-3">
 <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-secondary-container px-3.5 py-1 rounded border border-white">
               +3
@@ -366,7 +366,7 @@
 <footer class="w-full mt-auto z-40 flex flex-wrap justify-between items-center px-space-lg py-1 bg-surface-container-lowest border-t-2 border-surface-container-highest shadow-[0_-4px_16px_rgba(0,0,0,0.8)]">
 <!-- Left Safety Reset -->
 <div class="flex items-center gap-space-sm">
-<button class="tactile-bevel px-space-md py-2 bg-surface-container border border-surface-container-highest hover:border-error-container text-on-surface hover:text-error rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase">
+<button id="btn-reset-match" class="tactile-bevel px-space-md py-2 bg-surface-container border border-surface-container-highest hover:border-error-container text-on-surface hover:text-error rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase">
 <span class="material-symbols-outlined text-lg">restart_alt</span>
         RESET MATCH
       </button>
