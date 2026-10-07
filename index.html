@@ -38,9 +38,9 @@
 <circle cx="52" cy="23" fill="#FFBE29" r="1.5"></circle>
 <path d="M36 10h8v4h-6v2h6v2h-8zm3 2h3v1h-3z" fill="#FFBE29"></path>
 </svg>
-<span class="text-xs font-mono font-bold tracking-wider text-white">SRI</span>
+<span id="display-aka-country" class="text-xs font-mono font-bold tracking-wider text-white">SRI</span>
 </div>
-<span class="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-wider text-white drop-shadow block">PLAYER 1 NAME</span>
+<span id="display-aka-name" class="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-wider text-white drop-shadow block">PLAYER 1 NAME</span>
 </div>
 </div>
 </div>
@@ -50,10 +50,10 @@
 </div>
 <!-- Center Massive Score & Senshu Badge -->
 <div class="flex flex-col items-center justify-center my-auto transform -translate-y-2">
-<div class="leading-none text-[15rem] sm:text-[18rem] md:text-[22rem] lg:text-[24rem] 2xl:text-[28rem] font-black text-white score-glow-red select-none tabular-nums tracking-tighter">
-          6
+<div id="display-aka-score" class="leading-none text-[15rem] sm:text-[18rem] md:text-[22rem] lg:text-[24rem] 2xl:text-[28rem] font-black text-white score-glow-red select-none tabular-nums tracking-tighter">
+          0
         </div>
-<div class="mt-2 flex items-center gap-3 px-8 py-2.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.25em] text-lg sm:text-xl uppercase senshu-glow border-2 border-white/90">
+<div id="display-aka-senshu" class="mt-2 flex items-center gap-3 px-8 py-2.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.25em] text-lg sm:text-xl uppercase senshu-glow border-2 border-white/90 transition-opacity duration-300 opacity-0">
 <svg class="w-5 h-5 fill-neutral-950" viewBox="0 0 24 24">
 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
 </svg>
@@ -68,13 +68,13 @@
 <span class="text-xs tracking-wider font-extrabold uppercase text-white/90">AKA PENALTIES</span>
 <div class="flex flex-col items-center gap-2">
 <div class="flex items-center justify-center gap-3 sm:gap-4">
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH1</div>
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH2</div>
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH3</div>
+<div id="display-aka-ch1" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">CH1</div>
+<div id="display-aka-ch2" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">CH2</div>
+<div id="display-aka-ch3" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">CH3</div>
 </div>
 <div class="flex items-center justify-center gap-3 sm:gap-4">
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">HC</div>
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">H</div>
+<div id="display-aka-hc" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">HC</div>
+<div id="display-aka-h" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">H</div>
 </div>
 </div>
 </div>
@@ -95,8 +95,8 @@
             Ages 6–7 - 22 Kg
           </div>
 </div>
-<div class="font-timer text-[8.5rem] sm:text-[11rem] md:text-[13rem] lg:text-[14rem] 2xl:text-[17rem] font-bold tracking-tighter text-white timer-glow tabular-nums leading-none select-none py-2">
-          0:53
+<div id="display-timer" class="font-timer text-[8.5rem] sm:text-[11rem] md:text-[13rem] lg:text-[14rem] 2xl:text-[17rem] font-bold tracking-tighter text-white timer-glow tabular-nums leading-none select-none py-2 transition-colors duration-300">
+          2:00
         </div>
 <div class="flex items-center gap-2 text-white/40 text-xs tracking-widest uppercase font-mono mt-1">
 <span class="">MINUTES</span>
@@ -131,13 +131,13 @@
 <p class="text-sm xl:text-base font-bold tracking-widest text-white/80 uppercase">青 / BLUE</p>
 <div class="pt-2">
 <div class="flex items-center justify-end gap-3 border-b-2 border-white/40 pb-1">
-<span class="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-wider text-white drop-shadow block">PLAYER 2 NAME</span>
+<span id="display-ao-name" class="text-2xl sm:text-3xl xl:text-4xl font-black uppercase tracking-wider text-white drop-shadow block">PLAYER 2 NAME</span>
 <div class="flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded border border-white/20">
 <svg class="w-6 h-4 rounded-sm overflow-hidden shadow-sm bg-white" viewBox="0 0 60 40">
 <rect fill="#FFFFFF" height="40" width="60"></rect>
 <circle cx="30" cy="20" fill="#BC002D" r="12"></circle>
 </svg>
-<span class="text-xs font-mono font-bold tracking-wider text-white">JPN</span>
+<span id="display-ao-country" class="text-xs font-mono font-bold tracking-wider text-white">JPN</span>
 </div>
 </div>
 </div>
@@ -145,10 +145,14 @@
 </div>
 <!-- Center Massive Score -->
 <div class="flex flex-col items-center justify-center my-auto transform -translate-y-2">
-<div class="leading-none text-[15rem] sm:text-[18rem] md:text-[22rem] lg:text-[24rem] 2xl:text-[28rem] font-black text-white score-glow-blue select-none tabular-nums tracking-tighter">
-          3
+<div id="display-ao-score" class="leading-none text-[15rem] sm:text-[18rem] md:text-[22rem] lg:text-[24rem] 2xl:text-[28rem] font-black text-white score-glow-blue select-none tabular-nums tracking-tighter">
+          0
         </div>
-<div class="mt-2 px-8 py-2.5 rounded-full opacity-0 pointer-events-none text-lg sm:text-xl font-black tracking-[0.25em]">
+<div id="display-ao-senshu" class="mt-2 flex items-center gap-3 px-8 py-2.5 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.25em] text-lg sm:text-xl uppercase senshu-glow border-2 border-white/90 transition-opacity duration-300 opacity-0">
+<svg class="w-5 h-5 fill-neutral-950" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+<span class="">SENSHU</span>
+<svg class="w-5 h-5 fill-neutral-950" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+</div>
           SENSHU
         </div>
 </div>
@@ -157,13 +161,13 @@
 <span class="text-xs tracking-wider font-extrabold uppercase text-white/90">AO PENALTIES</span>
 <div class="flex flex-col items-center gap-2">
 <div class="flex items-center justify-center gap-3 sm:gap-4">
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH1</div>
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH2</div>
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">CH3</div>
+<div id="display-ao-ch1" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">CH1</div>
+<div id="display-ao-ch2" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">CH2</div>
+<div id="display-ao-ch3" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">CH3</div>
 </div>
 <div class="flex items-center justify-center gap-3 sm:gap-4">
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">HC</div>
-<div class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner">H</div>
+<div id="display-ao-hc" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">HC</div>
+<div id="display-ao-h" class="penalty-circle w-12 h-12 sm:w-14 sm:h-14 xl:w-16 xl:h-16 rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold text-base sm:text-lg xl:text-xl shadow-inner transition-colors duration-300">H</div>
 </div>
 </div>
 </div>
@@ -209,4 +213,5 @@
 </div>
 </footer>
 <script src="js/script.js"></script>
+<script src="js/display.js"></script>
 </body></html>

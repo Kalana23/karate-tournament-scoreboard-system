@@ -68,8 +68,34 @@ const aoPenaltyBtns = {
   h: document.getElementById('btn-ao-h')
 };
 
+// DOM Elements - Competitor Info
+const inputAkaName = document.getElementById('input-aka-name');
+const inputAkaCountry = document.getElementById('input-aka-country-code');
+const inputAoName = document.getElementById('input-ao-name');
+const inputAoCountry = document.getElementById('input-ao-country-code');
+
 // DOM Elements - Global Buttons
 const btnResetMatch = document.getElementById('btn-reset-match');
+
+/**
+ * Broadcasts current state to localStorage for the Arena Display
+ */
+function broadcastState() {
+  const stateObject = {
+    akaScore,
+    aoScore,
+    currentTime,
+    akaSenshu,
+    aoSenshu,
+    akaPenalties,
+    aoPenalties,
+    akaName: inputAkaName ? inputAkaName.value : 'PLAYER 1',
+    akaCountry: inputAkaCountry ? inputAkaCountry.innerText : 'SRI',
+    aoName: inputAoName ? inputAoName.value : 'PLAYER 2',
+    aoCountry: inputAoCountry ? inputAoCountry.innerText : 'JPN',
+  };
+  localStorage.setItem('karateMatchState', JSON.stringify(stateObject));
+}
 
 /**
  * Updates the score displays for both corners.
@@ -101,6 +127,7 @@ function addPoints(corner, points) {
 
   // Refresh UI
   updateDisplay();
+  broadcastState();
 }
 
 /**
@@ -124,6 +151,7 @@ function undoLastAction() {
 
   // Refresh UI
   updateDisplay();
+  broadcastState();
 }
 
 /**
@@ -166,6 +194,7 @@ function startTimer() {
     if (currentTime > 0) {
       currentTime--;
       updateTimerDisplay();
+      broadcastState();
     }
     if (currentTime === 0) {
       stopTimer();
@@ -190,6 +219,7 @@ function stopTimer() {
 function adjustTime(secondsToAdd) {
   currentTime = Math.max(0, currentTime + secondsToAdd);
   updateTimerDisplay();
+  broadcastState();
   
   if (currentTime === 0 && isTimerRunning) {
     stopTimer();
@@ -208,6 +238,7 @@ function toggleSenshu(corner) {
     if (aoSenshu) akaSenshu = false;
   }
   updatePenaltiesDisplay();
+  broadcastState();
 }
 
 /**
@@ -220,6 +251,7 @@ function togglePenalty(corner, type) {
     aoPenalties[type] = !aoPenalties[type];
   }
   updatePenaltiesDisplay();
+  broadcastState();
 }
 
 /**
@@ -232,6 +264,7 @@ function clearPenalties(corner) {
     for (let key in aoPenalties) aoPenalties[key] = false;
   }
   updatePenaltiesDisplay();
+  broadcastState();
 }
 
 /**
@@ -314,6 +347,7 @@ function resetMatch() {
   updateDisplay();
   updateTimerDisplay();
   updatePenaltiesDisplay();
+  broadcastState();
 }
 
 // Ensure DOM is fully loaded before attaching events
@@ -351,6 +385,11 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDisplay();
   updateTimerDisplay();
   updatePenaltiesDisplay();
+  broadcastState();
+  
+  // Attach Name Input events for live sync
+  if (inputAkaName) inputAkaName.addEventListener('input', broadcastState);
+  if (inputAoName) inputAoName.addEventListener('input', broadcastState);
 
   // Attach Penalty & Senshu Events
   if (btnAkaSenshu) btnAkaSenshu.addEventListener('click', () => toggleSenshu('aka'));
