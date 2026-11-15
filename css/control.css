@@ -1,8 +1,26 @@
+/* ============================================================
+   CONTROL CONSOLE — CUSTOM CSS
+   WKF Karate Kumite Scoreboard System
+   ============================================================ */
+
+/* Material Symbols */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24;
   display: inline-block;
   vertical-align: middle;
 }
+
+/* ---- Tactile Button Bevel ---- */
+.tactile-bevel {
+  box-shadow: 0 4px 0 #07080b, inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.tactile-bevel:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #07080b, inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* ---- Hazard Stripes ---- */
 .hazard-stripes-yellow {
   background: repeating-linear-gradient(
     -45deg,
@@ -12,10 +30,194 @@
     #332305 20px
   );
 }
-.tactile-bevel {
-  box-shadow: 0 4px 0 #07080b, inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+/* ---- Penalty button active states ---- */
+.penalty-btn-active-warn {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+  border-color: #f59e0b !important;
+  color: #fcd34d !important;
+  font-weight: 900;
 }
-.tactile-bevel:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #07080b, inset 0 2px 4px rgba(0, 0, 0, 0.6);
+.penalty-btn-active-danger {
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
+  color: #fca5a5 !important;
+  font-weight: 900;
 }
+
+/* ---- Senshu Active ---- */
+.senshu-active {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  border-color: #f59e0b !important;
+  color: #fcd34d !important;
+}
+
+/* ---- Score Winner Blink (Control) ---- */
+@keyframes winner-blink-ctrl {
+  0%, 100% { opacity: 1; text-shadow: 0 0 24px rgba(255, 220, 50, 0.9); }
+  50%       { opacity: 0.25; text-shadow: none; }
+}
+.winner-blink-ctrl {
+  animation: winner-blink-ctrl 0.75s ease-in-out infinite;
+  color: #fde047 !important;
+}
+
+/* ---- Atoshi Baraku (15s warning) ---- */
+@keyframes atoshi-pulse {
+  0%, 100% { text-shadow: 0 0 10px rgba(245,158,11,0.6); }
+  50%       { text-shadow: 0 0 30px rgba(245,158,11,1); }
+}
+.atoshi-baraku {
+  color: #f59e0b !important;
+  animation: atoshi-pulse 1s ease-in-out infinite;
+}
+
+/* ---- Timer Ended State ---- */
+.timer-ended {
+  color: #ef4444 !important;
+  animation: none;
+}
+
+/* ---- Sync Pulse Flash ---- */
+@keyframes sync-pulse {
+  0%   { background-color: rgba(78, 222, 163, 0.35); }
+  50%  { background-color: rgba(78, 222, 163, 0.05); }
+  100% { background-color: transparent; }
+}
+.sync-flash {
+  animation: sync-pulse 0.6s ease-out 2;
+}
+
+/* ---- Stream LIVE / PAUSED states ---- */
+.stream-live {
+  background-color: rgba(78, 222, 163, 0.12);
+  border-color: rgba(78, 222, 163, 0.5);
+  color: #4edea3;
+}
+.stream-paused {
+  background-color: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: #f59e0b;
+}
+
+/* ---- Light theme overrides ---- */
+html.light body {
+  background-color: #f4f5f9 !important;
+  color: #1a1c23 !important;
+}
+html.light header,
+html.light footer {
+  background-color: #e8eaf0 !important;
+  border-color: #c9ccd6 !important;
+}
+html.light .bg-surface-container-lowest { background-color: #f4f5f9 !important; }
+html.light .bg-surface-container-low    { background-color: #e8eaf0 !important; }
+html.light .bg-surface-container        { background-color: #dfe1ea !important; }
+html.light .bg-surface-container-high   { background-color: #d4d6e0 !important; }
+html.light .bg-surface-container-highest{ background-color: #c9ccd6 !important; }
+html.light .text-on-surface             { color: #1a1c23 !important; }
+html.light .text-on-surface-variant     { color: #44474e !important; }
+html.light .text-outline                { color: #74777f !important; }
+html.light .border-surface-container-highest { border-color: #c9ccd6 !important; }
+
+/* ---- Settings Modal ---- */
+#settings-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  align-items: center;
+  justify-content: center;
+}
+#settings-modal.open {
+  display: flex;
+}
+.modal-box {
+  background: #191b22;
+  border: 2px solid #33343b;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  min-width: 420px;
+  max-width: 560px;
+  width: 95%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+}
+html.light .modal-box {
+  background: #f4f5f9;
+  border-color: #c9ccd6;
+}
+
+/* ---- Audit Log ---- */
+.audit-entry {
+  display: flex;
+  justify-content: space-between;
+  font-family: monospace;
+  font-size: 11px;
+  color: #9ea3af;
+  padding: 1px 0;
+}
+
+/* ---- Scorer locked overlay ---- */
+.scoring-locked {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* ---- Tatami title inline edit ---- */
+#tatami-title-display {
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(78,222,163,0.4);
+  transition: border-color 0.2s;
+}
+#tatami-title-display:hover {
+  border-color: #4edea3;
+}
+#tatami-title-input {
+  display: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #4edea3;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  letter-spacing: inherit;
+  text-transform: uppercase;
+}
+#tatami-title-input.active {
+  display: inline-block;
+}
+
+/* ---- Bout metadata pill edits ---- */
+.bout-editable {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  min-width: 60px;
+  cursor: text;
+  transition: border-color 0.2s;
+}
+.bout-editable:focus {
+  border-bottom-color: #4edea3;
+}
+
+/* ---- Publish button animation ---- */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
+/* ---- Score leads telemetry ---- */
+.lead-positive { color: #4edea3; }
+.lead-negative { color: #ffb3ad; }
+.lead-even     { color: #74777f; }
