@@ -22,6 +22,7 @@ try {
    SECTION 1: STATE
    ============================================================ */
 const STATE = {
+  logos: { mainHeader: '', titleSponsor: '', platinumPartner: '', goldPartner: '', silverSponsor: '', associationPartner: '' },
   akaScore:          0,
   aoScore:           0,
   akaSenshu:         false,
@@ -781,10 +782,9 @@ async function exportMatchResult() {
 /* ============================================================
    SECTION 13: STATE BROADCAST (DIRECT IPC + LOCALSTORAGE)
    ============================================================ */
-function broadcastState() {
-  if (!STATE.streamLive) return;
-
-  const payload = {
+function createStatePayload() {
+  return {
+    logos:            { ...STATE.logos },
     akaScore:          STATE.akaScore,
     aoScore:           STATE.aoScore,
     akaSenshu:         STATE.akaSenshu,
@@ -812,16 +812,23 @@ function broadcastState() {
     roundLabel:        STATE.roundLabel,
     ts:                Date.now(),
   };
+}
 
-  // 1. Direct Electron IPC broadcast (zero latency)
-  if (ipc) {
-    ipc.send('broadcast-state-instant', payload);
-  }
+function broadcastState(force = false) {
+  if (!STATE.streamLive && force !== true) return false;
+  const payload = createStatePayload();
 
-  // 2. localStorage fallback
+  // Save first so Settings can report quota failures without publishing a partial save.
+  let stored = false;
   try {
     localStorage.setItem('karateMatchState', JSON.stringify(payload));
-  } catch (e) {}
+    stored = true;
+  } catch (e) {
+    if (force === true) return false;
+  }
+
+  if (ipc) ipc.send('broadcast-state-instant', payload);
+  return stored;
 }
 
 function forceSync() {
@@ -1141,6 +1148,120 @@ document.addEventListener('fullscreenchange', () => {
 /* ============================================================
    SECTION 16: SETTINGS MODAL
    ============================================================ */
+const LOGO_FIELDS = {
+  mainHeader: 'main-header',
+  titleSponsor: 'title-sponsor',
+  platinumPartner: 'platinum-partner',
+  goldPartner: 'gold-partner',
+  silverSponsor: 'silver-sponsor',
+  associationPartner: 'association-partner',
+};
+const LOGO_DATA_URL = /^data:image\/(?:png|jpeg|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$/;
+const MAX_LOGO_BYTES = 200 * 1024;
+let draftLogos = null;
+const pendingLogos = new Map();
+
+function logoMessage(message = '') {
+  const el = document.getElementById('logo-settings-status');
+  if (el) el.textContent = message;
+}
+
+function updateLogoSaveButton() {
+  const button = document.getElementById('btn-modal-save');
+  if (button) button.disabled = pendingLogos.size > 0;
+}
+
+function updateLogoPreview(key, filename) {
+  const suffix = LOGO_FIELDS[key];
+  const preview = document.getElementById(`preview-logo-${suffix}`);
+  const label = document.getElementById(`filename-logo-${suffix}`);
+  const source = draftLogos?.[key] || '';
+  if (preview) {
+    preview.classList.toggle('hidden', !source);
+    if (source) preview.src = source;
+    else preview.removeAttribute('src');
+  }
+  if (label) label.textContent = filename || (source ? 'Saved logo' : 'No logo selected');
+}
+
+function restoreLogos() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('karateMatchState'))?.logos;
+    for (const key of Object.keys(LOGO_FIELDS)) {
+      const source = saved?.[key];
+      if (typeof source === 'string' && source.length <= 280000 && LOGO_DATA_URL.test(source)) {
+        STATE.logos[key] = source;
+      }
+    }
+  } catch (e) {
+    // Older installations may not have saved logos yet.
+  }
+}
+
+function readLogo(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Could not read this file. Please try again.'));
+    reader.onabort = () => reject(new Error('Image upload was cancelled.'));
+    reader.onload = () => {
+      const source = reader.result;
+      if (typeof source !== 'string' || !LOGO_DATA_URL.test(source)) {
+        reject(new Error('Choose a PNG, JPEG, or SVG image.'));
+        return;
+      }
+      const image = new Image();
+      image.onload = () => resolve(source);
+      image.onerror = () => reject(new Error('This image could not be displayed. Choose another file.'));
+      image.src = source;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleLogoUpload(key, input) {
+  const file = input.files?.[0];
+  if (!file || !draftLogos) return;
+  // The token also invalidates earlier reads when replacing/removing a logo or closing the modal.
+  const token = {};
+  pendingLogos.set(key, token);
+  updateLogoSaveButton();
+  logoMessage('');
+  try {
+    if (!['image/png', 'image/jpeg', 'image/svg+xml'].includes(file.type)) {
+      throw new Error('Choose a PNG, JPEG, or SVG image.');
+    }
+    if (file.size > MAX_LOGO_BYTES) throw new Error('Each logo must be 200 KB or smaller.');
+    const source = await readLogo(file);
+    if (pendingLogos.get(key) !== token || !draftLogos) return;
+    draftLogos[key] = source;
+    updateLogoPreview(key, file.name);
+  } catch (error) {
+    if (pendingLogos.get(key) === token) logoMessage(error.message);
+  } finally {
+    if (pendingLogos.get(key) === token) {
+      pendingLogos.delete(key);
+      input.value = '';
+      updateLogoSaveButton();
+    }
+  }
+}
+
+function initLogoInputs() {
+  for (const [key, suffix] of Object.entries(LOGO_FIELDS)) {
+    const input = document.getElementById(`input-logo-${suffix}`);
+    input?.addEventListener('change', () => handleLogoUpload(key, input));
+    document.getElementById(`remove-logo-${suffix}`)?.addEventListener('click', () => {
+      if (!draftLogos) return;
+      pendingLogos.delete(key);
+      draftLogos[key] = '';
+      if (input) input.value = '';
+      updateLogoPreview(key);
+      updateLogoSaveButton();
+      logoMessage('');
+    });
+  }
+}
+
 function openSettingsModal() {
   const modal = document.getElementById('settings-modal');
   if (!modal) return;
@@ -1150,23 +1271,40 @@ function openSettingsModal() {
   if (tField) tField.value = STATE.tournamentName;
   if (gField) gField.value = STATE.pointGapLimit;
   if (cField) cField.value = STATE.customTimeS;
+  pendingLogos.clear();
+  draftLogos = { ...STATE.logos };
+  for (const [key, suffix] of Object.entries(LOGO_FIELDS)) {
+    const input = document.getElementById(`input-logo-${suffix}`);
+    if (input) input.value = '';
+    updateLogoPreview(key);
+  }
+  logoMessage('');
+  updateLogoSaveButton();
   updateBuzzerUI();
   modal.classList.add('open');
 }
 
 function closeSettingsModal() {
+  draftLogos = null;
+  pendingLogos.clear();
+  updateLogoSaveButton();
   document.getElementById('settings-modal')?.classList.remove('open');
 }
 
 function saveSettings() {
+  if (!draftLogos || pendingLogos.size) return;
+  const previous = {
+    logos: STATE.logos,
+    tournamentName: STATE.tournamentName,
+    pointGapLimit: STATE.pointGapLimit,
+    customTimeS: STATE.customTimeS,
+  };
   const tField = document.getElementById('modal-tournament-name');
   const gField = document.getElementById('modal-point-gap');
   const cField = document.getElementById('modal-custom-time');
 
   if (tField) {
     STATE.tournamentName = tField.value.trim() || STATE.tournamentName;
-    const tnInput = document.getElementById('edit-tournament-name');
-    if (tnInput) tnInput.value = STATE.tournamentName;
   }
   if (gField) {
     const v = parseInt(gField.value);
@@ -1177,8 +1315,16 @@ function saveSettings() {
     if (v >= 30 && v <= 600) STATE.customTimeS = v;
   }
 
+  STATE.logos = { ...draftLogos };
+  // Explicit Save & Sync publishes even while the automatic arena stream is paused.
+  if (!broadcastState(true)) {
+    Object.assign(STATE, previous);
+    logoMessage('Settings could not be saved. Storage may be full or unavailable. Remove a logo or choose smaller images, then try again.');
+    return;
+  }
+  const tnInput = document.getElementById('edit-tournament-name');
+  if (tnInput) tnInput.value = STATE.tournamentName;
   closeSettingsModal();
-  broadcastState();
   addAudit(nowHHMMSS(), 'Settings Updated', 'SET');
 }
 
@@ -1188,6 +1334,10 @@ function saveSettings() {
 function attachKeyboard() {
   document.addEventListener('keydown', e => {
     const t = e.target;
+    if (document.getElementById('settings-modal')?.classList.contains('open')) {
+      if (e.code === 'Escape') closeSettingsModal();
+      return;
+    }
     if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable) return;
 
     switch (e.code) {
@@ -1226,6 +1376,9 @@ function attachKeyboard() {
    SECTION 18: INIT
    ============================================================ */
 document.addEventListener('DOMContentLoaded', async () => {
+  // Restore logos before the first broadcast overwrites the saved match payload.
+  restoreLogos();
+  initLogoInputs();
   // Rebuild timer display node cleanly
   const mainTimerSpan = document.getElementById('timer-display-main');
   if (mainTimerSpan) {

@@ -24,6 +24,37 @@
      DOM REFS
      ============================================================ */
   const $ = id => document.getElementById(id);
+  const logoElements = {
+    mainHeader: $('logo-main-header'),
+    titleSponsor: $('logo-title-sponsor'),
+    platinumPartner: $('logo-platinum-partner'),
+    goldPartner: $('logo-gold-partner'),
+    silverSponsor: $('logo-silver-sponsor'),
+    associationPartner: $('logo-association-partner'),
+  };
+  const LOGO_DATA_URL = /^data:image\/(?:png|jpeg|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$/;
+
+  function renderLogos(logos = {}) {
+    for (const [key, element] of Object.entries(logoElements)) {
+      if (!element) continue;
+      const source = logos?.[key];
+      // Match state arrives frequently; validate and decode only changed images.
+      if (typeof source === 'string' && source && element.getAttribute('src') === source) continue;
+      if (typeof source !== 'string' || source.length > 280000 || !LOGO_DATA_URL.test(source)) {
+        element.classList.add('hidden');
+        element.removeAttribute('src');
+        continue;
+      }
+      element.classList.add('hidden');
+      element.onload = () => {
+        if (element.getAttribute('src') === source) element.classList.remove('hidden');
+      };
+      element.onerror = () => {
+        if (element.getAttribute('src') === source) element.classList.add('hidden');
+      };
+      element.src = source;
+    }
+  }
 
   const EL = {
     akaScore:         $('display-aka-score'),
@@ -213,8 +244,9 @@
   /* ============================================================
      MAIN ARENA DISPLAY UPDATER
      ============================================================ */
-  function updateArenaDisplay(state) {
+  function renderDisplay(state) {
     if (!state) return;
+    renderLogos(state.logos);
 
     /* ---- 1. Scores ---- */
     if (EL.akaScore) EL.akaScore.textContent = state.akaScore ?? 0;
@@ -383,13 +415,13 @@
     // 1. Initial State from localStorage
     try {
       const stored = localStorage.getItem('karateMatchState');
-      if (stored) updateArenaDisplay(JSON.parse(stored));
+      if (stored) renderDisplay(JSON.parse(stored));
     } catch (e) {}
 
     // 2. Direct Electron IPC Listeners (Instant zero-lag sync)
     if (ipc) {
       ipc.on('arena-state-update', (event, state) => {
-        updateArenaDisplay(state);
+        renderDisplay(state);
       });
       ipc.on('arena-buzzer-trigger', (event, buzzerData) => {
         handleBuzzerEvent(buzzerData);
@@ -402,7 +434,7 @@
         try { handleBuzzerEvent(JSON.parse(e.newValue)); } catch (err) {}
       }
       if (e.key === 'karateMatchState' && e.newValue) {
-        try { updateArenaDisplay(JSON.parse(e.newValue)); } catch (err) {}
+        try { renderDisplay(JSON.parse(e.newValue)); } catch (err) {}
       }
     });
 
@@ -415,7 +447,7 @@
         const st = JSON.parse(raw);
         if (st.ts && st.ts !== lastKnownTs) {
           lastKnownTs = st.ts;
-          updateArenaDisplay(st);
+          renderDisplay(st);
         }
       } catch (e) {}
     }, 80);

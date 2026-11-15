@@ -17,17 +17,11 @@
 <!-- ==================== TOP HEADER: TOURNAMENT TITLE ==================== -->
 <header class="w-full shrink-0 bg-[#0B0B0E] border-b border-white/20 px-6 py-1.5 flex items-center z-30 shadow-md justify-between" style="min-height:42px;">
   <!-- Left logo -->
-  <div class="flex items-center gap-3">
-    <div class="w-7 h-7 rounded-full border border-amber-400/80 bg-black/60 flex items-center justify-center shadow-md">
-      <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" fill="none" r="10" stroke="currentColor" stroke-width="1.5"/>
-        <path d="M12 4v16M4 12h16M7 7l10 10M17 7L7 17" opacity="0.5" stroke="currentColor" stroke-width="1"/>
-        <circle cx="12" cy="12" fill="#D31327" r="3.5"/>
-      </svg>
-    </div>
-    <div class="flex flex-col text-left leading-none">
-      <span class="text-[9px] tracking-widest text-amber-400 font-bold uppercase">JAPAN KARATE-DO</span>
-      <span class="text-[8px] tracking-wider text-white/70 font-mono">HAYASHI-HA</span>
+  <div class="flex shrink-0 items-center gap-3">
+    <img id="logo-main-header" alt="Japan Karate-Do Hayashi-Ha logo" class="hidden h-10 max-h-12 w-auto max-w-24 object-contain">
+    <div class="flex flex-col gap-1 text-left leading-none">
+      <span class="text-[9px] tracking-[0.2em] text-white/70 font-bold uppercase">JAPAN KARATE-DO</span>
+      <span class="text-xs tracking-[0.15em] text-amber-400 font-black uppercase">HAYASHI-HA</span>
     </div>
   </div>
 
@@ -248,23 +242,28 @@
 <div id="win-reason-banner"></div>
 
 <!-- ==================== BOTTOM FOOTER: SPONSORS ==================== -->
-<footer class="w-full shrink-0 bg-[#0B0B0E] border-t border-white/15 px-6 py-1 z-30 select-none flex items-center justify-center gap-4" style="min-height:36px;">
+<footer class="w-full shrink-0 bg-[#0B0B0E] border-t border-white/15 px-6 py-2 z-30 select-none flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
   <span class="text-[9px] font-black uppercase tracking-[0.3em] text-white/50">OFFICIAL TOURNAMENT SPONSORS &amp; PARTNERS</span>
-  <div class="flex items-center gap-3">
-    <div class="flex items-center gap-1.5 py-1 px-3 rounded-lg bg-gradient-to-r from-amber-400/15 via-white/5 to-amber-400/15 border border-amber-400/60">
-      <span class="text-[10px] font-black uppercase tracking-wider text-amber-400">TITLE SPONSOR</span>
+  <div class="flex min-w-0 max-w-full flex-wrap items-stretch justify-center gap-3">
+    <div class="flex w-36 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-amber-400/60 bg-gradient-to-r from-amber-400/15 via-white/5 to-amber-400/15 px-3 py-2">
+      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Title Sponsor</span>
+      <img id="logo-title-sponsor" alt="Title sponsor logo" class="hidden h-8 max-h-8 w-auto max-w-full object-contain">
     </div>
-    <div class="flex items-center gap-1.5 py-1 px-3 rounded-lg bg-white/5 border border-white/15">
-      <span class="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
-      <span class="text-[10px] font-black uppercase tracking-wider text-white/80">PLATINUM</span>
+    <div class="flex w-32 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
+      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Platinum</span>
+      <img id="logo-platinum-partner" alt="Platinum sponsor logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
     </div>
-    <div class="flex items-center gap-1.5 py-1 px-3 rounded-lg bg-white/5 border border-white/15">
-      <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
-      <span class="text-[10px] font-black uppercase tracking-wider text-white/80">GOLD</span>
+    <div class="flex w-32 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
+      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Gold</span>
+      <img id="logo-gold-partner" alt="Gold sponsor logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
     </div>
-    <div class="flex items-center gap-1.5 py-1 px-3 rounded-lg bg-white/5 border border-white/15">
-      <span class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-      <span class="text-[10px] font-black uppercase tracking-wider text-white/80">SILVER</span>
+    <div class="flex w-32 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
+      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Silver</span>
+      <img id="logo-silver-sponsor" alt="Silver sponsor logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
+    </div>
+    <div class="flex w-40 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
+      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Association Partner</span>
+      <img id="logo-association-partner" alt="Association partner logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
     </div>
   </div>
 </footer>
