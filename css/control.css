@@ -226,18 +226,18 @@ button, input, select { transition: background-color 0.2s ease, border-color 0.2
 /* Viewport layout: shrink spacing, never the content inside a timer or action. */
 body.control-platform { height: 100dvh; min-height: 0; overflow: hidden; }
 .control-platform > header, .control-platform > footer { flex-shrink: 0; }
-.control-platform > main { flex: 1 1 0; min-height: 0; gap: 6px; padding: 8px; overflow: hidden; }
-.control-platform > main > section { min-height: 0; min-width: 0; gap: 6px; padding: 8px; overflow: visible; }
+.control-platform > main { flex: 1 1 0; min-height: 0; gap: 4px; padding: 6px; overflow: hidden; }
+.control-platform > main > section { min-height: 0; min-width: 0; gap: 4px; padding: 6px; overflow: visible; }
 .control-platform > main > section > * { flex-shrink: 0; min-width: 0; }
 .control-platform #main-header { padding: 6px 12px; gap: 6px; }
 .control-platform #main-header nav:not(.mode-switch) { display: none; }
 .control-platform .mode-switch { margin-inline: auto; }
-.control-platform #aka-panel > [data-kumite], .control-platform #ao-panel > [data-kumite] { padding: 8px; }
-.control-platform :is(#aka-score-display, #ao-score-display) { font-size: 52px; line-height: 1.1; }
+.control-platform #aka-panel > [data-kumite], .control-platform #ao-panel > [data-kumite] { padding: 6px; }
+.control-platform :is(#aka-score-display, #ao-score-display) { font-size: 44px; line-height: 1.1; }
 .control-platform :is(#btn-aka-senshu, #btn-ao-senshu) { padding-block: 6px; }
 .control-platform :is(#aka-score-btns, #ao-score-btns) { gap: 6px; padding: 0; }
-.control-platform :is(#aka-score-btns, #ao-score-btns) > button { padding: 6px 10px; min-height: 48px; }
-.control-platform .penalty-btn { padding: 6px 3px; min-height: 42px; }
+.control-platform :is(#aka-score-btns, #ao-score-btns) > button { padding: 4px 8px; min-height: 40px; }
+.control-platform .penalty-btn { padding: 4px 3px; min-height: 34px; }
 .control-platform .dq-btn { padding: 5px; }
 .control-platform .platform-box { padding: 8px; }
 .control-platform .platform-stack { gap: 6px; }
@@ -246,10 +246,10 @@ body.control-platform { height: 100dvh; min-height: 0; overflow: hidden; }
 .control-platform .athlete-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 6px; }
 .control-platform .published-total { display: flex; justify-content: space-between; align-items: center; }
 .control-platform .published-total [id^="kata-total-"] { font-size: 36px; line-height: 1.1; }
-#control-timer-box { overflow: visible; height: auto; min-height: max-content; padding: 12px 8px; }
-#control-timer-box > div { flex-shrink: 0; }
-#timer-display-main { display: inline-block; white-space: nowrap; font-size: clamp(48px, 6vw, 80px); line-height: 1.1; padding-block: 3px; }
-#timer-display-main #timer-ms { line-height: 1.1; }
+#timer-box { overflow: visible; height: auto; min-height: max-content; padding: 12px 8px; }
+#timer-box > div { flex-shrink: 0; }
+#ctrl-timer-main { display: inline-block; white-space: nowrap; font-size: clamp(44px, 5vw, 64px); line-height: 1.1; padding-block: 3px; }
+#ctrl-timer-main #ctrl-timer-ms { line-height: 1.1; }
 .control-platform .team-series-row { display: grid; grid-template-columns: minmax(80px, .9fr) minmax(70px, 1fr) auto auto; gap: 6px; align-items: center; }
 .control-platform .team-series-row :is(button, select) { padding: 5px 6px; font-size: 11px; white-space: nowrap; }
 .control-platform .team-series-row strong { font-size: 11px; }
@@ -263,8 +263,8 @@ body.control-platform { height: 100dvh; min-height: 0; overflow: hidden; }
   .control-platform :is(#aka-score-btns, #ao-score-btns) > button { min-height: 40px; padding-block: 3px; }
   .control-platform .penalty-btn { min-height: 34px; padding-block: 3px; }
   .control-platform #center-panel > [data-kumite] { padding: 6px; }
-  .control-platform #control-timer-box { padding-block: 12px; }
-  .control-platform #timer-display-main { font-size: 52px; }
+  .control-platform #timer-box { padding-block: 12px; }
+  .control-platform #ctrl-timer-main { font-size: 52px; }
   .control-platform #center-panel [class*="max-h-28"] { max-height: 64px; }
 }
 
@@ -289,7 +289,7 @@ body.light-mode .judge-flag[data-flag="aka"], body.light-mode .penalty-btn-activ
 body.light-mode .judge-flag[data-flag="ao"] { background: #bfdbfe !important; border-color: #1d4ed8 !important; }
 body.light-mode .penalty-btn-active-warn { background: #fef08a !important; border-color: #a16207 !important; }
 body.light-mode .mode-message { color: #854d0e; }
-body.light-mode :is(#aka-score-display, #ao-score-display, #timer-display-main, #kata-total-aka, #kata-total-ao) {
+body.light-mode :is(#aka-score-display, #ao-score-display, #ctrl-timer-main, #kata-total-aka, #kata-total-ao) {
   color: var(--console-foreground) !important; text-shadow: none !important;
 }
 /* Catch utility classes on nested divs too, including labels with white opacity. */
@@ -302,3 +302,24 @@ body.light-mode :is(header, main, footer, .modal-box) .bg-black\/40 {
   border-color: #cbd5e1 !important;
 }
 .control-platform :is(#aka-panel, #ao-panel) > .absolute { display: none; }
+
+/* Final utility overrides: keep these after all general theme rules. */
+body.light-mode #timer-box span,
+body.light-mode #ctrl-timer-main,
+body.light-mode #ctrl-timer-ms,
+body.light-mode .text-white {
+    color: #000000 !important;
+}
+/* Force inputs and static text to also turn black */
+body.light-mode input,
+body.light-mode button,
+body.light-mode .text-gray-400 {
+    color: #1a1a1a !important;
+}
+/* Match the specificity of earlier panel rules as well as Tailwind utilities. */
+body.light-mode :is(header, main, footer, .modal-box) :is(input, button, .text-gray-400) {
+  color: #1a1a1a !important;
+}
+body.light-mode :is(header, main, footer, .modal-box) .text-white {
+  color: #000000 !important;
+}

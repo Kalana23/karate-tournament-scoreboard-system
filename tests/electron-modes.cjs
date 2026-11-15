@@ -50,7 +50,7 @@ app.whenReady().then(async () => {
         await delay(450);
         const clipped = await run(`(() => {
           const bad = [];
-          for (const el of document.querySelectorAll('main input, main select, main button, #timer-display-main, [id^="kata-total-"]')) {
+          for (const el of document.querySelectorAll('main input, main select, main button, #ctrl-timer-main, [id^="kata-total-"]')) {
             if (!el.getClientRects().length) continue;
             const r=el.getBoundingClientRect(), panel=el.closest('main > section').getBoundingClientRect();
             if(r.top<panel.top-1 || r.bottom>panel.bottom+1 || r.left<panel.left-1 || r.right>panel.right+1) bad.push(el.id || el.outerHTML.slice(0,100));
@@ -59,9 +59,15 @@ app.whenReady().then(async () => {
         })()`);
         assert.deepEqual(clipped, [], mode + ' clipped controls in ' + theme);
         if (theme === 'light') {
-          assert.equal(await run(`getComputedStyle(document.getElementById('bout-number')).color`), 'rgb(15, 23, 42)');
+          assert.equal(await run(`getComputedStyle(document.getElementById('bout-number')).color`), 'rgb(26, 26, 26)');
           assert.equal(await run(`getComputedStyle(document.getElementById('aka-score-display')).color`), 'rgb(15, 23, 42)');
           assert.equal(await run(`document.body.classList.contains('light-mode')`), true);
+          for (const id of ['ctrl-timer-main', 'ctrl-timer-ms']) {
+            assert.equal(await run(`getComputedStyle(document.getElementById('${id}')).color`), 'rgb(0, 0, 0)');
+          }
+          for (const selector of ['#timer-box span', '.text-white']) {
+            assert.equal(await run(`[...document.querySelectorAll('${selector}')].every(el => getComputedStyle(el).color === 'rgb(0, 0, 0)')`), true);
+          }
         }
       }
     }

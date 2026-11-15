@@ -905,8 +905,8 @@ function updateScoreDisplay() {
 }
 
 function updateTimerDisplay() {
-  const mainEl = document.getElementById('timer-display-main');
-  const msEl   = document.getElementById('timer-ms');
+  const mainEl = document.getElementById('ctrl-timer-main');
+  const msEl   = document.getElementById('ctrl-timer-ms');
   if (!mainEl) return;
 
   const { main, ms } = formatMs(STATE.timerMs);
@@ -1397,9 +1397,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   restoreLogos();
   initLogoInputs();
   // Rebuild timer display node cleanly
-  const mainTimerSpan = document.getElementById('timer-display-main');
+  const mainTimerSpan = document.getElementById('ctrl-timer-main');
   if (mainTimerSpan) {
-    const msSpan = document.getElementById('timer-ms');
+    const msSpan = document.getElementById('ctrl-timer-ms');
     mainTimerSpan.innerHTML = '';
     mainTimerSpan.appendChild(document.createTextNode('2:00'));
     if (msSpan) {
