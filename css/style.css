@@ -210,24 +210,20 @@ body {
 }
 
 /* ---- Team Wins Display ---- */
-.team-wins-display {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(0.6rem, 1.1vh, 0.85rem);
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.75);
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-.team-wins-display .wins-count {
-  font-size: clamp(0.8rem, 1.6vh, 1.2rem);
-  font-weight: 900;
-  color: #fde047;
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.25);
-  padding: 1px 7px;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
+/* Each identity stays in its outer lane; the center lane belongs to the timer. */
+#arena-workspace > section { flex-basis: 0; min-width: 0; }
+.arena-identity { width: 100%; min-width: 0; }
+.arena-identity > div { max-width: 100%; min-width: 0; }
+.arena-identity-ao { justify-content: flex-end; text-align: right; }
+.arena-identity-ao > div { display: flex; flex-direction: column; align-items: flex-end; }
+.arena-identity-ao h1, .arena-identity-ao p { width: 100%; text-align: right; }
+.arena-identity-ao [id="display-ao-name"] { text-align: right; }
+#display-aka-name, #display-ao-name { min-width: 0; max-width: 31vw; }
+.arena-identity [class*="border-b"] { max-width: 100%; min-width: 0; }
+.arena-identity [class*="backdrop-blur"] { flex-shrink: 0; }
+#arena-center { width: 26vw; max-width: 460px; }
+#arena-center > :first-child { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 100%; }
+#arena-timer-wrapper { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); width: 100%; }
+#display-timer { white-space: nowrap; line-height: 1.1 !important; font-size: clamp(44px, 7.5vw, 11vh) !important; }
+#arena-center > :last-child { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); }
+#display-category { max-width: 100%; }

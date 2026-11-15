@@ -53,6 +53,7 @@ function harness(filename, storage = new Map()) {
     : Object.values(fields).map(suffix => `logo-${suffix}`);
   ids.forEach(id => nodes.set(id, element()));
   const context = vm.createContext({
+    Tournament: require('../js/tournament.js'),
     console, setTimeout, setInterval() {},
     document: {
       getElementById: id => nodes.get(id) || null,

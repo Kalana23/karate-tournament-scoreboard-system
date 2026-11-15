@@ -15,8 +15,9 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="js/tailwind-config.js"></script>
 <link rel="stylesheet" href="css/control.css">
+<link rel="stylesheet" href="css/modes.css">
 </head>
-<body class="bg-surface-container-lowest text-on-surface min-h-screen flex flex-col font-body-md overflow-y-auto antialiased select-none">
+<body data-mode="kumite" class="control-platform bg-surface-container-lowest text-on-surface min-h-screen flex flex-col font-body-md overflow-y-auto antialiased select-none">
 
 <!-- ==================== TOP NAVBAR ==================== -->
 <header id="main-header" class="flex flex-wrap justify-between items-center w-full px-space-md py-space-sm bg-surface-container-lowest z-50 border-b-2 border-surface-container-highest gap-2">
@@ -60,6 +61,7 @@
     </nav>
   </div>
 
+<nav class="mode-switch" aria-label="Tournament mode"><button type="button" data-set-mode="kumite" aria-pressed="true">KUMITE</button><button type="button" data-set-mode="team_kumite" aria-pressed="false">TEAM KUMITE</button><button type="button" data-set-mode="kata" aria-pressed="false">KATA</button><button type="button" data-set-mode="team_kata" aria-pressed="false">TEAM KATA</button></nav>
   <!-- Center: Tournament Name -->
   <div class="hidden 2xl:flex flex-col items-center text-center px-space-sm">
     <div class="font-label-micro text-label-micro text-outline tracking-wider uppercase">Official Championship Interlock</div>
@@ -81,6 +83,7 @@
         <option value="junior"   data-time="120" data-cat="Junior | -61kg">Junior | -61kg (2:00)</option>
         <option value="snrF"     data-time="180" data-cat="Senior Female | -61kg">Senior Female | -61kg (3:00)</option>
         <option value="snrM"     data-time="180" data-cat="Senior Male | -75kg">Senior Male | -75kg (3:00)</option>
+        <option value="u21">Under 21 (3:00)</option><option value="senior">21 &amp; Over (3:00)</option>
         <option value="custom"   data-time=""    data-cat="">Custom Category</option>
       </select>
     </div>
@@ -88,13 +91,13 @@
     <!-- Bout Metadata Pills -->
     <div class="hidden md:flex items-center gap-1 font-label-tactical text-label-tactical">
       <span class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface flex items-center gap-1" title="Type bout number to auto-fill players from CSV">
-        BOUT #<input id="bout-number" type="text" value="14" class="bout-editable w-9 font-label-tactical text-label-tactical text-on-surface font-bold text-amber-300" maxlength="5">
+        BOUT #<input id="bout-number" type="text" value="14" class="bout-editable bg-[#182030] text-yellow-400 border border-white/20 font-bold text-center w-9 font-label-tactical text-label-tactical text-on-surface font-bold text-amber-300" maxlength="5">
       </span>
       <button id="btn-duration-cycle" class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface hover:border-tertiary transition-all duration-300" title="Click to cycle match duration (timer must be stopped)">
         <span id="duration-label">2:00 MIN</span>
       </button>
       <span class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface flex items-center gap-1">
-        <input id="round-label" type="text" value="R1 ELIM" class="bout-editable w-16 font-label-tactical text-label-tactical text-on-surface" maxlength="12">
+        <input id="round-label" type="text" value="R1 ELIM" class="bout-editable bg-[#182030] text-yellow-400 border border-white/20 font-bold text-center w-16 font-label-tactical text-label-tactical text-on-surface" maxlength="12">
       </span>
     </div>
 
@@ -226,7 +229,7 @@
         <span class="font-label-tactical text-label-tactical text-primary font-bold uppercase tracking-wider">TOTAL SCORE</span>
         <span id="aka-lead-text" class="font-label-micro text-label-micro text-outline lead-even">Even</span>
       </div>
-      <div id="aka-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(255,84,81,0.65)] px-space-md transition-all duration-300">0</div>
+      <div id="aka-score-display" class="font-score-display text-score-display font-extrabold theme-text tracking-tight drop-shadow-[0_0_18px_rgba(255,84,81,0.65)] px-space-md transition-all duration-300">0</div>
       <button id="btn-aka-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-primary/60 hover:border-primary text-primary-fixed rounded transition-all duration-300">
         <span class="material-symbols-outlined text-2xl font-bold">undo</span>
         <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
@@ -327,7 +330,7 @@
   </section>
 
   <!-- ==================== CENTER: TIMER COCKPIT ==================== -->
-  <section class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-surface-container-highest rounded-lg p-space-sm relative">
+  <section id="center-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-surface-container-highest rounded-lg p-space-sm relative">
 
     <!-- Status Ribbon -->
     <div id="match-status-ribbon" class="flex items-center justify-between bg-surface-container-lowest border border-surface-container-highest px-space-md py-1.5 rounded transition-all duration-300">
@@ -339,9 +342,9 @@
     </div>
 
     <!-- Main Timer Clock -->
-    <div class="bg-surface-container-lowest border-4 border-tertiary/60 rounded-xl p-space-md flex flex-col items-center justify-center relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.95)] overflow-hidden">
+    <div id="control-timer-box" class="bg-surface-container-lowest border-4 border-tertiary/60 rounded-xl px-2 py-3 flex flex-col items-center justify-center relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.95)]">
       <div class="absolute inset-0 bg-tertiary/5 pointer-events-none"></div>
-      <div class="flex items-baseline justify-center tracking-tight text-white leading-none">
+      <div class="flex items-baseline justify-center tracking-tight theme-text leading-none">
         <span id="timer-display-main" class="font-timer-display text-timer-display font-black tracking-normal transition-colors duration-300">2:00<span id="timer-ms" class="text-[32px] text-amber-400 font-bold">.00</span></span>
       </div>
       <div class="mt-2 flex items-center gap-space-md text-outline font-label-tactical text-label-tactical">
@@ -441,7 +444,7 @@
         <span class="font-label-tactical text-label-tactical text-secondary-fixed font-bold uppercase tracking-wider">TOTAL SCORE</span>
         <span id="ao-lead-text" class="font-label-micro text-label-micro text-outline lead-even">Even</span>
       </div>
-      <div id="ao-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(0,83,219,0.7)] px-space-md transition-all duration-300">0</div>
+      <div id="ao-score-display" class="font-score-display text-score-display font-extrabold theme-text tracking-tight drop-shadow-[0_0_18px_rgba(0,83,219,0.7)] px-space-md transition-all duration-300">0</div>
       <button id="btn-ao-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-secondary/60 hover:border-secondary text-secondary-fixed rounded transition-all duration-300">
         <span class="material-symbols-outlined text-2xl font-bold">undo</span>
         <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
@@ -763,6 +766,8 @@
   </div>
 </div>
 
+<script src="js/tournament.js"></script>
 <script src="js/control.js"></script>
+<script src="js/mode-control.js"></script>
 </body>
 </html>

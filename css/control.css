@@ -222,3 +222,83 @@ html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 
 /* ---- Smooth transitions for all interactive elements ---- */
 button, input, select { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease; }
+
+/* Viewport layout: shrink spacing, never the content inside a timer or action. */
+body.control-platform { height: 100dvh; min-height: 0; overflow: hidden; }
+.control-platform > header, .control-platform > footer { flex-shrink: 0; }
+.control-platform > main { flex: 1 1 0; min-height: 0; gap: 6px; padding: 8px; overflow: hidden; }
+.control-platform > main > section { min-height: 0; min-width: 0; gap: 6px; padding: 8px; overflow: visible; }
+.control-platform > main > section > * { flex-shrink: 0; min-width: 0; }
+.control-platform #main-header { padding: 6px 12px; gap: 6px; }
+.control-platform #main-header nav:not(.mode-switch) { display: none; }
+.control-platform .mode-switch { margin-inline: auto; }
+.control-platform #aka-panel > [data-kumite], .control-platform #ao-panel > [data-kumite] { padding: 8px; }
+.control-platform :is(#aka-score-display, #ao-score-display) { font-size: 52px; line-height: 1.1; }
+.control-platform :is(#btn-aka-senshu, #btn-ao-senshu) { padding-block: 6px; }
+.control-platform :is(#aka-score-btns, #ao-score-btns) { gap: 6px; padding: 0; }
+.control-platform :is(#aka-score-btns, #ao-score-btns) > button { padding: 6px 10px; min-height: 48px; }
+.control-platform .penalty-btn { padding: 6px 3px; min-height: 42px; }
+.control-platform .dq-btn { padding: 5px; }
+.control-platform .platform-box { padding: 8px; }
+.control-platform .platform-stack { gap: 6px; }
+.control-platform .platform-box h3 { margin-bottom: 5px; }
+.control-platform .platform-box input { padding: 4px 6px; }
+.control-platform .athlete-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 6px; }
+.control-platform .published-total { display: flex; justify-content: space-between; align-items: center; }
+.control-platform .published-total [id^="kata-total-"] { font-size: 36px; line-height: 1.1; }
+#control-timer-box { overflow: visible; height: auto; min-height: max-content; padding: 12px 8px; }
+#control-timer-box > div { flex-shrink: 0; }
+#timer-display-main { display: inline-block; white-space: nowrap; font-size: clamp(48px, 6vw, 80px); line-height: 1.1; padding-block: 3px; }
+#timer-display-main #timer-ms { line-height: 1.1; }
+.control-platform .team-series-row { display: grid; grid-template-columns: minmax(80px, .9fr) minmax(70px, 1fr) auto auto; gap: 6px; align-items: center; }
+.control-platform .team-series-row :is(button, select) { padding: 5px 6px; font-size: 11px; white-space: nowrap; }
+.control-platform .team-series-row strong { font-size: 11px; }
+.control-platform .team-series #team-status { margin-top: 4px; font-size: 10px; }
+.control-platform .bout-editable { background: #182030; color: #facc15; border: 1px solid #ffffff33; border-radius: 4px; font-weight: 700; text-align: center; padding: 3px; }
+.control-platform input:focus-visible, .control-platform button:focus-visible, .control-platform select:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
+@media (max-height: 800px) and (min-width: 1024px) {
+  .control-platform > main > section { gap: 4px; padding: 6px; }
+  .control-platform :is(#aka-score-display, #ao-score-display) { font-size: 36px; }
+  .control-platform :is(#aka-panel, #ao-panel) .text-headline-md { font-size: 17px; line-height: 20px; }
+  .control-platform :is(#aka-score-btns, #ao-score-btns) > button { min-height: 40px; padding-block: 3px; }
+  .control-platform .penalty-btn { min-height: 34px; padding-block: 3px; }
+  .control-platform #center-panel > [data-kumite] { padding: 6px; }
+  .control-platform #control-timer-box { padding-block: 12px; }
+  .control-platform #timer-display-main { font-size: 52px; }
+  .control-platform #center-panel [class*="max-h-28"] { max-height: 64px; }
+}
+
+/* One theme contract covers Tailwind controls, generated mode cards, and settings. */
+body.control-platform { --console-foreground: #f8fafc; }
+.theme-text { color: var(--console-foreground, #f8fafc); }
+body.light-mode { --console-foreground: #0f172a; background: #f8fafc !important; color: #0f172a !important; color-scheme: light; }
+/* Apply theme contrast immediately, including in throttled projector windows. */
+body.light-mode * { transition-property: transform, opacity, box-shadow !important; }
+body.light-mode :is(header, footer, main, .modal-box) { background: #f8fafc !important; color: #0f172a !important; border-color: #94a3b8 !important; }
+body.light-mode :is(header, footer, main, .modal-box) :is([class*="bg-"], .platform-box, .mode-switch, .scoring-switch, button, input, select) {
+  background: #e2e8f0 !important; color: #0f172a !important; border-color: #94a3b8 !important;
+}
+body.light-mode :is(header, footer, main, .modal-box) :is(span, label, p, h2, h3, strong, small, [id$="score-display"], [id^="kata-total-"], .audit-entry, .audit-entry *) {
+  color: #0f172a !important; text-shadow: none !important;
+}
+body.light-mode input::placeholder { color: #475569; opacity: 1; }
+body.light-mode :is(input, select, button) { border-color: #94a3b8 !important; }
+body.light-mode .bout-editable { background: #f8fafc !important; color: #0f172a !important; }
+body.light-mode button[aria-pressed="true"], body.light-mode .senshu-active { background: #fde68a !important; color: #0f172a !important; border-color: #a16207 !important; }
+body.light-mode .judge-flag[data-flag="aka"], body.light-mode .penalty-btn-active-danger { background: #fecaca !important; border-color: #b91c1c !important; }
+body.light-mode .judge-flag[data-flag="ao"] { background: #bfdbfe !important; border-color: #1d4ed8 !important; }
+body.light-mode .penalty-btn-active-warn { background: #fef08a !important; border-color: #a16207 !important; }
+body.light-mode .mode-message { color: #854d0e; }
+body.light-mode :is(#aka-score-display, #ao-score-display, #timer-display-main, #kata-total-aka, #kata-total-ao) {
+  color: var(--console-foreground) !important; text-shadow: none !important;
+}
+/* Catch utility classes on nested divs too, including labels with white opacity. */
+body.light-mode :is(header, main, footer, .modal-box) :is(.text-white, [class*="text-white/"], .theme-text) {
+  color: var(--console-foreground) !important;
+  text-shadow: none !important;
+}
+body.light-mode :is(header, main, footer, .modal-box) .bg-black\/40 {
+  background: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+}
+.control-platform :is(#aka-panel, #ao-panel) > .absolute { display: none; }

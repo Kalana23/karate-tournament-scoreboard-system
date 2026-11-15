@@ -11,8 +11,9 @@
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&family=Montserrat:ital,wght@0,700;0,800;0,900;1,900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/modes.css">
 </head>
-<body class="w-screen h-screen flex flex-col bg-black text-white overflow-hidden select-none">
+<body data-mode="kumite" class="w-screen h-screen flex flex-col bg-black text-white overflow-hidden select-none">
 
 <!-- ==================== TOP HEADER: TOURNAMENT TITLE ==================== -->
 <header class="w-full shrink-0 bg-[#0B0B0E] border-b border-white/20 px-6 py-1.5 flex items-center z-30 shadow-md justify-between" style="min-height:42px;">
@@ -40,24 +41,20 @@
   </div>
 </header>
 
+<div id="arena-team-tracker" data-team-kumite class="team-tracker"></div>
 <!-- ==================== MAIN: 50/50 SPLIT + CENTER FLOATING TIMER ==================== -->
-<main class="w-full flex-1 min-h-0 flex overflow-hidden relative">
+<main id="arena-workspace" class="w-full flex-1 min-h-0 flex overflow-hidden relative">
 
   <!-- ==================== LEFT: AKA (RED CORNER) ==================== -->
-  <section class="flex-1 bg-[#C01020] relative flex flex-col justify-between p-3.5 shadow-[inset_-15px_0_40px_rgba(0,0,0,0.4)] border-r-2 border-black/40 z-10 transition-colors duration-300">
+  <section id="arena-aka-panel" class="min-w-0 flex-1 bg-[#C01020] relative flex flex-col justify-between p-3.5 shadow-[inset_-15px_0_40px_rgba(0,0,0,0.4)] border-r-2 border-black/40 z-10 transition-colors duration-300">
 
     <!-- Top: AKA Info & Team Kumite Indicator -->
-    <div class="shrink-0 flex items-start justify-between">
+    <div class="arena-identity arena-identity-aka shrink-0 flex items-start justify-start">
       <div class="space-y-0.5">
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-1.5">
             <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
             <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 1</span>
-          </div>
-          <!-- Team Wins Indicator -->
-          <div id="display-aka-team-wins" class="team-wins-display">
-            <span>TEAM WINS:</span>
-            <span class="wins-count" id="aka-team-wins-count">0</span>
           </div>
         </div>
 
@@ -77,9 +74,7 @@
         </div>
       </div>
 
-      <div class="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white shrink-0">
-        CORNER 1
-      </div>
+
     </div>
 
     <!-- Center: Huge Score Display & Senshu Badge -->
@@ -114,10 +109,10 @@
   </section>
 
   <!-- ==================== CENTER FLOATING TIMER CARD ==================== -->
-  <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-between py-3 z-30 pointer-events-none" style="width: clamp(210px, 24vw, 350px);">
+  <div id="arena-center" class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-between py-3 z-20 pointer-events-none">
 
     <!-- Category Pill -->
-    <div class="flex justify-center w-full">
+    <div class="arena-category-wrapper flex justify-center w-full">
       <div id="display-category"
         class="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black px-5 py-1 rounded-full tracking-[0.15em] uppercase shadow-[0_0_20px_rgba(250,204,21,0.5)] border border-white/80 text-center transition-all duration-300"
         style="font-size:clamp(0.6rem,1.4vh,1rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">
@@ -126,7 +121,7 @@
     </div>
 
     <!-- Giant Match Clock with Milliseconds -->
-    <div class="flex flex-col items-center justify-center flex-1">
+    <div id="arena-timer-wrapper" data-kumite class="flex flex-col items-center justify-center pointer-events-none z-20">
       <div id="display-timer"
         class="font-timer font-bold tracking-tighter text-white timer-glow tabular-nums leading-none select-none transition-colors duration-300 text-center"
         style="font-size: clamp(3.5rem, 11vh, 13vh); line-height: 1;">
@@ -149,21 +144,14 @@
   </div>
 
   <!-- ==================== RIGHT: AO (BLUE CORNER) ==================== -->
-  <section class="flex-1 bg-[#1245C8] relative flex flex-col justify-between p-3.5 shadow-[inset_15px_0_40px_rgba(0,0,0,0.4)] border-l-2 border-black/40 z-10 transition-colors duration-300">
+  <section id="arena-ao-panel" class="min-w-0 flex-1 bg-[#1245C8] relative flex flex-col justify-between p-3.5 shadow-[inset_15px_0_40px_rgba(0,0,0,0.4)] border-l-2 border-black/40 z-10 transition-colors duration-300">
 
     <!-- Top: AO Info & Team Kumite Indicator -->
-    <div class="shrink-0 flex items-start justify-between">
-      <div class="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white shrink-0">
-        CORNER 2
-      </div>
+    <div class="arena-identity arena-identity-ao shrink-0 flex items-end text-right justify-end">
 
-      <div class="space-y-0.5 text-right">
+
+      <div class="min-w-0 flex flex-col items-end space-y-0.5 text-right">
         <div class="flex items-center justify-end gap-3">
-          <!-- Team Wins Indicator -->
-          <div id="display-ao-team-wins" class="team-wins-display">
-            <span>TEAM WINS:</span>
-            <span class="wins-count" id="ao-team-wins-count">0</span>
-          </div>
           <div class="flex items-center gap-1.5">
             <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 2</span>
             <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
@@ -268,6 +256,8 @@
   </div>
 </footer>
 
+<script src="js/tournament.js"></script>
+<script src="js/mode-display.js"></script>
 <script src="js/display.js"></script>
 </body>
 </html>

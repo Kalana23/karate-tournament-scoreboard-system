@@ -4,6 +4,7 @@ const fs = require('fs');
 
 let controlWindow = null;
 let displayWindow = null;
+let latestState = null;
 
 function createWindows() {
   const displays = screen.getAllDisplays();
@@ -64,6 +65,9 @@ function createWindows() {
   }
 
   displayWindow.loadFile('index.html');
+  displayWindow.webContents.on('did-finish-load', () => {
+    if (latestState) displayWindow.webContents.send('arena-state-update', latestState);
+  });
 
   // Handle window close interlock
   controlWindow.on('closed', () => {
@@ -84,9 +88,17 @@ function createWindows() {
 
 // Zero-lag direct state broadcast between Electron windows
 ipcMain.on('broadcast-state-instant', (event, state) => {
+  if (event.sender !== controlWindow?.webContents) return;
+  latestState = state;
   if (displayWindow && !displayWindow.isDestroyed()) {
     displayWindow.webContents.send('arena-state-update', state);
   }
+});
+
+// Arena timer buttons request an action; the control console owns the clock.
+ipcMain.on('bunkai-action', (event, action) => {
+  if (event.sender !== displayWindow?.webContents || !['start', 'stop', 'reset'].includes(action)) return;
+  if (controlWindow && !controlWindow.isDestroyed()) controlWindow.webContents.send('bunkai-action', action);
 });
 
 // Direct buzzer audio event forwarding

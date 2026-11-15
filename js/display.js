@@ -73,8 +73,6 @@
     roundLabel:       $('display-round'),
     akaSenshu:        $('display-aka-senshu'),
     aoSenshu:         $('display-ao-senshu'),
-    akaTeamWins:      $('aka-team-wins-count'),
-    aoTeamWins:       $('ao-team-wins-count'),
     // Penalties — AKA
     akaCh1: $('display-aka-ch1'),
     akaCh2: $('display-aka-ch2'),
@@ -246,6 +244,7 @@
      ============================================================ */
   function renderDisplay(state) {
     if (!state) return;
+    state = Tournament.viewState(state);
     renderLogos(state.logos);
 
     /* ---- 1. Scores ---- */
@@ -263,10 +262,6 @@
     if (EL.akaCountry) EL.akaCountry.textContent = state.akaCountry || 'SRI';
     if (EL.aoName)     EL.aoName.textContent     = state.aoName     || 'PLAYER 2 NAME';
     if (EL.aoCountry)  EL.aoCountry.textContent  = state.aoCountry  || 'JPN';
-
-    /* ---- 4. Team Kumite Mode Wins ---- */
-    if (EL.akaTeamWins && state.akaTeamWins !== undefined) EL.akaTeamWins.textContent = state.akaTeamWins;
-    if (EL.aoTeamWins  && state.aoTeamWins  !== undefined) EL.aoTeamWins.textContent  = state.aoTeamWins;
 
     /* ---- 5. Tournament & Tatami Info ---- */
     if (EL.tournamentName && state.tournamentName) EL.tournamentName.textContent = state.tournamentName;
@@ -390,6 +385,7 @@
       applyPenalty(EL.aoHc,  state.aoPenalties.hc,  'hc');
       applyPenalty(EL.aoH,   state.aoPenalties.h,   'h');
     }
+    window.TournamentDisplay?.render(state);
   }
 
   /* ============================================================

@@ -1,0 +1,37 @@
+[hidden] { display: none !important; }
+.mode-switch, .scoring-switch { display:flex; gap:4px; padding:4px; border:1px solid #424754; border-radius:24px; background:#10141c; }
+.mode-switch button, .scoring-switch button { border-radius:20px; padding:7px 16px; font-size:12px; font-weight:800; color:#bec7d8; }
+button[aria-pressed="true"] { background:#fbbf24; color:#111827; }
+.platform-box { background:#10141c; border:1px solid #414958; border-radius:10px; padding:12px; color:#f1f5f9; }
+.platform-box h3 { font-size:12px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:8px; }
+.platform-box button, .bunkai-actions button { border:1px solid #556174; border-radius:6px; padding:6px 9px; font-size:12px; font-weight:700; }
+.platform-box input, .platform-box select { min-width:0; background:#202736; color:white; border:1px solid #576174; border-radius:5px; padding:5px; width:100%; }
+.platform-box label { display:block; font-size:11px; color:#cbd5e1; }
+.platform-stack { display:flex; flex-direction:column; gap:10px; }
+.judge-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }
+.judge-grid label { text-align:center; }
+.judge-grid input { padding:4px 2px; text-align:center; font-size:13px; }
+.judge-flags { display:flex; gap:8px; justify-content:center; }
+.judge-flag { padding:12px; background:#334155; border:2px solid #94a3b8; border-radius:8px; transition:background .2s,transform .2s; font-weight:800; }
+.judge-flag[data-flag="aka"], .bout-pill[data-winner="aka"] { background:#b91c1c; color:white; }
+.judge-flag[data-flag="ao"], .bout-pill[data-winner="ao"] { background:#1d4ed8; color:white; }
+.team-tracker { flex-shrink:0; background:#111827; border-bottom:1px solid #475569; padding:8px 16px; text-align:center; }
+.team-summary { display:flex; align-items:center; justify-content:center; gap:20px; font-weight:800; }
+.team-summary strong { font-size:22px; }
+.bout-pills { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-top:6px; }
+.bout-pill { padding:4px 9px; border:1px solid #64748b; border-radius:20px; font-size:11px; }
+.kata-center { position:absolute; left:50%; top:16%; transform:translateX(-50%); z-index:35; width:28%; text-align:center; pointer-events:none; }
+.kata-banner { background:#111827ed; border:1px solid #fbbf24; border-radius:12px; padding:10px; font-size:clamp(12px,1.3vw,22px); font-weight:800; margin-bottom:15px; overflow-wrap:anywhere; }
+.kata-center .judge-flag { padding:12px 8px; font-size:clamp(12px,1.2vw,22px); }
+.kata-scorecards { display:flex; gap:8px; justify-content:center; padding:12px; }
+.kata-scorecard { background:#0008; border:1px solid #fff5; border-radius:8px; padding:8px 12px; text-align:center; font-size:20px; }
+.kata-scorecard small { display:block; font-size:10px; }
+.kata-scorecard.dropped { color:#a1a1aa; text-decoration:line-through; background:#27272a; opacity:.65; }
+.kata-roster { font-size:clamp(12px,1.2vw,20px); color:#e2e8f0; margin-top:8px; }
+.bunkai-clock { font-size:clamp(30px,3vw,54px); font-variant-numeric:tabular-nums; font-weight:900; }
+.bunkai-actions { display:flex; justify-content:center; gap:6px; pointer-events:auto; }
+.mode-message { min-height:16px; color:#fbbf24; font-size:12px; }
+body[data-mode="kata"] [data-kumite], body[data-mode="team_kata"] [data-kumite] { display:none !important; }
+body:not([data-mode="team_kumite"]) [data-team-kumite], body:not([data-mode="team_kata"]) [data-team-kata] { display:none !important; }
+body:not([data-mode="kata"]):not([data-mode="team_kata"]) [data-kata] { display:none !important; }
+body[data-mode="kata"] #display-timer, body[data-mode="team_kata"] #display-timer { visibility:hidden; }

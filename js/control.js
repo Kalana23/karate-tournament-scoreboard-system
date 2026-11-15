@@ -22,6 +22,7 @@ try {
    SECTION 1: STATE
    ============================================================ */
 const STATE = {
+  ...Tournament.defaults(),
   logos: { mainHeader: '', titleSponsor: '', platinumPartner: '', goldPartner: '', silverSponsor: '', associationPartner: '' },
   akaScore:          0,
   aoScore:           0,
@@ -69,6 +70,8 @@ const DURATION_CYCLE = [60, 90, 120, 180]; // seconds
 let durationCycleIdx = 2; // 120s
 
 const PRESETS = {
+  u21:    { label: 'Under 21', timeS: 180 },
+  senior: { label: '21 & Over', timeS: 180 },
   ages67: { label: 'Ages 6-7 | -22kg', timeS: 90  },
   cadet:  { label: 'Cadet | -52kg',    timeS: 120 },
   junior: { label: 'Junior | -61kg',   timeS: 120 },
@@ -117,6 +120,7 @@ function timerTick(ts) {
 }
 
 function startTimer() {
+  if (Tournament.isKata(STATE.mode)) return;
   if (STATE.isRunning || STATE.timerMs <= 0 || STATE.winner || STATE.medicalActive) return;
   STATE.isRunning = true;
   lastTimestamp = null;
@@ -291,6 +295,7 @@ function awardHantei(corner) {
    SECTION 6: SCORING & UNDO
    ============================================================ */
 function addPoints(corner, points) {
+  if (Tournament.isKata(STATE.mode)) return;
   if (STATE.winner) return;
 
   if (corner === 'aka') {
@@ -740,15 +745,18 @@ function processCsvContent(content, filename) {
 }
 
 async function exportMatchResult() {
+  const resultState = Tournament.viewState(createStatePayload());
   const akaName = document.getElementById('input-aka-name')?.value || 'AKA';
   const akaCountry = document.getElementById('input-aka-country-code')?.value || 'SRI';
   const aoName = document.getElementById('input-ao-name')?.value || 'AO';
   const aoCountry = document.getElementById('input-ao-country-code')?.value || 'JPN';
-  const winnerStr = STATE.winner ? STATE.winner.toUpperCase() : 'DRAW / ONGOING';
-  const reasonStr = STATE.winReason || (STATE.winner ? 'POINTS' : 'NONE');
+  const winnerStr = resultState.winner ? resultState.winner.toUpperCase() : 'DRAW / ONGOING';
+  const reasonStr = Tournament.isKata(STATE.mode) ? `${STATE.mode.toUpperCase()} ${STATE.kataScoring.toUpperCase()}` : STATE.winReason || (STATE.winner ? 'POINTS' : 'NONE');
   const timestamp = new Date().toISOString();
 
-  const csvRow = `"${STATE.boutNumber}","${akaName}","${akaCountry}","${aoName}","${aoCountry}",${STATE.akaScore},${STATE.aoScore},"${winnerStr}","${reasonStr}","${timestamp}"`;
+  const csvRow = [STATE.boutNumber, resultState.akaName || akaName, akaCountry, resultState.aoName || aoName, aoCountry,
+    resultState.akaScore, resultState.aoScore, winnerStr, reasonStr, timestamp]
+    .map(value => '"' + String(value).replace(/"/g, '""') + '"').join(',');
 
   // 1. Electron Native FS write
   if (ipc) {
@@ -784,6 +792,7 @@ async function exportMatchResult() {
    ============================================================ */
 function createStatePayload() {
   return {
+    ...Tournament.modeState(STATE),
     logos:            { ...STATE.logos },
     akaScore:          STATE.akaScore,
     aoScore:           STATE.aoScore,
@@ -1117,10 +1126,12 @@ function toggleTheme() {
   const label = document.getElementById('theme-label');
   if (html.classList.contains('dark')) {
     html.classList.replace('dark', 'light');
+    document.body.classList.add('light-mode');
     if (icon) { icon.textContent = 'light_mode'; icon.style.color = '#fbbf24'; }
     if (label) label.textContent = 'LIGHT';
   } else {
     html.classList.replace('light', 'dark');
+    document.body.classList.remove('light-mode');
     if (icon) { icon.textContent = 'dark_mode'; icon.style.color = '#fbbf24'; }
     if (label) label.textContent = 'DARK';
   }
@@ -1339,6 +1350,12 @@ function attachKeyboard() {
       return;
     }
     if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable) return;
+    if (Tournament.isKata(STATE.mode)) {
+      if (e.code === 'Space' && STATE.mode === 'team_kata') {
+        e.preventDefault(); window.TournamentControl?.bunkaiAction(STATE.bunkaiRunning ? 'stop' : 'start');
+      } else if (e.code === 'KeyB') playManualHorn();
+      return;
+    }
 
     switch (e.code) {
       case 'Space':
