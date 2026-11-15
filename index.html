@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Karate Kumite — Arena Display</title>
-<!-- Tailwind (CDN, works offline in Electron) -->
+<!-- Tailwind CDN (works offline in Electron cache) -->
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -15,7 +15,7 @@
 <body class="w-screen h-screen flex flex-col bg-black text-white overflow-hidden select-none">
 
 <!-- ==================== TOP HEADER: TOURNAMENT TITLE ==================== -->
-<header class="w-full shrink-0 bg-[#0B0B0E] border-b border-white/20 px-6 py-1.5 flex items-center z-30 shadow-md justify-between" style="min-height:40px;">
+<header class="w-full shrink-0 bg-[#0B0B0E] border-b border-white/20 px-6 py-1.5 flex items-center z-30 shadow-md justify-between" style="min-height:42px;">
   <!-- Left logo -->
   <div class="flex items-center gap-3">
     <div class="w-7 h-7 rounded-full border border-amber-400/80 bg-black/60 flex items-center justify-center shadow-md">
@@ -30,13 +30,14 @@
       <span class="text-[8px] tracking-wider text-white/70 font-mono">HAYASHI-HA</span>
     </div>
   </div>
+
   <!-- Center: Tournament Name -->
   <h1 id="display-tournament-name" class="text-xs sm:text-sm font-black tracking-[0.2em] text-white uppercase drop-shadow text-center flex-1 px-4 leading-tight">
     2028 10TH JAPAN KARATE-DO HAYASHI HA SHITORYU KAI WORLD KARATE TOURNAMENT — SRI LANKA
   </h1>
-  <!-- Right badge -->
+
+  <!-- Right: Tatami Badge & Federation Code -->
   <div class="flex items-center gap-2">
-    <!-- Tatami badge (synced from control) -->
     <div id="display-tatami-badge" class="bg-white text-neutral-950 font-black text-sm px-4 py-1 rounded-xl shadow tracking-tight uppercase border border-white flex items-center gap-2">
       <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
       <span id="display-tatami-name">TATAMI 1</span>
@@ -45,74 +46,92 @@
   </div>
 </header>
 
-<!-- ==================== MAIN: 50/50 SPLIT + CENTER TIMER ==================== -->
+<!-- ==================== MAIN: 50/50 SPLIT + CENTER FLOATING TIMER ==================== -->
 <main class="w-full flex-1 min-h-0 flex overflow-hidden relative">
 
-  <!-- ---- LEFT: AKA (RED) ---- -->
-  <section class="flex-1 bg-[#C01020] relative flex flex-col justify-between p-3 shadow-[inset_-15px_0_40px_rgba(0,0,0,0.4)] border-r-2 border-black/40 z-10">
+  <!-- ==================== LEFT: AKA (RED CORNER) ==================== -->
+  <section class="flex-1 bg-[#C01020] relative flex flex-col justify-between p-3.5 shadow-[inset_-15px_0_40px_rgba(0,0,0,0.4)] border-r-2 border-black/40 z-10 transition-colors duration-300">
 
-    <!-- Top: AKA Info -->
+    <!-- Top: AKA Info & Team Kumite Indicator -->
     <div class="shrink-0 flex items-start justify-between">
       <div class="space-y-0.5">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
-          <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 1</span>
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
+            <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 1</span>
+          </div>
+          <!-- Team Wins Indicator -->
+          <div id="display-aka-team-wins" class="team-wins-display">
+            <span>TEAM WINS:</span>
+            <span class="wins-count" id="aka-team-wins-count">0</span>
+          </div>
         </div>
-        <h1 class="font-black uppercase tracking-tight text-white leading-none drop-shadow-md" style="font-size: clamp(2rem, 7vw, 6rem);">AKA</h1>
+
+        <h1 class="font-black uppercase tracking-tight text-white leading-none drop-shadow-md" style="font-size: clamp(2.2rem, 7.5vw, 6.5rem);">
+          AKA
+        </h1>
         <p class="text-xs font-bold tracking-widest text-white/70 uppercase">赤 / RED</p>
+
+        <!-- Competitor Name & Country Flag/Code -->
         <div class="pt-0.5 flex items-center gap-2 border-b border-white/30 pb-1">
           <div class="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded border border-white/20">
             <span id="display-aka-country" class="text-xs font-mono font-bold tracking-wider text-white">SRI</span>
           </div>
-          <span id="display-aka-name" class="font-black uppercase tracking-wider text-white drop-shadow" style="font-size: clamp(1rem, 2.8vw, 2.5rem);">PLAYER 1 NAME</span>
+          <span id="display-aka-name" class="font-black uppercase tracking-wider text-white drop-shadow truncate max-w-[32vw]" style="font-size: clamp(1rem, 2.8vw, 2.5rem);">
+            PLAYER 1 NAME
+          </span>
         </div>
       </div>
-      <div class="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white shrink-0">CORNER 1</div>
+
+      <div class="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white shrink-0">
+        CORNER 1
+      </div>
     </div>
 
-    <!-- Center: Huge Score -->
+    <!-- Center: Huge Score Display & Senshu Badge -->
     <div class="flex-1 flex flex-col items-center justify-center min-h-0 overflow-hidden">
       <div id="display-aka-score"
-        class="leading-none font-black text-white score-glow-red select-none tabular-nums tracking-tighter"
-        style="font-size: clamp(5rem, 20vh, 22vh); line-height: 1;">
+        class="leading-none font-black text-white score-glow-red select-none tabular-nums tracking-tighter transition-all duration-300"
+        style="font-size: clamp(5.5rem, 22vh, 25vh); line-height: 1;">
         0
       </div>
-      <!-- Senshu Badge -->
+
+      <!-- Senshu Advantage Badge -->
       <div id="display-aka-senshu"
         class="mt-2 flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.2em] uppercase senshu-glow border-2 border-white/90 transition-all duration-300 opacity-0 pointer-events-none"
-        style="font-size: clamp(0.9rem, 1.8vh, 1.4rem);">
+        style="font-size: clamp(0.9rem, 1.8vh, 1.35rem);">
         <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         <span>SENSHU</span>
         <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
     </div>
 
-    <!-- Bottom: Penalties -->
+    <!-- Bottom: Penalties (Single Row) -->
     <div class="shrink-0 w-full flex flex-col items-center gap-1 pb-1">
       <span class="text-[10px] tracking-wider font-extrabold uppercase text-white/80">AKA PENALTIES</span>
-      <div class="flex items-center justify-center gap-2">
-        <div id="display-aka-ch1" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH1</div>
-        <div id="display-aka-ch2" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH2</div>
-        <div id="display-aka-ch3" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH3</div>
-        <div id="display-aka-hc"  class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">HC</div>
-        <div id="display-aka-h"   class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">H</div>
+      <div class="flex items-center justify-center gap-2 sm:gap-2.5">
+        <div id="display-aka-ch1" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH1</div>
+        <div id="display-aka-ch2" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH2</div>
+        <div id="display-aka-ch3" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH3</div>
+        <div id="display-aka-hc"  class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">HC</div>
+        <div id="display-aka-h"   class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">H</div>
       </div>
     </div>
   </section>
 
-  <!-- ---- CENTER FLOATING TIMER CARD (overlays the split) ---- -->
-  <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-between py-3 z-30 pointer-events-none" style="width: clamp(200px, 24vw, 340px);">
+  <!-- ==================== CENTER FLOATING TIMER CARD ==================== -->
+  <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-between py-3 z-30 pointer-events-none" style="width: clamp(210px, 24vw, 350px);">
 
-    <!-- Category Badge -->
+    <!-- Category Pill -->
     <div class="flex justify-center w-full">
       <div id="display-category"
-        class="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black px-5 py-1 rounded-full tracking-[0.15em] uppercase shadow-[0_0_20px_rgba(250,204,21,0.5)] border border-white/80 text-center"
+        class="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black px-5 py-1 rounded-full tracking-[0.15em] uppercase shadow-[0_0_20px_rgba(250,204,21,0.5)] border border-white/80 text-center transition-all duration-300"
         style="font-size:clamp(0.6rem,1.4vh,1rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">
         Cadet | -52kg
       </div>
     </div>
 
-    <!-- Giant Timer -->
+    <!-- Giant Match Clock with Milliseconds -->
     <div class="flex flex-col items-center justify-center flex-1">
       <div id="display-timer"
         class="font-timer font-bold tracking-tighter text-white timer-glow tabular-nums leading-none select-none transition-colors duration-300 text-center"
@@ -121,9 +140,9 @@
       </div>
     </div>
 
-    <!-- Match Status -->
+    <!-- Match Status & Bout Metadata -->
     <div class="flex flex-col items-center gap-1 w-full">
-      <div id="display-match-status" class="text-white font-extrabold tracking-[0.2em] uppercase text-center drop-shadow" style="font-size:clamp(0.65rem,1.6vh,1.1rem);">
+      <div id="display-match-status" class="text-white font-extrabold tracking-[0.2em] uppercase text-center drop-shadow transition-all duration-300" style="font-size:clamp(0.65rem,1.6vh,1.1rem);">
         MATCH READY
       </div>
       <!-- Bout info -->
@@ -135,21 +154,38 @@
     </div>
   </div>
 
-  <!-- ---- RIGHT: AO (BLUE) ---- -->
-  <section class="flex-1 bg-[#1245C8] relative flex flex-col justify-between p-3 shadow-[inset_15px_0_40px_rgba(0,0,0,0.4)] border-l-2 border-black/40 z-10">
+  <!-- ==================== RIGHT: AO (BLUE CORNER) ==================== -->
+  <section class="flex-1 bg-[#1245C8] relative flex flex-col justify-between p-3.5 shadow-[inset_15px_0_40px_rgba(0,0,0,0.4)] border-l-2 border-black/40 z-10 transition-colors duration-300">
 
-    <!-- Top: AO Info -->
+    <!-- Top: AO Info & Team Kumite Indicator -->
     <div class="shrink-0 flex items-start justify-between">
-      <div class="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white shrink-0">CORNER 2</div>
+      <div class="bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/20 text-xs font-bold tracking-wider text-white shrink-0">
+        CORNER 2
+      </div>
+
       <div class="space-y-0.5 text-right">
-        <div class="flex items-center justify-end gap-2">
-          <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 2</span>
-          <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
+        <div class="flex items-center justify-end gap-3">
+          <!-- Team Wins Indicator -->
+          <div id="display-ao-team-wins" class="team-wins-display">
+            <span>TEAM WINS:</span>
+            <span class="wins-count" id="ao-team-wins-count">0</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 2</span>
+            <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
+          </div>
         </div>
-        <h1 class="font-black uppercase tracking-tight text-white leading-none drop-shadow-md" style="font-size: clamp(2rem, 7vw, 6rem);">AO</h1>
+
+        <h1 class="font-black uppercase tracking-tight text-white leading-none drop-shadow-md" style="font-size: clamp(2.2rem, 7.5vw, 6.5rem);">
+          AO
+        </h1>
         <p class="text-xs font-bold tracking-widest text-white/70 uppercase">青 / BLUE</p>
+
+        <!-- Competitor Name & Country Flag/Code -->
         <div class="pt-0.5 flex items-center justify-end gap-2 border-b border-white/30 pb-1">
-          <span id="display-ao-name" class="font-black uppercase tracking-wider text-white drop-shadow" style="font-size: clamp(1rem, 2.8vw, 2.5rem);">PLAYER 2 NAME</span>
+          <span id="display-ao-name" class="font-black uppercase tracking-wider text-white drop-shadow truncate max-w-[32vw]" style="font-size: clamp(1rem, 2.8vw, 2.5rem);">
+            PLAYER 2 NAME
+          </span>
           <div class="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded border border-white/20">
             <span id="display-ao-country" class="text-xs font-mono font-bold tracking-wider text-white">JPN</span>
           </div>
@@ -157,37 +193,59 @@
       </div>
     </div>
 
-    <!-- Center: Huge Score -->
+    <!-- Center: Huge Score Display & Senshu Badge -->
     <div class="flex-1 flex flex-col items-center justify-center min-h-0 overflow-hidden">
       <div id="display-ao-score"
-        class="leading-none font-black text-white score-glow-blue select-none tabular-nums tracking-tighter"
-        style="font-size: clamp(5rem, 20vh, 22vh); line-height: 1;">
+        class="leading-none font-black text-white score-glow-blue select-none tabular-nums tracking-tighter transition-all duration-300"
+        style="font-size: clamp(5.5rem, 22vh, 25vh); line-height: 1;">
         0
       </div>
-      <!-- Senshu Badge -->
+
+      <!-- Senshu Advantage Badge -->
       <div id="display-ao-senshu"
         class="mt-2 flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.2em] uppercase senshu-glow border-2 border-white/90 transition-all duration-300 opacity-0 pointer-events-none"
-        style="font-size: clamp(0.9rem, 1.8vh, 1.4rem);">
+        style="font-size: clamp(0.9rem, 1.8vh, 1.35rem);">
         <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         <span>SENSHU</span>
         <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
     </div>
 
-    <!-- Bottom: Penalties -->
+    <!-- Bottom: Penalties (Single Row) -->
     <div class="shrink-0 w-full flex flex-col items-center gap-1 pb-1">
       <span class="text-[10px] tracking-wider font-extrabold uppercase text-white/80">AO PENALTIES</span>
-      <div class="flex items-center justify-center gap-2">
-        <div id="display-ao-ch1" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH1</div>
-        <div id="display-ao-ch2" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH2</div>
-        <div id="display-ao-ch3" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH3</div>
-        <div id="display-ao-hc"  class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">HC</div>
-        <div id="display-ao-h"   class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.5rem,4.5vh,3.5rem);height:clamp(2.5rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">H</div>
+      <div class="flex items-center justify-center gap-2 sm:gap-2.5">
+        <div id="display-ao-ch1" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH1</div>
+        <div id="display-ao-ch2" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH2</div>
+        <div id="display-ao-ch3" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH3</div>
+        <div id="display-ao-hc"  class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">HC</div>
+        <div id="display-ao-h"   class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">H</div>
       </div>
     </div>
   </section>
 
 </main>
+
+<!-- ==================== DYNAMIC OVERLAYS ==================== -->
+
+<!-- 1. 10s Medical Timer Overlay -->
+<div id="medical-overlay">
+  <div class="text-emerald-400 font-black uppercase tracking-widest text-2xl sm:text-3xl flex items-center gap-2">
+    <span>⚕ MEDICAL STOPPAGE</span>
+  </div>
+  <div id="medical-countdown">10</div>
+  <div class="text-white/70 text-sm sm:text-base uppercase tracking-widest font-mono">Medical Assessment Time Remaining</div>
+</div>
+
+<!-- 2. Hantei (Referee Decision) Overlay -->
+<div id="hantei-overlay">
+  <div id="hantei-title">HANTEI</div>
+  <div class="text-white/80 text-xl sm:text-2xl uppercase tracking-[0.4em] font-bold">— REFEREE DECISION —</div>
+  <div id="hantei-winner-display" class="hidden text-5xl sm:text-7xl font-black text-amber-400 uppercase tracking-widest mt-4"></div>
+</div>
+
+<!-- 3. Win Reason Banner (Kiken / Shikkaku / Gap / Hantei) -->
+<div id="win-reason-banner"></div>
 
 <!-- ==================== BOTTOM FOOTER: SPONSORS ==================== -->
 <footer class="w-full shrink-0 bg-[#0B0B0E] border-t border-white/15 px-6 py-1 z-30 select-none flex items-center justify-center gap-4" style="min-height:36px;">

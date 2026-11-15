@@ -1,9 +1,8 @@
 /* ============================================================
-   ARENA DISPLAY — CUSTOM CSS
+   ARENA DISPLAY — CUSTOM CSS v2
    WKF Karate Kumite Scoreboard System  |  index.html
    ============================================================ */
 
-/* Reset / Base */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
@@ -35,11 +34,12 @@ body {
 /* ---- Senshu Badge ---- */
 .senshu-glow {
   box-shadow: 0 0 25px rgba(250,204,21,0.6), inset 0 0 15px rgba(255,255,255,0.5);
+  transition: all 0.3s ease;
 }
 
 /* ---- Penalty Circles ---- */
 .penalty-circle {
-  transition: all 0.25s ease;
+  transition: all 0.3s ease;
 }
 
 /* Active penalty states */
@@ -102,4 +102,132 @@ body {
 #display-match-status {
   font-family: 'Space Grotesk', sans-serif;
   letter-spacing: 0.25em;
+  transition: all 0.3s ease;
+}
+
+/* ---- Smooth score transitions ---- */
+#display-aka-score, #display-ao-score {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* ============================================================
+   ADVANCED WKF & ARENA UI OVERLAYS (v2)
+   ============================================================ */
+
+/* ---- Medical Timer Overlay (Arena Display) ---- */
+#medical-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 20, 10, 0.92);
+  backdrop-filter: blur(12px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  transition: opacity 0.3s ease;
+}
+#medical-overlay.open {
+  display: flex;
+}
+
+@keyframes medical-count-pulse {
+  0%,100% { color: #4ade80; text-shadow: 0 0 40px rgba(74,222,128,0.8); }
+  50%     { color: #ffffff; text-shadow: 0 0 80px rgba(255,255,255,0.6); }
+}
+#medical-countdown {
+  font-family: 'Chakra Petch', monospace;
+  font-weight: 800;
+  line-height: 1;
+  color: #4ade80;
+  animation: medical-count-pulse 1s ease-in-out infinite;
+  font-size: clamp(7rem, 24vh, 28vh);
+}
+#medical-overlay.urgent #medical-countdown {
+  animation: none;
+  color: #ef4444;
+  text-shadow: 0 0 60px rgba(239,68,68,0.9);
+}
+
+/* ---- Hantei Overlay (Arena Display) ---- */
+#hantei-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 8500;
+  background: rgba(25, 12, 0, 0.90);
+  backdrop-filter: blur(10px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  transition: opacity 0.4s ease;
+}
+#hantei-overlay.open {
+  display: flex;
+}
+
+@keyframes hantei-letters {
+  0%,100% { letter-spacing: 0.35em; opacity: 1; text-shadow: 0 0 40px rgba(245,158,11,0.9); }
+  50%     { letter-spacing: 0.55em; opacity: 0.85; text-shadow: 0 0 80px rgba(245,158,11,1); }
+}
+#hantei-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  color: #f59e0b;
+  text-transform: uppercase;
+  animation: hantei-letters 2s ease-in-out infinite;
+  font-size: clamp(4.5rem, 15vh, 18vh);
+  line-height: 1;
+}
+
+/* ---- Win Reason Banner (Arena Display) ---- */
+#win-reason-banner {
+  display: none;
+  position: fixed;
+  bottom: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 8000;
+  background: rgba(10, 10, 14, 0.95);
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 30px rgba(245,158,11,0.4);
+  border-radius: 9999px;
+  padding: 0.6rem 2.5rem;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: clamp(0.85rem, 1.8vh, 1.35rem);
+  color: #fde047;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.4s ease;
+}
+#win-reason-banner.open {
+  display: block;
+}
+
+/* ---- Team Wins Display ---- */
+.team-wins-display {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(0.6rem, 1.1vh, 0.85rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.team-wins-display .wins-count {
+  font-size: clamp(0.8rem, 1.6vh, 1.2rem);
+  font-weight: 900;
+  color: #fde047;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 1px 7px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
 }

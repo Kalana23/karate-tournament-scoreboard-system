@@ -1,5 +1,5 @@
 /* ============================================================
-   CONTROL CONSOLE — CUSTOM CSS
+   CONTROL CONSOLE — CUSTOM CSS v2
    WKF Karate Kumite Scoreboard System
    ============================================================ */
 
@@ -13,7 +13,7 @@
 /* ---- Tactile Button Bevel ---- */
 .tactile-bevel {
   box-shadow: 0 4px 0 #07080b, inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 .tactile-bevel:active {
   transform: translateY(3px);
@@ -22,13 +22,7 @@
 
 /* ---- Hazard Stripes ---- */
 .hazard-stripes-yellow {
-  background: repeating-linear-gradient(
-    -45deg,
-    #0c0e14,
-    #0c0e14 10px,
-    #332305 10px,
-    #332305 20px
-  );
+  background: repeating-linear-gradient(-45deg,#0c0e14,#0c0e14 10px,#332305 10px,#332305 20px);
 }
 
 /* ---- Penalty button active states ---- */
@@ -37,12 +31,14 @@
   border-color: #f59e0b !important;
   color: #fcd34d !important;
   font-weight: 900;
+  transition: all 0.3s ease;
 }
 .penalty-btn-active-danger {
   background-color: rgba(239, 68, 68, 0.2) !important;
   border-color: #ef4444 !important;
   color: #fca5a5 !important;
   font-weight: 900;
+  transition: all 0.3s ease;
 }
 
 /* ---- Senshu Active ---- */
@@ -50,6 +46,7 @@
   background-color: rgba(245, 158, 11, 0.12) !important;
   border-color: #f59e0b !important;
   color: #fcd34d !important;
+  transition: all 0.3s ease;
 }
 
 /* ---- Score Winner Blink (Control) ---- */
@@ -84,32 +81,15 @@
   50%  { background-color: rgba(78, 222, 163, 0.05); }
   100% { background-color: transparent; }
 }
-.sync-flash {
-  animation: sync-pulse 0.6s ease-out 2;
-}
+.sync-flash { animation: sync-pulse 0.6s ease-out 2; }
 
 /* ---- Stream LIVE / PAUSED states ---- */
-.stream-live {
-  background-color: rgba(78, 222, 163, 0.12);
-  border-color: rgba(78, 222, 163, 0.5);
-  color: #4edea3;
-}
-.stream-paused {
-  background-color: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.5);
-  color: #f59e0b;
-}
+.stream-live   { background-color: rgba(78,222,163,0.12); border-color: rgba(78,222,163,0.5); color: #4edea3; }
+.stream-paused { background-color: rgba(245,158,11,0.12);  border-color: rgba(245,158,11,0.5);  color: #f59e0b; }
 
 /* ---- Light theme overrides ---- */
-html.light body {
-  background-color: #f4f5f9 !important;
-  color: #1a1c23 !important;
-}
-html.light header,
-html.light footer {
-  background-color: #e8eaf0 !important;
-  border-color: #c9ccd6 !important;
-}
+html.light body { background-color: #f4f5f9 !important; color: #1a1c23 !important; }
+html.light header, html.light footer { background-color: #e8eaf0 !important; border-color: #c9ccd6 !important; }
 html.light .bg-surface-container-lowest { background-color: #f4f5f9 !important; }
 html.light .bg-surface-container-low    { background-color: #e8eaf0 !important; }
 html.light .bg-surface-container        { background-color: #dfe1ea !important; }
@@ -122,102 +102,123 @@ html.light .border-surface-container-highest { border-color: #c9ccd6 !important;
 
 /* ---- Settings Modal ---- */
 #settings-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(4px);
-  align-items: center;
-  justify-content: center;
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center;
 }
-#settings-modal.open {
-  display: flex;
-}
+#settings-modal.open { display: flex; }
 .modal-box {
-  background: #191b22;
-  border: 2px solid #33343b;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  min-width: 420px;
-  max-width: 560px;
-  width: 95%;
+  background: #191b22; border: 2px solid #33343b; border-radius: 0.75rem;
+  padding: 1.5rem; min-width: 480px; max-width: 640px; width: 95%;
   box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+  max-height: 90vh; overflow-y: auto;
 }
-html.light .modal-box {
-  background: #f4f5f9;
-  border-color: #c9ccd6;
-}
+html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 
 /* ---- Audit Log ---- */
-.audit-entry {
-  display: flex;
-  justify-content: space-between;
-  font-family: monospace;
-  font-size: 11px;
-  color: #9ea3af;
-  padding: 1px 0;
-}
+.audit-entry { display:flex; justify-content:space-between; font-family:monospace; font-size:11px; color:#9ea3af; padding:1px 0; }
 
 /* ---- Scorer locked overlay ---- */
-.scoring-locked {
-  pointer-events: none;
-  opacity: 0.45;
-}
+.scoring-locked { pointer-events: none; opacity: 0.45; transition: opacity 0.3s ease; }
 
 /* ---- Tatami title inline edit ---- */
-#tatami-title-display {
-  cursor: pointer;
-  border-bottom: 1px dashed rgba(78,222,163,0.4);
-  transition: border-color 0.2s;
-}
-#tatami-title-display:hover {
-  border-color: #4edea3;
-}
-#tatami-title-input {
-  display: none;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid #4edea3;
-  color: inherit;
-  font: inherit;
-  outline: none;
-  letter-spacing: inherit;
-  text-transform: uppercase;
-}
-#tatami-title-input.active {
-  display: inline-block;
-}
+#tatami-title-display { cursor:pointer; border-bottom:1px dashed rgba(78,222,163,0.4); transition:border-color 0.2s; }
+#tatami-title-display:hover { border-color: #4edea3; }
+#tatami-title-input { display:none; background:transparent; border:none; border-bottom:2px solid #4edea3; color:inherit; font:inherit; outline:none; letter-spacing:inherit; text-transform:uppercase; }
+#tatami-title-input.active { display: inline-block; }
 
 /* ---- Bout metadata pill edits ---- */
-.bout-editable {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid transparent;
-  color: inherit;
-  font: inherit;
-  outline: none;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  min-width: 60px;
-  cursor: text;
-  transition: border-color 0.2s;
-}
-.bout-editable:focus {
-  border-bottom-color: #4edea3;
-}
+.bout-editable { background:transparent; border:none; border-bottom:1px solid transparent; color:inherit; font:inherit; outline:none; text-align:center; text-transform:uppercase; letter-spacing:0.08em; min-width:60px; cursor:text; transition:border-color 0.2s; }
+.bout-editable:focus { border-bottom-color: #4edea3; }
 
-/* ---- Publish button animation ---- */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-.spin-slow {
-  animation: spin-slow 4s linear infinite;
-}
+/* ---- Publish spin ---- */
+@keyframes spin-slow { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+.spin-slow { animation: spin-slow 4s linear infinite; }
 
 /* ---- Score leads telemetry ---- */
 .lead-positive { color: #4edea3; }
 .lead-negative { color: #ffb3ad; }
 .lead-even     { color: #74777f; }
+
+/* ============================================================
+   NEW IN v2: Medical Timer, Hantei, Team Wins, CSV
+   ============================================================ */
+
+/* ---- Medical Timer Overlay (control side) ---- */
+#medical-overlay-ctrl {
+  display: none;
+  position: fixed; inset: 0; z-index: 8888;
+  background: rgba(0,0,0,0.80);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+#medical-overlay-ctrl.open { display: flex; }
+
+@keyframes medical-pulse {
+  0%,100% { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.4); }
+  50%     { color: #ef4444; text-shadow: 0 0 40px rgba(239,68,68,0.9); }
+}
+#medical-countdown-ctrl {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 120px;
+  font-weight: 900;
+  line-height: 1;
+  color: #fff;
+  animation: medical-pulse 1s ease-in-out infinite;
+}
+#medical-overlay-ctrl.urgent #medical-countdown-ctrl {
+  color: #ef4444;
+  animation: medical-pulse 0.5s ease-in-out infinite;
+}
+
+/* ---- Hantei Mode Banner (control) ---- */
+#hantei-banner {
+  display: none;
+  background: linear-gradient(135deg, #1a0a00, #3d1a00);
+  border: 2px solid #f59e0b;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin: 0 0 0.5rem 0;
+  align-items: center; justify-content: space-between;
+  gap: 0.5rem;
+}
+#hantei-banner.open { display: flex; }
+
+@keyframes hantei-glow {
+  0%,100% { box-shadow: 0 0 10px rgba(245,158,11,0.4); }
+  50%     { box-shadow: 0 0 30px rgba(245,158,11,0.9), inset 0 0 10px rgba(245,158,11,0.1); }
+}
+#hantei-banner.open { animation: hantei-glow 1.5s ease-in-out infinite; }
+
+/* ---- Team Win counter ---- */
+.team-wins-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 9999px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+.team-wins-badge.aka-badge { background: rgba(255,84,81,0.15); border: 1px solid rgba(255,84,81,0.4); color: #ffb3ad; }
+.team-wins-badge.ao-badge  { background: rgba(0,83,219,0.15);  border: 1px solid rgba(0,83,219,0.4);  color: #b4c5ff; }
+.team-wins-badge span.count { font-size: 14px; font-weight: 900; }
+
+/* ---- DQ / Kiken buttons ---- */
+.dq-btn {
+  transition: all 0.3s ease;
+}
+.dq-btn:hover {
+  filter: brightness(1.2);
+  transform: translateY(-1px);
+}
+
+/* ---- Score update flash ---- */
+@keyframes score-flash {
+  0%   { background-color: rgba(255,255,255,0.15); }
+  100% { background-color: transparent; }
+}
+.score-flash { animation: score-flash 0.4s ease-out; }
+
+/* ---- Smooth transitions for all interactive elements ---- */
+button, input, select { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease; }

@@ -1,8 +1,7 @@
 /**
  * ============================================================
- * ARENA DISPLAY — RECEIVER LOGIC
+ * ARENA DISPLAY — PRODUCTION RECEIVER v2
  * WKF Karate Kumite Scoreboard System  |  js/display.js
- * Listens to localStorage cross-window events from control.js
  * ============================================================
  */
 
@@ -10,28 +9,41 @@
 
 (function () {
 
+  // Detect Electron IPC safely
+  let ipc = null;
+  try {
+    if (typeof window !== 'undefined' && window.require) {
+      const electron = window.require('electron');
+      ipc = electron.ipcRenderer;
+    }
+  } catch (e) {
+    ipc = null;
+  }
+
   /* ============================================================
      DOM REFS
      ============================================================ */
   const $ = id => document.getElementById(id);
 
   const EL = {
-    akaScore:        $('display-aka-score'),
-    aoScore:         $('display-ao-score'),
-    timer:           $('display-timer'),
-    timerMs:         $('display-timer-ms'),
-    akaName:         $('display-aka-name'),
-    akaCountry:      $('display-aka-country'),
-    aoName:          $('display-ao-name'),
-    aoCountry:       $('display-ao-country'),
-    tournamentName:  $('display-tournament-name'),
-    category:        $('display-category'),
-    tatamiName:      $('display-tatami-name'),
-    matchStatus:     $('display-match-status'),
-    boutNum:         $('display-bout-num'),
-    roundLabel:      $('display-round'),
-    akaSenshu:       $('display-aka-senshu'),
-    aoSenshu:        $('display-ao-senshu'),
+    akaScore:         $('display-aka-score'),
+    aoScore:          $('display-ao-score'),
+    timer:            $('display-timer'),
+    timerMs:          $('display-timer-ms'),
+    akaName:          $('display-aka-name'),
+    akaCountry:       $('display-aka-country'),
+    aoName:           $('display-ao-name'),
+    aoCountry:        $('display-ao-country'),
+    tournamentName:   $('display-tournament-name'),
+    category:         $('display-category'),
+    tatamiName:       $('display-tatami-name'),
+    matchStatus:      $('display-match-status'),
+    boutNum:          $('display-bout-num'),
+    roundLabel:       $('display-round'),
+    akaSenshu:        $('display-aka-senshu'),
+    aoSenshu:         $('display-ao-senshu'),
+    akaTeamWins:      $('aka-team-wins-count'),
+    aoTeamWins:       $('ao-team-wins-count'),
     // Penalties — AKA
     akaCh1: $('display-aka-ch1'),
     akaCh2: $('display-aka-ch2'),
@@ -39,17 +51,24 @@
     akaHc:  $('display-aka-hc'),
     akaH:   $('display-aka-h'),
     // Penalties — AO
-    aoCh1: $('display-ao-ch1'),
-    aoCh2: $('display-ao-ch2'),
-    aoCh3: $('display-ao-ch3'),
-    aoHc:  $('display-ao-hc'),
-    aoH:   $('display-ao-h'),
+    aoCh1:  $('display-ao-ch1'),
+    aoCh2:  $('display-ao-ch2'),
+    aoCh3:  $('display-ao-ch3'),
+    aoHc:   $('display-ao-hc'),
+    aoH:    $('display-ao-h'),
+    // Overlays
+    medicalOverlay:   $('medical-overlay'),
+    medicalCountdown: $('medical-countdown'),
+    hanteiOverlay:    $('hantei-overlay'),
+    hanteiWinner:     $('hantei-winner-display'),
+    winReasonBanner:  $('win-reason-banner'),
   };
 
   /* ============================================================
-     AUDIO ENGINE (mirror of control.js)
+     AUDIO ENGINE (Custom Buffer + Web Audio Synth)
      ============================================================ */
   let audioCtx = null;
+  let customAudioBuffer = null;
 
   function initAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -74,44 +93,102 @@
     osc.stop(t + duration);
   }
 
+  function playCustomSound() {
+    if (!audioCtx || !customAudioBuffer) return false;
+    try {
+      const src = audioCtx.createBufferSource();
+      src.buffer = customAudioBuffer;
+      src.connect(audioCtx.destination);
+      src.start();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   function playVictoryBuzzer() {
     initAudio();
-    playTone(220, 'sawtooth', 0.6, 1.0, 0.01, 0.0);
-    playTone(260, 'square',   0.6, 0.8, 0.01, 0.0);
-    playTone(220, 'sawtooth', 0.6, 1.0, 0.01, 0.8);
-    playTone(260, 'square',   0.6, 0.8, 0.01, 0.8);
-    playTone(220, 'sawtooth', 0.9, 1.0, 0.01, 1.6);
-    playTone(290, 'square',   0.9, 0.9, 0.01, 1.6);
+    if (!playCustomSound()) {
+      playTone(220, 'sawtooth', 0.6, 1.0, 0.01, 0.0);
+      playTone(260, 'square',   0.6, 0.8, 0.01, 0.0);
+      playTone(220, 'sawtooth', 0.6, 1.0, 0.01, 0.8);
+      playTone(260, 'square',   0.6, 0.8, 0.01, 0.8);
+      playTone(220, 'sawtooth', 0.9, 1.0, 0.01, 1.6);
+    }
   }
 
   function playManualHorn() {
     initAudio();
-    playTone(300, 'sawtooth', 0.5, 1.0, 0.01, 0.0);
-    playTone(400, 'square',   0.5, 0.8, 0.01, 0.0);
+    if (!playCustomSound()) {
+      playTone(300, 'sawtooth', 0.5, 1.0, 0.01, 0.0);
+      playTone(400, 'square',   0.5, 0.8, 0.01, 0.0);
+    }
+  }
+
+  function playAtoshiBeep() {
+    initAudio();
+    playTone(880, 'sine', 0.18, 0.7, 0.01, 0.00);
+    playTone(880, 'sine', 0.18, 0.7, 0.01, 0.25);
+  }
+
+  function playMedicalBeep() {
+    initAudio();
+    playTone(1000, 'sine', 0.15, 0.8, 0.01, 0.0);
+    playTone(1200, 'sine', 0.25, 0.6, 0.01, 0.2);
   }
 
   function playEmergencyAlarm() {
     initAudio();
     for (let i = 0; i < 6; i++) {
-      const f = i % 2 === 0 ? 440 : 660;
-      playTone(f, 'square', 0.25, 1.0, 0.1, i * 0.3);
+      playTone(i % 2 === 0 ? 440 : 660, 'square', 0.25, 1.0, 0.1, i * 0.3);
     }
   }
 
-  let lastBuzzerTs = 0;
-  function handleBuzzerEvent(raw) {
+  async function loadCustomBuzzer() {
+    // 1. Try Electron IPC
+    if (ipc) {
+      try {
+        const b64 = await ipc.invoke('load-buzzer');
+        if (b64) {
+          await decodeBuzzer(b64);
+          return;
+        }
+      } catch (e) {}
+    }
+    // 2. Try localStorage
     try {
-      const ev = JSON.parse(raw);
-      if (!ev || ev.ts <= lastBuzzerTs) return;
-      lastBuzzerTs = ev.ts;
-      if (ev.type === 'victory' || ev.type === 'manual') playVictoryBuzzer();
-      else if (ev.type === 'emergency') playEmergencyAlarm();
-      else playManualHorn();
-    } catch (e) { playManualHorn(); }
+      const b64 = localStorage.getItem('customBuzzerAudio');
+      if (b64) await decodeBuzzer(b64);
+    } catch (e) {}
+  }
+
+  async function decodeBuzzer(base64Str) {
+    try {
+      initAudio();
+      const binary = atob(base64Str);
+      const bytes  = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      customAudioBuffer = await audioCtx.decodeAudioData(bytes.buffer);
+    } catch (e) {}
+  }
+
+  let lastBuzzerTs = 0;
+  function handleBuzzerEvent(ev) {
+    if (!ev || ev.ts <= lastBuzzerTs) return;
+    lastBuzzerTs = ev.ts;
+
+    switch (ev.type) {
+      case 'victory':   playVictoryBuzzer(); break;
+      case 'manual':    playManualHorn(); break;
+      case 'atoshi':    playAtoshiBeep(); break;
+      case 'medical':   playMedicalBeep(); break;
+      case 'emergency': playEmergencyAlarm(); break;
+      default:          playManualHorn(); break;
+    }
   }
 
   /* ============================================================
-     TIMER DISPLAY FORMATTER
+     TIME FORMATTING
      ============================================================ */
   function formatMs(ms) {
     if (ms < 0) ms = 0;
@@ -125,64 +202,55 @@
     };
   }
 
-  /* ============================================================
-     PENALTY HELPER
-     ============================================================ */
   function applyPenalty(el, active, type) {
     if (!el) return;
     el.classList.remove('penalty-warn', 'penalty-danger');
     if (active) {
-      if (type === 'h' || type === 'hc') el.classList.add('penalty-danger');
-      else                                el.classList.add('penalty-warn');
+      el.classList.add(type === 'h' || type === 'hc' ? 'penalty-danger' : 'penalty-warn');
     }
   }
 
   /* ============================================================
-     MAIN DISPLAY UPDATER
+     MAIN ARENA DISPLAY UPDATER
      ============================================================ */
   function updateArenaDisplay(state) {
     if (!state) return;
 
-    /* ---- Scores ---- */
+    /* ---- 1. Scores ---- */
     if (EL.akaScore) EL.akaScore.textContent = state.akaScore ?? 0;
     if (EL.aoScore)  EL.aoScore.textContent  = state.aoScore  ?? 0;
 
-    /* ---- Winner blink ---- */
+    /* ---- 2. Winner Blink Animation ---- */
     EL.akaScore?.classList.remove('winner-blink');
     EL.aoScore?.classList.remove('winner-blink');
     if (state.winner === 'aka') EL.akaScore?.classList.add('winner-blink');
     if (state.winner === 'ao')  EL.aoScore?.classList.add('winner-blink');
 
-    /* ---- Names & Countries ---- */
+    /* ---- 3. Names & Countries ---- */
     if (EL.akaName)    EL.akaName.textContent    = state.akaName    || 'PLAYER 1 NAME';
     if (EL.akaCountry) EL.akaCountry.textContent = state.akaCountry || 'SRI';
     if (EL.aoName)     EL.aoName.textContent     = state.aoName     || 'PLAYER 2 NAME';
     if (EL.aoCountry)  EL.aoCountry.textContent  = state.aoCountry  || 'JPN';
 
-    /* ---- Tournament Name ---- */
-    if (EL.tournamentName && state.tournamentName)
-      EL.tournamentName.textContent = state.tournamentName;
+    /* ---- 4. Team Kumite Mode Wins ---- */
+    if (EL.akaTeamWins && state.akaTeamWins !== undefined) EL.akaTeamWins.textContent = state.akaTeamWins;
+    if (EL.aoTeamWins  && state.aoTeamWins  !== undefined) EL.aoTeamWins.textContent  = state.aoTeamWins;
 
-    /* ---- Category ---- */
+    /* ---- 5. Tournament & Tatami Info ---- */
+    if (EL.tournamentName && state.tournamentName) EL.tournamentName.textContent = state.tournamentName;
     if (EL.category && state.categoryText) {
       EL.category.textContent = state.categoryText.replace(/^Category:\s*/i, '');
     }
+    if (EL.tatamiName && state.tatamiName) EL.tatamiName.textContent = state.tatamiName;
+    if (EL.boutNum    && state.boutNumber) EL.boutNum.textContent   = `BOUT #${state.boutNumber}`;
+    if (EL.roundLabel && state.roundLabel) EL.roundLabel.textContent = state.roundLabel;
 
-    /* ---- Tatami Name ---- */
-    if (EL.tatamiName && state.tatamiName)
-      EL.tatamiName.textContent = state.tatamiName;
-
-    /* ---- Bout / Round ---- */
-    if (EL.boutNum    && state.boutNumber)  EL.boutNum.textContent   = `BOUT #${state.boutNumber}`;
-    if (EL.roundLabel && state.roundLabel)  EL.roundLabel.textContent = state.roundLabel;
-
-    /* ---- Timer ---- */
+    /* ---- 6. Timer with Yellow Milliseconds ---- */
     if (EL.timer) {
       const ms  = state.timerMs ?? 0;
       const fmt = formatMs(ms);
 
-      // Rebuild text node + ms span
-      EL.timer.firstChild.textContent = fmt.main;
+      if (EL.timer.firstChild) EL.timer.firstChild.textContent = fmt.main;
       if (EL.timerMs) EL.timerMs.textContent = '.' + fmt.ms;
 
       EL.timer.classList.remove('atoshi-baraku', 'timer-ended');
@@ -190,22 +258,28 @@
 
       if (ms <= 0) {
         EL.timer.classList.add('timer-ended');
-        if (EL.timerMs) { EL.timerMs.style.color = '#ef4444'; }
+        if (EL.timerMs) EL.timerMs.style.color = '#ef4444';
       } else if (ms <= 15000) {
         EL.timer.classList.add('atoshi-baraku');
-        if (EL.timerMs) { EL.timerMs.style.color = '#f59e0b'; }
+        if (EL.timerMs) EL.timerMs.style.color = '#f59e0b';
       } else {
-        if (EL.timerMs) { EL.timerMs.style.color = '#fde047'; }
+        if (EL.timerMs) EL.timerMs.style.color = '#fde047';
       }
     }
 
-    /* ---- Match Status ---- */
+    /* ---- 7. Match Status ---- */
     if (EL.matchStatus) {
-      if (state.winner) {
+      if (state.hanteiMode) {
+        EL.matchStatus.textContent = 'HANTEI — REFEREE DECISION';
+        EL.matchStatus.style.color = '#f59e0b';
+      } else if (state.winner) {
         EL.matchStatus.textContent = `${state.winner.toUpperCase()} WINS! 🏆`;
         EL.matchStatus.style.color = '#fde047';
+      } else if (state.medicalActive) {
+        EL.matchStatus.textContent = '⚕ 10s MEDICAL STOPPAGE';
+        EL.matchStatus.style.color = '#4ade80';
       } else if (state.isRunning && state.timerMs <= 15000 && state.timerMs > 0) {
-        EL.matchStatus.textContent = '⚡ ATOSHI BARAKU — FINAL 15 SECONDS';
+        EL.matchStatus.textContent = '⚡ ATOSHI BARAKU — FINAL 15s';
         EL.matchStatus.style.color = '#f59e0b';
       } else if (state.isRunning) {
         EL.matchStatus.textContent = 'MATCH IN PROGRESS';
@@ -219,7 +293,47 @@
       }
     }
 
-    /* ---- Senshu ---- */
+    /* ---- 8. 10s Medical Timer Overlay ---- */
+    if (EL.medicalOverlay) {
+      if (state.medicalActive) {
+        EL.medicalOverlay.classList.add('open');
+        const secondsRemaining = Math.max(0, Math.ceil((state.medicalMs || 10000) / 1000));
+        if (EL.medicalCountdown) EL.medicalCountdown.textContent = secondsRemaining;
+        if (state.medicalMs <= 3000) EL.medicalOverlay.classList.add('urgent');
+        else EL.medicalOverlay.classList.remove('urgent');
+      } else {
+        EL.medicalOverlay.classList.remove('open', 'urgent');
+      }
+    }
+
+    /* ---- 9. Hantei Overlay ---- */
+    if (EL.hanteiOverlay) {
+      if (state.hanteiMode) {
+        EL.hanteiOverlay.classList.add('open');
+        if (EL.hanteiWinner) {
+          if (state.hanteiWinner) {
+            EL.hanteiWinner.textContent = `${state.hanteiWinner.toUpperCase()} DECLARED WINNER`;
+            EL.hanteiWinner.classList.remove('hidden');
+          } else {
+            EL.hanteiWinner.classList.add('hidden');
+          }
+        }
+      } else {
+        EL.hanteiOverlay.classList.remove('open');
+      }
+    }
+
+    /* ---- 10. Win Reason Banner ---- */
+    if (EL.winReasonBanner) {
+      if (state.winReason) {
+        EL.winReasonBanner.textContent = state.winReason;
+        EL.winReasonBanner.classList.add('open');
+      } else {
+        EL.winReasonBanner.classList.remove('open');
+      }
+    }
+
+    /* ---- 11. Senshu Advantage ---- */
     if (EL.akaSenshu) {
       EL.akaSenshu.classList.toggle('opacity-0',   !state.akaSenshu);
       EL.akaSenshu.classList.toggle('opacity-100',  !!state.akaSenshu);
@@ -229,7 +343,7 @@
       EL.aoSenshu.classList.toggle('opacity-100',  !!state.aoSenshu);
     }
 
-    /* ---- Penalties ---- */
+    /* ---- 12. Penalties ---- */
     if (state.akaPenalties) {
       applyPenalty(EL.akaCh1, state.akaPenalties.ch1, 'ch1');
       applyPenalty(EL.akaCh2, state.akaPenalties.ch2, 'ch2');
@@ -247,16 +361,14 @@
   }
 
   /* ============================================================
-     TIMER NODE SETUP (ensure firstChild is a text node)
+     INIT & MULTI-CHANNEL LISTENERS
      ============================================================ */
   function setupTimerNode() {
     const timerEl = EL.timer;
     const msEl    = EL.timerMs;
     if (!timerEl) return;
-    // Clear and rebuild: textNode + msSpan
     timerEl.innerHTML = '';
-    const textNode = document.createTextNode('2:00');
-    timerEl.appendChild(textNode);
+    timerEl.appendChild(document.createTextNode('2:00'));
     if (msEl) {
       timerEl.appendChild(msEl);
       msEl.className = 'ms-digits';
@@ -264,31 +376,37 @@
     }
   }
 
-  /* ============================================================
-     INIT
-     ============================================================ */
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     setupTimerNode();
+    await loadCustomBuzzer();
 
-    // Load any existing state from previous session
+    // 1. Initial State from localStorage
     try {
       const stored = localStorage.getItem('karateMatchState');
       if (stored) updateArenaDisplay(JSON.parse(stored));
-    } catch (e) { /* ignore */ }
+    } catch (e) {}
 
-    // Listen for cross-window storage events (control.html → index.html)
+    // 2. Direct Electron IPC Listeners (Instant zero-lag sync)
+    if (ipc) {
+      ipc.on('arena-state-update', (event, state) => {
+        updateArenaDisplay(state);
+      });
+      ipc.on('arena-buzzer-trigger', (event, buzzerData) => {
+        handleBuzzerEvent(buzzerData);
+      });
+    }
+
+    // 3. Cross-Window Storage Event Listener (Browser or Electron fallback)
     window.addEventListener('storage', e => {
       if (e.key === 'karateBuzzerEvent' && e.newValue) {
-        handleBuzzerEvent(e.newValue);
+        try { handleBuzzerEvent(JSON.parse(e.newValue)); } catch (err) {}
       }
       if (e.key === 'karateMatchState' && e.newValue) {
-        try { updateArenaDisplay(JSON.parse(e.newValue)); }
-        catch (err) { console.error('Display parse error:', err); }
+        try { updateArenaDisplay(JSON.parse(e.newValue)); } catch (err) {}
       }
     });
 
-    // Poll fallback for same-window Electron contexts (every 100ms)
-    // Some Electron builds don't fire cross-window storage events
+    // 4. Polling Fallback for Electron same-process contexts
     let lastKnownTs = 0;
     setInterval(() => {
       try {
@@ -299,10 +417,10 @@
           lastKnownTs = st.ts;
           updateArenaDisplay(st);
         }
-      } catch (e) { /* ignore */ }
-    }, 100);
+      } catch (e) {}
+    }, 80);
 
-    // Also poll buzzer event
+    // 5. Buzzer Event Polling Fallback
     let lastBuzzerTsPoll = 0;
     setInterval(() => {
       try {
@@ -311,10 +429,10 @@
         const ev = JSON.parse(raw);
         if (ev.ts && ev.ts > lastBuzzerTsPoll) {
           lastBuzzerTsPoll = ev.ts;
-          handleBuzzerEvent(raw);
+          handleBuzzerEvent(ev);
         }
-      } catch (e) { /* ignore */ }
-    }, 150);
+      } catch (e) {}
+    }, 100);
   });
 
 })();

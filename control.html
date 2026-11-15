@@ -5,10 +5,10 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>KUMITE DESK // TATAMI 1 — Control Console</title>
 
-<!-- Offline-first: Google Fonts preloaded inline (CDN fallback acceptable for Electron) -->
+<!-- Fonts -->
 <link href="https://fonts.googleapis.com" rel="preconnect">
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
 
 <!-- Tailwind CSS -->
@@ -16,18 +16,18 @@
 <script src="js/tailwind-config.js"></script>
 <link rel="stylesheet" href="css/control.css">
 </head>
-<body class="bg-surface-container-lowest text-on-surface min-h-screen flex flex-col font-body-md overflow-y-auto antialiased">
+<body class="bg-surface-container-lowest text-on-surface min-h-screen flex flex-col font-body-md overflow-y-auto antialiased select-none">
 
 <!-- ==================== TOP NAVBAR ==================== -->
 <header id="main-header" class="flex flex-wrap justify-between items-center w-full px-space-md py-space-sm bg-surface-container-lowest z-50 border-b-2 border-surface-container-highest gap-2">
 
-  <!-- ---- Left: Tatami Title + Connection Status ---- -->
+  <!-- Left: Tatami Title + Connection Status -->
   <div class="flex items-center gap-space-md">
     <div class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1 border border-surface-container-highest rounded">
       <!-- Editable Tatami Title -->
       <span
         id="tatami-title-display"
-        class="font-headline-md text-headline-md font-bold tracking-wider text-on-surface uppercase"
+        class="font-headline-md text-headline-md font-bold tracking-wider text-on-surface uppercase cursor-pointer"
         title="Click to edit Tatami name"
       >KUMITE DESK // TATAMI 1</span>
       <input
@@ -41,7 +41,7 @@
       <!-- Arena Display Connection Status / Force Sync -->
       <button
         id="btn-arena-sync"
-        class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-tertiary-container/30 border border-tertiary text-tertiary font-label-tactical text-label-tactical uppercase cursor-pointer hover:bg-tertiary/20 transition-colors"
+        class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-tertiary-container/30 border border-tertiary text-tertiary font-label-tactical text-label-tactical uppercase cursor-pointer hover:bg-tertiary/20 transition-all duration-300"
         title="Click to force full state sync to Arena Display"
       >
         <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
@@ -52,34 +52,26 @@
     <!-- Category / Pool / Ruleset nav inputs -->
     <nav class="hidden xl:flex items-center gap-space-md ml-space-sm">
       <input type="text" id="edit-category" value="Category: Male Senior -75kg"
-        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-tertiary border-b-2 border-tertiary font-headline-sm text-headline-sm pb-1 uppercase tracking-wider px-1 rounded">
+        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-tertiary border-b-2 border-tertiary font-headline-sm text-headline-sm pb-1 uppercase tracking-wider px-1 rounded transition-colors duration-300">
       <input type="text" id="edit-pool" value="Pool: Semi-Finals"
-        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-on-surface-variant font-label-tactical text-label-tactical uppercase tracking-wider px-1 rounded">
+        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-on-surface-variant font-label-tactical text-label-tactical uppercase tracking-wider px-1 rounded transition-colors duration-300">
       <input type="text" id="edit-ruleset" value="Ruleset: WKF 2024"
-        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-on-surface-variant font-label-tactical text-label-tactical uppercase tracking-wider px-1 rounded">
+        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-on-surface-variant font-label-tactical text-label-tactical uppercase tracking-wider px-1 rounded transition-colors duration-300">
     </nav>
   </div>
 
-  <!-- ---- Center: Tournament Name ---- -->
+  <!-- Center: Tournament Name -->
   <div class="hidden 2xl:flex flex-col items-center text-center px-space-sm">
     <div class="font-label-micro text-label-micro text-outline tracking-wider uppercase">Official Championship Interlock</div>
     <input type="text" id="edit-tournament-name"
       value="2028 10TH JAPAN KARATE-DO HAYASHI HA SHITORYU KAI WORLD KARATE TOURNAMENT — SRI LANKA"
-      class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto font-label-tactical text-label-tactical font-bold text-on-surface text-center px-1 rounded">
+      class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto font-label-tactical text-label-tactical font-bold text-on-surface text-center px-1 rounded transition-colors duration-300">
   </div>
 
-  <!-- ---- Right: Category Preset + Bout Metadata + Actions ---- -->
+  <!-- Right: Category Preset + Bout Metadata + Actions -->
   <div class="flex items-center gap-space-sm flex-wrap">
 
-    <!-- Next Bout Preview -->
-    <div class="hidden 2xl:flex items-center gap-2 px-3 py-1 bg-surface-container-high border border-amber-500/40 rounded font-label-tactical text-label-tactical tracking-wider">
-      <span class="flex items-center gap-1 text-amber-300 font-bold uppercase">
-        <span class="material-symbols-outlined text-sm text-amber-400">upcoming</span>NEXT BOUT:
-      </span>
-      <span class="text-on-surface font-semibold uppercase">M. TARO (JPN) <span class="text-outline">VS</span> E. SILVA (BRA)</span>
-    </div>
-
-    <!-- ---- Category Preset Dropdown ---- -->
+    <!-- Category Preset Dropdown -->
     <div class="relative flex items-center bg-surface-container-low border-2 border-tertiary rounded px-space-sm py-1">
       <span class="material-symbols-outlined text-tertiary mr-1 text-sm">tune</span>
       <span class="font-label-micro text-label-micro text-tertiary uppercase mr-2 font-bold">PRESET:</span>
@@ -93,12 +85,12 @@
       </select>
     </div>
 
-    <!-- ---- Bout Metadata Pills ---- -->
+    <!-- Bout Metadata Pills -->
     <div class="hidden md:flex items-center gap-1 font-label-tactical text-label-tactical">
-      <span class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface flex items-center gap-1">
-        BOUT #<input id="bout-number" type="text" value="14" class="bout-editable w-8 font-label-tactical text-label-tactical text-on-surface" maxlength="4">
+      <span class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface flex items-center gap-1" title="Type bout number to auto-fill players from CSV">
+        BOUT #<input id="bout-number" type="text" value="14" class="bout-editable w-9 font-label-tactical text-label-tactical text-on-surface font-bold text-amber-300" maxlength="5">
       </span>
-      <button id="btn-duration-cycle" class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface hover:border-tertiary transition-colors" title="Click to cycle match duration (timer must be stopped)">
+      <button id="btn-duration-cycle" class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface hover:border-tertiary transition-all duration-300" title="Click to cycle match duration (timer must be stopped)">
         <span id="duration-label">2:00 MIN</span>
       </button>
       <span class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface flex items-center gap-1">
@@ -106,26 +98,33 @@
       </span>
     </div>
 
-    <!-- ---- Emergency Buzzer ---- -->
+    <!-- 10s Medical Quick Button -->
+    <button id="btn-medical-timer"
+      class="px-space-sm py-1 bg-emerald-950/80 border-2 border-emerald-500 text-emerald-300 hover:bg-emerald-800 hover:text-white font-label-tactical text-label-tactical uppercase rounded transition-all duration-300 tactile-bevel flex items-center gap-1"
+      title="Start 10s Medical Stoppage Countdown (Keyboard shortcut: M)">
+      <span class="material-symbols-outlined text-sm">medical_services</span>
+      10s Medical
+    </button>
+
+    <!-- Emergency Buzzer -->
     <button id="btn-emergency-buzzer"
-      class="px-space-sm py-1 bg-error-container border border-primary-container text-on-error-container font-label-tactical text-label-tactical uppercase rounded hover:bg-primary-container transition-colors tactile-bevel flex items-center gap-1">
+      class="px-space-sm py-1 bg-error-container border border-primary-container text-on-error-container font-label-tactical text-label-tactical uppercase rounded hover:bg-primary-container transition-all duration-300 tactile-bevel flex items-center gap-1">
       <span class="material-symbols-outlined text-sm">notifications_active</span>
       Emergency Buzzer
     </button>
 
-    <!-- ---- Arena Stream Toggle ---- -->
+    <!-- Arena Stream Toggle -->
     <button id="btn-stream-toggle"
-      class="flex items-center gap-1 px-space-sm py-1 bg-surface-container-high border border-tertiary/40 rounded stream-live font-label-tactical text-label-tactical uppercase cursor-pointer transition-colors">
+      class="flex items-center gap-1 px-space-sm py-1 bg-surface-container-high border border-tertiary/40 rounded stream-live font-label-tactical text-label-tactical uppercase cursor-pointer transition-all duration-300">
       <span class="material-symbols-outlined text-sm">sensors</span>
       <span id="stream-status-text">Arena Stream: LIVE</span>
     </button>
 
-    <!-- ---- Trailing Icon Actions ---- -->
+    <!-- Trailing Icon Actions -->
     <div class="flex items-center gap-1 text-on-surface-variant border-l border-surface-container-highest pl-space-sm">
-
       <!-- Theme Toggle -->
       <button id="btn-theme-toggle"
-        class="flex items-center gap-1 px-2 py-0.5 bg-surface-container border border-surface-container-highest rounded-full hover:border-outline transition-colors text-xs font-label-tactical uppercase text-on-surface-variant mr-1"
+        class="flex items-center gap-1 px-2 py-0.5 bg-surface-container border border-surface-container-highest rounded-full hover:border-outline transition-all duration-300 text-xs font-label-tactical uppercase text-on-surface-variant mr-1"
         title="Toggle Light/Dark Theme">
         <span id="theme-icon" class="material-symbols-outlined text-amber-400 text-sm" style="font-variation-settings: 'FILL' 1;">dark_mode</span>
         <span id="theme-label" class="text-[11px] font-bold text-on-surface">DARK</span>
@@ -133,63 +132,90 @@
 
       <!-- Timer Reset (Clock only) -->
       <button id="btn-timer-reset-icon"
-        class="p-1 hover:bg-surface-container-high rounded transition-colors"
+        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
         title="Reset Clock to Preset Duration">
         <span class="material-symbols-outlined">timer</span>
       </button>
 
       <!-- Audio Mute Toggle -->
       <button id="btn-audio-toggle"
-        class="p-1 hover:bg-surface-container-high rounded transition-colors"
+        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
         title="Toggle Audio Mute">
         <span id="audio-icon" class="material-symbols-outlined">volume_up</span>
       </button>
 
       <!-- Settings Gear -->
       <button id="btn-settings"
-        class="p-1 hover:bg-surface-container-high rounded transition-colors"
-        title="Settings">
+        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
+        title="Tournament & Hardware Settings">
         <span class="material-symbols-outlined">settings</span>
       </button>
 
       <!-- Fullscreen -->
       <button id="btn-fullscreen"
-        class="p-1 hover:bg-surface-container-high rounded transition-colors"
+        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
         title="Toggle Fullscreen">
         <span id="fullscreen-icon" class="material-symbols-outlined">fullscreen</span>
       </button>
-
     </div>
   </div>
 </header>
+
+<!-- ==================== HANTEI DECISION BANNER (TRIGGERED ON TIED TIME UP) ==================== -->
+<div id="hantei-banner" class="w-full px-space-md py-2 border-b-2 border-amber-500 bg-gradient-to-r from-amber-950/90 via-black to-amber-950/90 flex items-center justify-between transition-all duration-300">
+  <div class="flex items-center gap-3">
+    <span class="material-symbols-outlined text-2xl text-amber-400 animate-pulse">gavel</span>
+    <div class="flex flex-col">
+      <span class="font-headline-md text-headline-md font-black text-amber-300 uppercase tracking-widest leading-none">HANTEI — REFEREE DECISION REQUIRED</span>
+      <span class="text-xs text-amber-200/70 uppercase tracking-wider font-mono">Bout ended tied without Senshu advantage. Select winning competitor:</span>
+    </div>
+  </div>
+  <div class="flex items-center gap-3">
+    <button id="btn-hantei-aka" class="tactile-bevel px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white font-headline-sm text-headline-sm font-black rounded uppercase flex items-center gap-1.5 shadow-[0_0_15px_rgba(220,38,38,0.7)] transition-all duration-300">
+      🔴 AKA WINNER
+    </button>
+    <button id="btn-hantei-ao" class="tactile-bevel px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-headline-sm text-headline-sm font-black rounded uppercase flex items-center gap-1.5 shadow-[0_0_15px_rgba(37,99,235,0.7)] transition-all duration-300">
+      🔵 AO WINNER
+    </button>
+    <button id="btn-hantei-cancel" class="px-3 py-1.5 bg-surface-container border border-surface-container-highest text-on-surface-variant hover:text-white rounded font-label-tactical text-label-tactical uppercase transition-all duration-300">
+      DISMISS
+    </button>
+  </div>
+</div>
 
 <!-- ==================== MAIN 12-COLUMN CONSOLE GRID ==================== -->
 <main class="flex-1 grid grid-cols-12 gap-space-sm p-space-sm bg-surface-container-lowest">
 
   <!-- ==================== LEFT: AKA (RED CORNER) ==================== -->
-  <section id="aka-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-primary-container/80 rounded-lg p-space-sm shadow-2xl relative overflow-hidden">
+  <section id="aka-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-primary-container/80 rounded-lg p-space-sm shadow-2xl relative overflow-hidden transition-all duration-300">
     <div class="absolute -top-12 -left-12 w-48 h-48 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <!-- Corner Header -->
+    <!-- Corner Header & Team Wins Indicator -->
     <div class="flex items-center justify-between bg-error-container/80 border-b-2 border-primary-container px-space-md py-space-xs rounded">
       <div class="flex items-center gap-2">
         <span class="w-3.5 h-3.5 rounded-full bg-primary-container animate-pulse border border-white"></span>
         <h2 class="font-headline-md text-headline-md tracking-wider text-white font-extrabold uppercase">🔴 AKA (RED CORNER)</h2>
       </div>
-      <span class="font-label-tactical text-label-tactical text-primary-fixed bg-surface-container-lowest/80 px-2 py-0.5 rounded border border-primary/30">MATCH SEED #1</span>
+      <!-- Team Kumite Mode Counter -->
+      <div class="flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded border border-primary/40">
+        <span class="text-[10px] font-bold text-primary-fixed uppercase tracking-wider">TEAM WINS:</span>
+        <button id="btn-aka-team-dec" class="px-1 text-primary-fixed hover:text-white font-black text-xs cursor-pointer">-</button>
+        <span id="aka-team-wins-label" class="font-mono font-black text-amber-300 text-sm px-1">0</span>
+        <button id="btn-aka-team-inc" class="px-1 text-primary-fixed hover:text-white font-black text-xs cursor-pointer">+</button>
+      </div>
     </div>
 
     <!-- Competitor Identity -->
     <div class="grid grid-cols-3 gap-2 bg-surface-container-lowest p-space-sm border border-surface-container-highest rounded">
       <div class="col-span-2 flex flex-col">
         <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Competitor Name</label>
-        <input id="input-aka-name" class="w-full bg-surface-container border border-surface-container-highest focus:border-primary-container rounded px-2.5 py-1 text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider outline-none" type="text" value="Kasun Perera">
+        <input id="input-aka-name" class="w-full bg-surface-container border border-surface-container-highest focus:border-primary-container rounded px-2.5 py-1 text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider outline-none transition-colors duration-300" type="text" value="Kasun Perera">
       </div>
       <div class="flex flex-col">
         <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Country</label>
         <div class="flex items-center h-full bg-surface-container border border-surface-container-highest rounded px-2 gap-1.5">
           <span class="text-base">🇱🇰</span>
-          <input type="text" id="input-aka-country-code" class="bg-transparent outline-none w-full font-headline-sm text-headline-sm font-bold text-on-surface uppercase" value="SRI" maxlength="4">
+          <input type="text" id="input-aka-country-code" class="bg-transparent outline-none w-full font-headline-sm text-headline-sm font-bold text-on-surface uppercase transition-colors duration-300" value="SRI" maxlength="4">
         </div>
       </div>
     </div>
@@ -200,8 +226,8 @@
         <span class="font-label-tactical text-label-tactical text-primary font-bold uppercase tracking-wider">TOTAL SCORE</span>
         <span id="aka-lead-text" class="font-label-micro text-label-micro text-outline lead-even">Even</span>
       </div>
-      <div id="aka-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(255,84,81,0.65)] px-space-md">0</div>
-      <button id="btn-aka-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-primary/60 hover:border-primary text-primary-fixed rounded transition-all">
+      <div id="aka-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(255,84,81,0.65)] px-space-md transition-all duration-300">0</div>
+      <button id="btn-aka-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-primary/60 hover:border-primary text-primary-fixed rounded transition-all duration-300">
         <span class="material-symbols-outlined text-2xl font-bold">undo</span>
         <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
         <span class="font-label-micro text-label-micro text-outline">(REVERT LAST)</span>
@@ -209,7 +235,7 @@
     </div>
 
     <!-- Senshu Toggle -->
-    <button id="btn-aka-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-colors">
+    <button id="btn-aka-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-all duration-300">
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-outline">stars</span>
         <span id="aka-senshu-label">★ SENSHU READY (Click to Award)</span>
@@ -219,7 +245,7 @@
 
     <!-- Scoring Buttons -->
     <div id="aka-score-btns" class="grid grid-cols-1 gap-2.5">
-      <button id="btn-aka-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
+      <button id="btn-aka-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-all duration-300">
         <div class="flex items-center gap-3">
           <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">+1</span>
           <div class="text-left">
@@ -229,7 +255,7 @@
         </div>
         <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
       </button>
-      <button id="btn-aka-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-colors">
+      <button id="btn-aka-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-all duration-300">
         <div class="flex items-center gap-3">
           <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">+2</span>
           <div class="text-left">
@@ -239,7 +265,7 @@
         </div>
         <span class="material-symbols-outlined text-2xl">flash_on</span>
       </button>
-      <button id="btn-aka-ippon" class="tactile-bevel w-full py-2 px-space-md bg-primary-container hover:bg-error text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(255,84,81,0.4)] transition-all">
+      <button id="btn-aka-ippon" class="tactile-bevel w-full py-2 px-space-md bg-primary-container hover:bg-error text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(255,84,81,0.4)] transition-all duration-300">
         <div class="flex items-center gap-3">
           <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-primary-container px-3.5 py-1 rounded border border-white">+3</span>
           <div class="text-left">
@@ -251,34 +277,50 @@
       </button>
     </div>
 
-    <!-- WKF Penalties (AKA) -->
+    <!-- WKF Penalties & Disqualifications (AKA) -->
     <div class="bg-surface-container-lowest border-2 border-primary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]">
       <div class="flex items-center justify-between border-b border-surface-container-highest pb-1">
         <div class="flex items-center gap-1.5">
           <span class="material-symbols-outlined text-base text-amber-400">warning</span>
           <span class="font-label-tactical text-label-tactical text-amber-300 uppercase font-bold tracking-wider">WKF PENALTIES (AKA)</span>
         </div>
-        <button id="btn-aka-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors uppercase font-bold underline flex items-center gap-0.5">
+        <button id="btn-aka-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors duration-300 uppercase font-bold underline flex items-center gap-0.5">
           <span class="material-symbols-outlined text-xs">close</span>CLEAR
         </button>
       </div>
+
+      <!-- Warning Row -->
       <div class="grid grid-cols-3 gap-2">
-        <button id="btn-aka-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">
+        <button id="btn-aka-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
           CH1<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 1</span>
         </button>
-        <button id="btn-aka-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">
+        <button id="btn-aka-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
           CH2<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 2</span>
         </button>
-        <button id="btn-aka-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">
+        <button id="btn-aka-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
           CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span>
         </button>
       </div>
+
+      <!-- Serious Penalties Row -->
       <div class="grid grid-cols-2 gap-2">
-        <button id="btn-aka-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight">
+        <button id="btn-aka-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
           <span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span>
         </button>
-        <button id="btn-aka-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight">
+        <button id="btn-aka-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
           <span class="font-extrabold">H</span><span class="text-[10px] font-normal text-outline uppercase">HANSOKU (DQ)</span>
+        </button>
+      </div>
+
+      <!-- Explicit Kiken & Shikkaku Row -->
+      <div class="grid grid-cols-2 gap-2 pt-1 border-t border-surface-container-highest">
+        <button id="btn-aka-kiken" class="dq-btn tactile-bevel py-1.5 px-2 bg-red-950/60 border border-red-500/80 hover:bg-red-900 text-red-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex items-center justify-center gap-1" title="Withdrawal: AKA forfeits, AO wins immediately">
+          <span class="material-symbols-outlined text-sm">person_off</span>
+          KIKEN (WITHDRAW)
+        </button>
+        <button id="btn-aka-shikkaku" class="dq-btn tactile-bevel py-1.5 px-2 bg-red-950/80 border border-red-400 hover:bg-red-800 text-white rounded font-label-tactical text-label-tactical uppercase text-center font-black transition-all duration-300 flex items-center justify-center gap-1" title="Disqualification: AKA expelled from tournament, AO wins immediately">
+          <span class="material-symbols-outlined text-sm">gavel</span>
+          SHIKKAKU (DQ)
         </button>
       </div>
     </div>
@@ -288,7 +330,7 @@
   <section class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-surface-container-highest rounded-lg p-space-sm relative">
 
     <!-- Status Ribbon -->
-    <div id="match-status-ribbon" class="flex items-center justify-between bg-surface-container-lowest border border-surface-container-highest px-space-md py-1.5 rounded">
+    <div id="match-status-ribbon" class="flex items-center justify-between bg-surface-container-lowest border border-surface-container-highest px-space-md py-1.5 rounded transition-all duration-300">
       <div class="flex items-center gap-2">
         <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-tertiary animate-ping"></span>
         <span id="match-status-text" class="font-label-tactical text-label-tactical text-tertiary uppercase font-extrabold tracking-wider">STATUS: READY</span>
@@ -314,14 +356,14 @@
 
     <!-- START / STOP Buttons -->
     <div class="grid grid-cols-2 gap-space-sm">
-      <button id="btn-timer-start" class="tactile-bevel py-2 px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg border-2 border-tertiary flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(0,165,114,0.4)] transition-all">
+      <button id="btn-timer-start" class="tactile-bevel py-2 px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg border-2 border-tertiary flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(0,165,114,0.4)] transition-all duration-300">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
           <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">START</span>
         </div>
         <span class="font-label-micro text-label-micro font-bold uppercase tracking-widest text-on-tertiary">Space / Click</span>
       </button>
-      <button id="btn-timer-stop" class="tactile-bevel py-2 px-space-sm bg-error-container hover:bg-primary-container text-white rounded-lg border-2 border-primary-container flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(255,84,81,0.35)] transition-all">
+      <button id="btn-timer-stop" class="tactile-bevel py-2 px-space-sm bg-error-container hover:bg-primary-container text-white rounded-lg border-2 border-primary-container flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(255,84,81,0.35)] transition-all duration-300">
         <div class="flex items-center gap-2">
           <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">pause</span>
           <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">STOP</span>
@@ -331,7 +373,7 @@
     </div>
 
     <!-- Manual Buzzer -->
-    <button id="btn-manual-buzzer" class="tactile-bevel w-full py-2 px-space-md bg-amber-500 hover:bg-amber-400 text-surface-container-lowest border-2 border-amber-300 rounded-lg flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all active:scale-98">
+    <button id="btn-manual-buzzer" class="tactile-bevel w-full py-2 px-space-md bg-amber-500 hover:bg-amber-400 text-surface-container-lowest border-2 border-amber-300 rounded-lg flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all duration-300 active:scale-98">
       <span class="material-symbols-outlined text-3xl font-black" style="font-variation-settings: 'FILL' 1;">volume_up</span>
       <span class="font-headline-md text-headline-md font-extrabold tracking-wider leading-none">📢 MANUAL BUZZER / HORN</span>
     </button>
@@ -340,10 +382,10 @@
     <div class="bg-surface-container-lowest border border-surface-container-highest p-space-sm rounded-lg flex flex-col gap-1.5">
       <div class="font-label-micro text-label-micro text-outline text-center uppercase tracking-wider">Clock Stepper Trim</div>
       <div class="grid grid-cols-4 gap-2">
-        <button id="btn-time-minus-10" class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">-10s</button>
-        <button id="btn-time-minus-1"  class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">-1s</button>
-        <button id="btn-time-plus-1"   class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">+1s</button>
-        <button id="btn-time-plus-10"  class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center">+10s</button>
+        <button id="btn-time-minus-10" class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">-10s</button>
+        <button id="btn-time-minus-1"  class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">-1s</button>
+        <button id="btn-time-plus-1"   class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">+1s</button>
+        <button id="btn-time-plus-10"  class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">+10s</button>
       </div>
     </div>
 
@@ -360,29 +402,35 @@
   </section>
 
   <!-- ==================== RIGHT: AO (BLUE CORNER) ==================== -->
-  <section id="ao-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-secondary-container/80 rounded-lg p-space-sm shadow-2xl relative overflow-hidden">
+  <section id="ao-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-secondary-container/80 rounded-lg p-space-sm shadow-2xl relative overflow-hidden transition-all duration-300">
     <div class="absolute -top-12 -right-12 w-48 h-48 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
 
-    <!-- Corner Header -->
+    <!-- Corner Header & Team Wins Indicator -->
     <div class="flex items-center justify-between bg-on-secondary/70 border-b-2 border-secondary-container px-space-md py-space-xs rounded">
       <div class="flex items-center gap-2">
         <span class="w-3.5 h-3.5 rounded-full bg-secondary-fixed animate-pulse border border-white"></span>
         <h2 class="font-headline-md text-headline-md tracking-wider text-white font-extrabold uppercase">🔵 AO (BLUE CORNER)</h2>
       </div>
-      <span class="font-label-tactical text-label-tactical text-secondary-fixed bg-surface-container-lowest/80 px-2 py-0.5 rounded border border-secondary/30">MATCH SEED #4</span>
+      <!-- Team Kumite Mode Counter -->
+      <div class="flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded border border-secondary/40">
+        <span class="text-[10px] font-bold text-secondary-fixed uppercase tracking-wider">TEAM WINS:</span>
+        <button id="btn-ao-team-dec" class="px-1 text-secondary-fixed hover:text-white font-black text-xs cursor-pointer">-</button>
+        <span id="ao-team-wins-label" class="font-mono font-black text-amber-300 text-sm px-1">0</span>
+        <button id="btn-ao-team-inc" class="px-1 text-secondary-fixed hover:text-white font-black text-xs cursor-pointer">+</button>
+      </div>
     </div>
 
     <!-- Competitor Identity -->
     <div class="grid grid-cols-3 gap-2 bg-surface-container-lowest p-space-sm border border-surface-container-highest rounded">
       <div class="col-span-2 flex flex-col">
         <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Competitor Name</label>
-        <input id="input-ao-name" class="w-full bg-surface-container border border-surface-container-highest focus:border-secondary-container rounded px-2.5 py-1 text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider outline-none" type="text" value="Kenji Sato">
+        <input id="input-ao-name" class="w-full bg-surface-container border border-surface-container-highest focus:border-secondary-container rounded px-2.5 py-1 text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider outline-none transition-colors duration-300" type="text" value="Kenji Sato">
       </div>
       <div class="flex flex-col">
         <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Country</label>
         <div class="flex items-center h-full bg-surface-container border border-surface-container-highest rounded px-2 gap-1.5">
           <span class="text-base">🇯🇵</span>
-          <input type="text" id="input-ao-country-code" class="bg-transparent outline-none w-full font-headline-sm text-headline-sm font-bold text-on-surface uppercase" value="JPN" maxlength="4">
+          <input type="text" id="input-ao-country-code" class="bg-transparent outline-none w-full font-headline-sm text-headline-sm font-bold text-on-surface uppercase transition-colors duration-300" value="JPN" maxlength="4">
         </div>
       </div>
     </div>
@@ -393,8 +441,8 @@
         <span class="font-label-tactical text-label-tactical text-secondary-fixed font-bold uppercase tracking-wider">TOTAL SCORE</span>
         <span id="ao-lead-text" class="font-label-micro text-label-micro text-outline lead-even">Even</span>
       </div>
-      <div id="ao-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(0,83,219,0.7)] px-space-md">0</div>
-      <button id="btn-ao-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-secondary/60 hover:border-secondary text-secondary-fixed rounded transition-all">
+      <div id="ao-score-display" class="font-score-display text-score-display font-extrabold text-white tracking-tight drop-shadow-[0_0_18px_rgba(0,83,219,0.7)] px-space-md transition-all duration-300">0</div>
+      <button id="btn-ao-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-secondary/60 hover:border-secondary text-secondary-fixed rounded transition-all duration-300">
         <span class="material-symbols-outlined text-2xl font-bold">undo</span>
         <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
         <span class="font-label-micro text-label-micro text-outline">(REVERT LAST)</span>
@@ -402,7 +450,7 @@
     </div>
 
     <!-- Senshu Toggle -->
-    <button id="btn-ao-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-colors">
+    <button id="btn-ao-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-all duration-300">
       <div class="flex items-center gap-2">
         <span class="material-symbols-outlined text-outline">stars</span>
         <span id="ao-senshu-label">★ SENSHU READY (Click to Award)</span>
@@ -412,7 +460,7 @@
 
     <!-- Scoring Buttons -->
     <div id="ao-score-btns" class="grid grid-cols-1 gap-2.5">
-      <button id="btn-ao-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
+      <button id="btn-ao-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-all duration-300">
         <div class="flex items-center gap-3">
           <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">+1</span>
           <div class="text-left">
@@ -422,7 +470,7 @@
         </div>
         <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
       </button>
-      <button id="btn-ao-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-colors">
+      <button id="btn-ao-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-all duration-300">
         <div class="flex items-center gap-3">
           <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">+2</span>
           <div class="text-left">
@@ -432,7 +480,7 @@
         </div>
         <span class="material-symbols-outlined text-2xl">flash_on</span>
       </button>
-      <button id="btn-ao-ippon" class="tactile-bevel w-full py-2 px-space-md bg-secondary-fixed hover:bg-blue-400 text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(0,83,219,0.4)] transition-all">
+      <button id="btn-ao-ippon" class="tactile-bevel w-full py-2 px-space-md bg-secondary-fixed hover:bg-blue-400 text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(0,83,219,0.4)] transition-all duration-300">
         <div class="flex items-center gap-3">
           <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-secondary-container px-3.5 py-1 rounded border border-white">+3</span>
           <div class="text-left">
@@ -444,34 +492,50 @@
       </button>
     </div>
 
-    <!-- WKF Penalties (AO) -->
+    <!-- WKF Penalties & Disqualifications (AO) -->
     <div class="bg-surface-container-lowest border-2 border-secondary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]">
       <div class="flex items-center justify-between border-b border-surface-container-highest pb-1">
         <div class="flex items-center gap-1.5">
           <span class="material-symbols-outlined text-base text-secondary">warning</span>
           <span class="font-label-tactical text-label-tactical text-secondary-fixed font-bold uppercase tracking-wider">WKF PENALTIES (AO)</span>
         </div>
-        <button id="btn-ao-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors uppercase font-bold underline flex items-center gap-0.5">
+        <button id="btn-ao-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors duration-300 uppercase font-bold underline flex items-center gap-0.5">
           <span class="material-symbols-outlined text-xs">close</span>CLEAR
         </button>
       </div>
+
+      <!-- Warning Row -->
       <div class="grid grid-cols-3 gap-2">
-        <button id="btn-ao-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">
+        <button id="btn-ao-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
           CH1<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 1</span>
         </button>
-        <button id="btn-ao-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">
+        <button id="btn-ao-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
           CH2<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 2</span>
         </button>
-        <button id="btn-ao-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors">
+        <button id="btn-ao-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
           CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span>
         </button>
       </div>
+
+      <!-- Serious Penalties Row -->
       <div class="grid grid-cols-2 gap-2">
-        <button id="btn-ao-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight">
+        <button id="btn-ao-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
           <span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span>
         </button>
-        <button id="btn-ao-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-colors flex flex-col items-center justify-center leading-tight">
+        <button id="btn-ao-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
           <span class="font-extrabold">H</span><span class="text-[10px] font-normal text-outline uppercase">HANSOKU (DQ)</span>
+        </button>
+      </div>
+
+      <!-- Explicit Kiken & Shikkaku Row -->
+      <div class="grid grid-cols-2 gap-2 pt-1 border-t border-surface-container-highest">
+        <button id="btn-ao-kiken" class="dq-btn tactile-bevel py-1.5 px-2 bg-blue-950/60 border border-blue-500/80 hover:bg-blue-900 text-blue-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex items-center justify-center gap-1" title="Withdrawal: AO forfeits, AKA wins immediately">
+          <span class="material-symbols-outlined text-sm">person_off</span>
+          KIKEN (WITHDRAW)
+        </button>
+        <button id="btn-ao-shikkaku" class="dq-btn tactile-bevel py-1.5 px-2 bg-blue-950/80 border border-blue-400 hover:bg-blue-800 text-white rounded font-label-tactical text-label-tactical uppercase text-center font-black transition-all duration-300 flex items-center justify-center gap-1" title="Disqualification: AO expelled from tournament, AKA wins immediately">
+          <span class="material-symbols-outlined text-sm">gavel</span>
+          SHIKKAKU (DQ)
         </button>
       </div>
     </div>
@@ -479,76 +543,153 @@
 
 </main>
 
-<!-- ==================== BOTTOM ACTION BAR ==================== -->
-<footer class="w-full mt-auto z-40 flex flex-wrap justify-between items-center px-space-lg py-1 bg-surface-container-lowest border-t-2 border-surface-container-highest shadow-[0_-4px_16px_rgba(0,0,0,0.8)]">
-  <div class="flex items-center gap-space-sm">
-    <button id="btn-reset-match" class="tactile-bevel px-space-md py-2 bg-surface-container border border-surface-container-highest hover:border-error-container text-on-surface hover:text-error rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase">
+<!-- ==================== BOTTOM ACTION & SAFETY BAR ==================== -->
+<footer class="w-full mt-auto z-40 flex flex-wrap justify-between items-center px-space-lg py-1.5 bg-surface-container-lowest border-t-2 border-surface-container-highest shadow-[0_-4px_16px_rgba(0,0,0,0.8)] gap-2">
+
+  <!-- Left: Reset & Export Result -->
+  <div class="flex items-center gap-space-sm flex-wrap">
+    <button id="btn-reset-match" class="tactile-bevel px-space-md py-2 bg-surface-container border border-surface-container-highest hover:border-error-container text-on-surface hover:text-error rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase transition-all duration-300">
       <span class="material-symbols-outlined text-lg">restart_alt</span>
       RESET MATCH
     </button>
-    <button id="btn-shikkaku" class="tactile-bevel px-space-md py-2 hazard-stripes-yellow border-2 border-amber-500 hover:border-amber-400 text-amber-300 rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase tracking-wider shadow-[0_0_10px_rgba(245,158,11,0.2)]">
-      <span class="material-symbols-outlined text-xl text-amber-400">warning</span>
-      <span>SHIKKAKU (DISQUALIFY)</span>
-      <span class="bg-surface-container-lowest/90 px-1.5 py-0.5 rounded text-[10px] text-amber-400 border border-amber-500/40 ml-1">🔒 REQUIRES CONFIRMATION</span>
+
+    <button id="btn-export-result" class="tactile-bevel px-space-md py-2 bg-surface-container-high border-2 border-emerald-500/70 hover:border-emerald-400 text-emerald-300 hover:text-white rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase transition-all duration-300" title="Append match result to results.csv">
+      <span class="material-symbols-outlined text-lg">save_as</span>
+      EXPORT RESULT
     </button>
   </div>
 
+  <!-- Center: Keyboard Reference & Arbiters Actions -->
   <div class="hidden lg:flex items-center gap-space-md">
-    <button id="btn-hantei" class="px-space-sm py-1.5 bg-surface-container-high border border-surface-container-highest hover:bg-surface-bright rounded text-on-surface font-label-tactical text-label-tactical uppercase">Hantei / Referee Decision</button>
-    <button id="btn-doctor-time" class="px-space-sm py-1.5 bg-surface-container-high border border-surface-container-highest hover:bg-surface-bright rounded text-on-surface font-label-tactical text-label-tactical uppercase">Doctor Time (Kiken 1:00)</button>
+    <button id="btn-hantei" class="px-space-sm py-1.5 bg-surface-container-high border border-surface-container-highest hover:bg-surface-bright rounded text-on-surface font-label-tactical text-label-tactical uppercase transition-all duration-300">
+      Hantei Decision
+    </button>
+    <button id="btn-doctor-time" class="px-space-sm py-1.5 bg-surface-container-high border border-surface-container-highest hover:bg-surface-bright rounded text-on-surface font-label-tactical text-label-tactical uppercase transition-all duration-300">
+      Doctor Time (+1:00)
+    </button>
     <div class="flex items-center gap-3 border-l border-surface-container-highest pl-space-md">
-      <span class="font-label-tactical text-label-tactical text-outline uppercase tracking-wider">Keyboard: <span class="text-tertiary">Space</span>=Start/Stop  <span class="text-primary">Q/W/E</span>=AKA  <span class="text-secondary">I/O/P</span>=AO  <span class="text-amber-400">Z</span>=Undo  <span class="text-amber-400">B</span>=Buzzer  <span class="text-amber-400">R</span>=Reset</span>
+      <span class="font-label-tactical text-label-tactical text-outline uppercase tracking-wider">
+        Keys: <span class="text-tertiary">Space</span>=Start/Stop | <span class="text-primary">Q/W/E</span>=AKA | <span class="text-secondary">I/O/P</span>=AO | <span class="text-amber-400">Z</span>=Undo | <span class="text-emerald-400">M</span>=Medical | <span class="text-amber-400">B</span>=Horn
+      </span>
     </div>
   </div>
 
+  <!-- Right: Publish to Main Display -->
   <div class="flex items-center gap-space-sm">
-    <button id="btn-publish" class="tactile-bevel px-space-lg py-2.5 bg-tertiary-container hover:bg-tertiary text-on-tertiary-container border-2 border-tertiary rounded-lg flex items-center gap-3 font-headline-sm text-headline-sm font-extrabold uppercase tracking-wider shadow-[0_0_24px_rgba(78,222,163,0.5)]">
+    <button id="btn-publish" class="tactile-bevel px-space-lg py-2.5 bg-tertiary-container hover:bg-tertiary text-on-tertiary-container border-2 border-tertiary rounded-lg flex items-center gap-3 font-headline-sm text-headline-sm font-extrabold uppercase tracking-wider shadow-[0_0_24px_rgba(78,222,163,0.5)] transition-all duration-300">
       <span class="material-symbols-outlined text-2xl text-tertiary-fixed-dim spin-slow">sync</span>
-      <span>PUBLISH TO MAIN DISPLAY</span>
+      <span>PUBLISH TO ARENA</span>
       <span id="publish-status-badge" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-on-tertiary-container text-tertiary border border-tertiary/60">● LIVE SYNC ACTIVE</span>
     </button>
   </div>
 </footer>
 
+<!-- ==================== 10s MEDICAL OVERLAY (CONTROL CONSOLE) ==================== -->
+<div id="medical-overlay-ctrl">
+  <div class="flex items-center gap-2 text-emerald-400 font-headline-lg text-headline-lg font-black tracking-widest uppercase">
+    <span class="material-symbols-outlined text-4xl">medical_services</span>
+    10-SECOND MEDICAL TIMEOUT
+  </div>
+  <div id="medical-countdown-ctrl">10</div>
+  <div class="text-white/60 font-mono text-sm uppercase tracking-wider">Doctor & Athlete Assessment Time Remaining</div>
+  <button id="btn-medical-dismiss" class="tactile-bevel px-6 py-2.5 mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-headline-sm font-black rounded-lg uppercase tracking-wider transition-all duration-300">
+    STOP & RESUME MATCH
+  </button>
+</div>
+
 <!-- ==================== SETTINGS MODAL ==================== -->
 <div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
   <div class="modal-box">
-    <div class="flex items-center justify-between mb-4">
-      <h2 id="modal-title" class="font-headline-lg text-headline-lg font-black text-on-surface uppercase tracking-wider">⚙️ Settings</h2>
-      <button id="btn-modal-close" class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant">
+    <div class="flex items-center justify-between mb-4 border-b border-surface-container-highest pb-3">
+      <div class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-tertiary">tune</span>
+        <h2 id="modal-title" class="font-headline-lg text-headline-lg font-black text-on-surface uppercase tracking-wider">Settings & Tournament Interlock</h2>
+      </div>
+      <button id="btn-modal-close" class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant transition-colors duration-300">
         <span class="material-symbols-outlined">close</span>
       </button>
     </div>
 
-    <!-- Tournament Header Title -->
+    <!-- 1. Tournament Header Title -->
     <div class="mb-4">
       <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Tournament Header Title</label>
       <input id="modal-tournament-name" type="text"
-        class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary"
+        class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary transition-colors duration-300"
         value="2028 10TH JAPAN KARATE-DO HAYASHI HA SHITORYU KAI WORLD KARATE TOURNAMENT — SRI LANKA">
     </div>
 
-    <!-- Winning Point Gap -->
-    <div class="mb-4">
-      <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Winning Point Gap (Mercy Rule)</label>
-      <input id="modal-point-gap" type="number" min="1" max="20"
-        class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary"
-        value="8">
-      <span class="font-label-micro text-label-micro text-outline">Default: 8 points gap ends match automatically</span>
+    <!-- 2. Point Gap & Match Time -->
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div>
+        <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Winning Point Gap (Mercy Rule)</label>
+        <input id="modal-point-gap" type="number" min="1" max="20"
+          class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary transition-colors duration-300"
+          value="8">
+        <span class="font-label-micro text-label-micro text-outline">Default: 8 points gap ends match automatically</span>
+      </div>
+      <div>
+        <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Custom Match Time (seconds)</label>
+        <input id="modal-custom-time" type="number" min="30" max="600"
+          class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary transition-colors duration-300"
+          value="120">
+        <span class="font-label-micro text-label-micro text-outline">For "Custom Category" preset</span>
+      </div>
     </div>
 
-    <!-- Custom Match Time -->
-    <div class="mb-5">
-      <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Custom Match Time (seconds)</label>
-      <input id="modal-custom-time" type="number" min="30" max="600"
-        class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary"
-        value="120">
-      <span class="font-label-micro text-label-micro text-outline">Used when "Custom Category" preset is selected</span>
+    <!-- 3. Tournament CSV Match Data Auto-Fill -->
+    <div class="mb-4 p-3 bg-surface-container rounded-lg border border-surface-container-highest">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-amber-400 text-sm">table_rows</span>
+          <span class="font-label-tactical text-label-tactical font-bold text-on-surface uppercase">Tournament Bouts CSV Auto-Fill</span>
+        </div>
+        <span id="csv-status-badge" class="text-[10px] font-mono font-bold text-outline uppercase px-2 py-0.5 rounded bg-surface-container-lowest">NO CSV LOADED</span>
+      </div>
+      <p class="font-label-micro text-label-micro text-outline mb-2">
+        Upload CSV containing: <code>Bout Number, AKA Name, AKA Country, AO Name, AO Country</code>. Entering the bout # in the navbar will auto-fill competitor names.
+      </p>
+      <div class="flex items-center gap-2">
+        <button id="btn-load-csv" class="tactile-bevel px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black border border-amber-500 rounded font-label-tactical text-label-tactical uppercase font-bold flex items-center gap-1 transition-all duration-300">
+          <span class="material-symbols-outlined text-sm">upload_file</span>
+          Load Match CSV
+        </button>
+        <input type="file" id="csv-file-input" accept=".csv,text/csv,text/plain" class="hidden">
+        <span id="csv-filename" class="text-xs font-mono text-tertiary truncate flex-1"></span>
+      </div>
     </div>
 
-    <div class="flex gap-3 justify-end">
-      <button id="btn-modal-cancel" class="px-space-md py-2 bg-surface-container border border-surface-container-highest rounded text-on-surface font-label-tactical text-label-tactical uppercase hover:bg-surface-container-high transition-colors">Cancel</button>
-      <button id="btn-modal-save" class="tactile-bevel px-space-md py-2 bg-tertiary-container border-2 border-tertiary rounded text-on-tertiary-container font-label-tactical text-label-tactical uppercase hover:bg-tertiary transition-colors">Save Settings</button>
+    <!-- 4. Custom Horn Audio (MP3 Upload) -->
+    <div class="mb-5 p-3 bg-surface-container rounded-lg border border-surface-container-highest">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-amber-400 text-sm">volume_up</span>
+          <span class="font-label-tactical text-label-tactical font-bold text-on-surface uppercase">Custom Buzzer Audio (horn.mp3)</span>
+        </div>
+        <span id="buzzer-status-badge" class="text-[10px] font-mono font-bold text-tertiary uppercase px-2 py-0.5 rounded bg-surface-container-lowest">SYNTHESIZED HORN ACTIVE</span>
+      </div>
+      <p class="font-label-micro text-label-micro text-outline mb-2">
+        Select a custom MP3/WAV buzzer audio file. Falls back automatically to multi-tone Web Audio horn if none provided.
+      </p>
+      <div class="flex items-center gap-2">
+        <label class="tactile-bevel px-3 py-1.5 bg-surface-container-high hover:bg-surface-bright border border-surface-container-highest text-on-surface rounded font-label-tactical text-label-tactical uppercase cursor-pointer flex items-center gap-1 transition-all duration-300">
+          <span class="material-symbols-outlined text-sm">audio_file</span>
+          Choose Audio File
+          <input type="file" id="custom-buzzer-input" accept="audio/*,.mp3,.wav" class="hidden">
+        </label>
+        <button id="btn-test-buzzer" class="px-3 py-1.5 bg-surface-container-high hover:bg-surface-bright border border-surface-container-highest text-amber-300 rounded font-label-tactical text-label-tactical uppercase transition-all duration-300">
+          Test Sound
+        </button>
+        <button id="btn-reset-buzzer" class="px-2 py-1.5 text-xs text-outline hover:text-error uppercase underline transition-colors duration-300">
+          Reset Default
+        </button>
+      </div>
+      <span id="buzzer-filename" class="block text-xs font-mono text-on-surface-variant mt-1.5 truncate"></span>
+    </div>
+
+    <!-- Save / Cancel -->
+    <div class="flex gap-3 justify-end pt-3 border-t border-surface-container-highest">
+      <button id="btn-modal-cancel" class="px-space-md py-2 bg-surface-container border border-surface-container-highest rounded text-on-surface font-label-tactical text-label-tactical uppercase hover:bg-surface-container-high transition-colors duration-300">Cancel</button>
+      <button id="btn-modal-save" class="tactile-bevel px-space-md py-2 bg-tertiary-container border-2 border-tertiary rounded text-on-tertiary-container font-label-tactical text-label-tactical uppercase hover:bg-tertiary transition-all duration-300">Save Settings</button>
     </div>
   </div>
 </div>
