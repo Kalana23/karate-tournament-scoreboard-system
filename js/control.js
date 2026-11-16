@@ -51,7 +51,6 @@ const STATE = {
   streamLive:        true,
   audioMuted:        false,
   atoshiBarakuFired: false,
-  theme: 'dark',
   poolText: 'Semi-Finals',
   rulesetText: 'WKF',
 };
@@ -851,7 +850,6 @@ function createStatePayload() {
     tatamiName:        STATE.tatamiName,
     boutNumber:        STATE.boutNumber,
     roundLabel:        STATE.roundLabel,
-    theme:             STATE.theme,
     audioMuted:        STATE.audioMuted,
     poolText:          STATE.poolText,
     rulesetText:       STATE.rulesetText,
@@ -949,8 +947,6 @@ function updateTimerDisplay() {
   if (fraction) fraction.textContent = '.' + formatted.ms;
   main.classList.toggle('timer-ended', STATE.timerMs <= 0);
   main.classList.toggle('atoshi-baraku', STATE.timerMs > 0 && STATE.timerMs <= 15000);
-  // Light mode always retains dark numbers, including warning and ended states.
-  applyNumberTheme();
 }
 
 function updateStatusRibbon() {
@@ -1152,33 +1148,12 @@ function toggleStream() {
   }
 }
 
-function applyNumberTheme() {
-  const light = STATE.theme === 'light';
-  document.querySelectorAll('[data-theme-number]').forEach(element => {
-    const fraction = element.id === 'ctrl-timer-ms';
-    element.classList.toggle('text-[#0f172a]', light);
-    element.classList.toggle('text-white', !light && !fraction);
-    element.classList.toggle('text-yellow-400', !light && fraction);
-    element.classList.remove('text-[#c2410c]');
-    element.style.color = light ? '#0f172a' : fraction ? '#facc15' : '#ffffff';
-  });
-}
-
-function applyTheme() {
-  const light = STATE.theme === 'light';
-  document.documentElement.classList.toggle('light', light);
-  document.documentElement.classList.toggle('dark', !light);
-  document.body.classList.toggle('light-mode', light);
+function toggleTheme() {
+  // Console presentation is local to this document; never publish it as match data.
+  const light = document.body.classList.toggle('light-mode');
   const label = document.getElementById('theme-label');
   if (label) label.textContent = light ? 'LIGHT' : 'DARK';
   document.getElementById('btn-theme-toggle')?.setAttribute('aria-pressed', String(light));
-  applyNumberTheme();
-}
-
-function toggleTheme() {
-  STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
-  applyTheme();
-  broadcastState(true);
 }
 
 function restorePreferences() {
@@ -1188,9 +1163,7 @@ function restorePreferences() {
     if (typeof saved.tournamentName === 'string') STATE.tournamentName = saved.tournamentName;
     if (Number.isInteger(saved.pointGapLimit) && saved.pointGapLimit >= 1 && saved.pointGapLimit <= 20) STATE.pointGapLimit = saved.pointGapLimit;
     if (Number.isInteger(saved.customTimeS) && saved.customTimeS >= 30 && saved.customTimeS <= 600) STATE.customTimeS = saved.customTimeS;
-    STATE.theme = saved.theme === 'light' ? 'light' : 'dark';
   } catch (_) { /* Start with defaults when no valid preferences exist. */ }
-  applyTheme();
 }
 
 function toggleAudio() {
@@ -1461,23 +1434,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const msSpan = document.getElementById('ctrl-timer-ms');
     mainTimerSpan.innerHTML = '';
     mainTimerSpan.appendChild(document.createTextNode('2:00'));
-    const isLight = document.body.classList.contains('light-mode') || document.documentElement.classList.contains('light');
-    if (isLight) {
-      mainTimerSpan.className = 'font-timer-display text-4xl lg:text-5xl font-black tracking-normal transition-colors text-[#0f172a]';
-      mainTimerSpan.style.color = '#0f172a';
-    } else {
-      mainTimerSpan.className = 'font-timer-display text-4xl lg:text-5xl font-black tracking-normal transition-colors text-white';
-      mainTimerSpan.style.color = '#ffffff';
-    }
     if (msSpan) {
       mainTimerSpan.appendChild(msSpan);
-      if (isLight) {
-        msSpan.className = 'text-xl lg:text-2xl text-[#c2410c] font-bold';
-        msSpan.style.color = '#c2410c';
-      } else {
-        msSpan.className = 'text-xl lg:text-2xl text-yellow-400 font-bold';
-        msSpan.style.color = '#facc15';
-      }
       msSpan.textContent = '.00';
     }
   }
@@ -1799,7 +1757,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     $('bunkai-duration').disabled = STATE.bunkaiRunning;
     $('aka-team-wins-label').textContent = STATE.akaTeamWins;
     $('ao-team-wins-label').textContent = STATE.aoTeamWins;
-    applyNumberTheme();
   }
   function init() {
     for (const side of ['aka', 'ao']) {

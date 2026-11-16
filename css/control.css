@@ -88,17 +88,16 @@
 .stream-paused { background-color: rgba(245,158,11,0.12);  border-color: rgba(245,158,11,0.5);  color: #f59e0b; }
 
 /* ---- Light theme overrides ---- */
-html.light body { background-color: #f4f5f9 !important; color: #1a1c23 !important; }
-html.light header, html.light footer { background-color: #e8eaf0 !important; border-color: #c9ccd6 !important; }
-html.light .bg-surface-container-lowest { background-color: #f4f5f9 !important; }
-html.light .bg-surface-container-low    { background-color: #e8eaf0 !important; }
-html.light .bg-surface-container        { background-color: #dfe1ea !important; }
-html.light .bg-surface-container-high   { background-color: #d4d6e0 !important; }
-html.light .bg-surface-container-highest{ background-color: #c9ccd6 !important; }
-html.light .text-on-surface             { color: #1a1c23 !important; }
-html.light .text-on-surface-variant     { color: #44474e !important; }
-html.light .text-outline                { color: #74777f !important; }
-html.light .border-surface-container-highest { border-color: #c9ccd6 !important; }
+body.control-platform.light-mode header, body.control-platform.light-mode footer { background-color: #e8eaf0 !important; border-color: #c9ccd6 !important; }
+body.control-platform.light-mode .bg-surface-container-lowest { background-color: #f4f5f9 !important; }
+body.control-platform.light-mode .bg-surface-container-low    { background-color: #e8eaf0 !important; }
+body.control-platform.light-mode .bg-surface-container        { background-color: #dfe1ea !important; }
+body.control-platform.light-mode .bg-surface-container-high   { background-color: #d4d6e0 !important; }
+body.control-platform.light-mode .bg-surface-container-highest{ background-color: #c9ccd6 !important; }
+body.control-platform.light-mode .text-on-surface             { color: #1a1c23 !important; }
+body.control-platform.light-mode .text-on-surface-variant     { color: #44474e !important; }
+body.control-platform.light-mode .text-outline                { color: #74777f !important; }
+body.control-platform.light-mode .border-surface-container-highest { border-color: #c9ccd6 !important; }
 
 /* ---- Settings Modal ---- */
 #settings-modal {
@@ -113,7 +112,7 @@ html.light .border-surface-container-highest { border-color: #c9ccd6 !important;
   box-shadow: 0 20px 60px rgba(0,0,0,0.9);
   max-height: 90vh; overflow-y: auto;
 }
-html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
+body.control-platform.light-mode .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 
 /* ---- Audit Log ---- */
 .audit-entry { display:flex; justify-content:space-between; font-family:monospace; font-size:10px; color:#9ea3af; padding:1px 0; }
@@ -264,57 +263,72 @@ html, body {
   padding: 1px 4px;
 }
 
-/* Force Light Mode Color on Timer via explicit class selector */
-#ctrl-timer-main.text-\[\#0f172a\] {
-  color: #0f172a !important;
-}
-#ctrl-timer-ms.text-\[\#c2410c\] {
-  color: #c2410c !important;
-}
-#ctrl-timer-main.text-white {
-  color: #ffffff !important;
-}
-#ctrl-timer-ms.text-yellow-400 {
-  color: #facc15 !important;
-}
+/* Console number colors are controlled by CSS, never by shared state. */
+.control-platform .text-white { color: #ffffff; }
+.control-platform .text-yellow-400 { color: #facc15; }
 
 body.control-platform { --console-foreground: #f8fafc; }
 .theme-text { color: var(--console-foreground, #f8fafc); }
-body.light-mode { --console-foreground: #0f172a; background: #f8fafc !important; color: #0f172a !important; color-scheme: light; }
+/* Every light override requires the console body, even if this file is linked elsewhere. */
+body.control-platform.light-mode {
+  --bg: #f8fafc;
+  --panel: #e8edf4;
+  --box: #f8fafc;
+  --edge: #94a3b8;
+  --ink: #0f172a;
+  --muted: #475569;
+  --console-foreground: #0f172a;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  color-scheme: light;
+}
 
-body.light-mode #timer-box {
-  background-color: #f1f5f9 !important;
+body.control-platform.light-mode #timer-box {
+  background-color: var(--box) !important;
   border-color: #cbd5e1 !important;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
 }
-body.light-mode #ctrl-timer-main {
-  color: #0f172a !important;
-}
-body.light-mode #ctrl-timer-ms {
-  color: #c2410c !important;
-}
 
-body.light-mode :is(input, select, button) { border-color: #94a3b8 !important; }
-body.light-mode .bout-editable { background: #f8fafc !important; color: #0f172a !important; }
-body.light-mode button[aria-pressed="true"], body.light-mode .senshu-active { background: #fde68a !important; color: #0f172a !important; border-color: #a16207 !important; }
-body.light-mode .judge-flag[data-flag="aka"], body.light-mode .penalty-btn-active-danger { background: #fecaca !important; border-color: #b91c1c !important; }
-body.light-mode .judge-flag[data-flag="ao"] { background: #bfdbfe !important; border-color: #1d4ed8 !important; }
-body.light-mode .penalty-btn-active-warn { background: #fef08a !important; border-color: #a16207 !important; }
-body.light-mode .mode-message { color: #854d0e; }
+body.control-platform.light-mode :is(input, select, button) { border-color: #94a3b8 !important; }
+body.control-platform.light-mode .bout-editable { background: #f8fafc !important; color: #0f172a !important; }
+body.control-platform.light-mode button[aria-pressed="true"], body.control-platform.light-mode .senshu-active { background: #fde68a !important; color: #0f172a !important; border-color: #a16207 !important; }
+body.control-platform.light-mode .judge-flag[data-flag="aka"], body.control-platform.light-mode .penalty-btn-active-danger { background: #fecaca !important; border-color: #b91c1c !important; }
+body.control-platform.light-mode .judge-flag[data-flag="ao"] { background: #bfdbfe !important; border-color: #1d4ed8 !important; }
+body.control-platform.light-mode .penalty-btn-active-warn { background: #fef08a !important; border-color: #a16207 !important; }
+body.control-platform.light-mode .mode-message { color: #854d0e; }
 
-body.light-mode :is(#aka-score-display, #ao-score-display, #kata-total-aka, #kata-total-ao) {
+body.control-platform.light-mode :is(#aka-score-display, #ao-score-display, #kata-total-aka, #kata-total-ao, #ctrl-timer-main, #ctrl-timer-ms, #bunkai-control-clock) {
   color: var(--console-foreground) !important; text-shadow: none !important;
 }
-body.light-mode :is(header, main, footer, .modal-box) :is(.text-white, [class*="text-white/"], .theme-text) {
+body.control-platform.light-mode :is(header, main, footer, .modal-box) :is(.text-white, [class*="text-white/"], .theme-text) {
   color: var(--console-foreground) !important;
   text-shadow: none !important;
 }
-body.light-mode :is(header, main, footer, .modal-box) .bg-black\/40 {
+body.control-platform.light-mode :is(header, main, footer, .modal-box) .bg-black\/40 {
   background: #f1f5f9 !important;
   border-color: #cbd5e1 !important;
 }
-body.light-mode input,
-body.light-mode button,
-body.light-mode .text-gray-400 {
+body.control-platform.light-mode input,
+body.control-platform.light-mode button,
+body.control-platform.light-mode .text-gray-400 {
   color: #1a1a1a !important;
+}
+
+/* Console layout overrides moved from control.html. */
+body.control-platform.light-mode :is(main, header, footer, .modal-box) {
+  background-color: var(--panel) !important;
+}
+body.control-platform.light-mode .score-buttons button {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+body.control-platform.light-mode #platform-message { color: #854d0e; }
+body.control-platform.light-mode .overlay {
+  background: #e2e8f0f5 !important;
+  color: #0f172a;
+}
+body.control-platform.light-mode #medical-countdown-ctrl { color: #0f172a !important; }
+body.control-platform.light-mode #hantei-banner {
+  background: #fef3c7;
+  color: #0f172a;
 }

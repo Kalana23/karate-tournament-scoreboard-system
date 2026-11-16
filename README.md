@@ -27,7 +27,9 @@ its own controller. Compact layout styles are included in the HTML so both
 windows work without downloading Tailwind or fonts. The older `mode-control.js`,
 `mode-display.js`, and `modes.css` files are retained but are no longer loaded.
 
-Light/dark theme changes explicitly swap numeric text classes in both windows.
+Light/dark mode changes only the control console body class and its scoped CSS.
+Theme is never persisted or broadcast as match data. The arena always uses fixed
+dark panels, red/blue gradients, and high-contrast text.
 The medical shortcut is **M**; dismissing its overlay leaves the match paused.
 Custom horn uploads and resetting to the synthesized horn update the arena
 immediately. Mode selection and Arena Sync publish even when streaming is paused.

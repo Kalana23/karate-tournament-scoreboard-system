@@ -369,7 +369,7 @@
       if (EL.timerMs) EL.timerMs.textContent = '.' + fmt.ms;
 
       EL.timer.classList.remove('atoshi-baraku', 'timer-ended');
-      if (EL.timerMs) EL.timerMs.className = 'ms-digits';
+      if (EL.timerMs) EL.timerMs.className = 'ms-digits text-yellow-400';
 
       if (ms <= 0) {
         EL.timer.classList.add('timer-ended');
@@ -378,7 +378,7 @@
         EL.timer.classList.add('atoshi-baraku');
         if (EL.timerMs) EL.timerMs.style.color = '#f59e0b';
       } else {
-        if (EL.timerMs) EL.timerMs.style.color = '#fde047';
+        if (EL.timerMs) EL.timerMs.style.color = '';
       }
     }
 
@@ -474,21 +474,6 @@
       applyPenalty(EL.aoH,   state.aoPenalties.h,   'h');
     }
     window.TournamentDisplay?.render(state);
-    renderTheme(state.theme);
-  }
-
-  function renderTheme(theme) {
-    if (!document.body) return;
-    const light = theme === 'light';
-    document.body.classList.toggle('light-mode', light);
-    document.documentElement.classList.toggle('light', light);
-    document.documentElement.classList.toggle('dark', !light);
-    document.querySelectorAll('[data-theme-number]').forEach(element => {
-      element.classList.toggle('text-[#0f172a]', light);
-      element.classList.toggle('text-white', !light);
-      if (light) element.style.color = '#0f172a';
-      else if (element.id !== 'display-timer-ms') element.style.color = '';
-    });
   }
 
   /* ============================================================
@@ -502,7 +487,7 @@
     timerEl.appendChild(document.createTextNode('2:00'));
     if (msEl) {
       timerEl.appendChild(msEl);
-      msEl.className = 'ms-digits';
+      msEl.className = 'ms-digits text-yellow-400';
       msEl.textContent = '.00';
     }
   }
