@@ -1,3 +1,77 @@
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  let mounted = false;
+  const text = (tag, value, className) => {
+    const el = document.createElement(tag); el.textContent = value;
+    if (className) el.className = className;
+    return el;
+  };
+  function mount() {
+    document.querySelectorAll('[data-bunkai-action]').forEach(el => el.addEventListener('click', () => {
+      const action = el.dataset.bunkaiAction;
+      try {
+        if (window.require) window.require('electron').ipcRenderer.send('bunkai-action', action);
+        else localStorage.setItem('karateBunkaiAction', JSON.stringify({ action, ts: Date.now() }));
+      } catch (e) { console.warn('Timer action could not be sent', e); }
+    }));
+    mounted = true;
+  }
+  let lastKataSignature = '';
+  let lastTeamSignature = '';
+  function render(state) {
+    if (!document.body) return;
+    if (!mounted) mount();
+    document.body.dataset.mode = state.mode || 'kumite';
+    $('display-mode-label').textContent = (state.mode || 'kumite').replaceAll('_', ' ').toUpperCase();
+    const kata = Tournament.isKata(state.mode);
+    if (state.mode === 'team_kumite') {
+      const signature = JSON.stringify([state.teamFormat, state.teamBouts]);
+      if (signature !== lastTeamSignature) {
+        lastTeamSignature = signature;
+        const s = Tournament.teamStatus(state);
+        const tracker = $('arena-team-tracker'); tracker.replaceChildren();
+        const summary = text('div', '', 'team-summary');
+        summary.append(text('strong', `AKA TEAM WINS ${s.akaWins}`), text('span', `TOTAL POINTS: AKA ${s.akaPoints} - ${s.aoPoints} AO`), text('strong', `AO TEAM WINS ${s.aoWins}`));
+        tracker.append(summary);
+        const pills = text('div', '', 'bout-pills');
+        for (let i = 0; i < s.max; i++) {
+          const bout = state.teamBouts?.[i];
+          const label = i < state.teamFormat ? `BOUT ${i + 1}` : `EXTRA BOUT ${i - state.teamFormat + 1}`;
+          const pill = text('span', bout ? `${label}: ${bout.akaScore}-${bout.aoScore} (${bout.winner?.toUpperCase() || 'DRAW'})` : label, 'bout-pill');
+          pill.dataset.winner = bout?.winner || ''; pills.append(pill);
+        }
+        tracker.append(pills);
+        if (s.complete) tracker.append(text('div', s.winner ? `${s.winner.toUpperCase()} WINS THE SERIES` : 'SERIES TIED — REFEREE DECISION REQUIRED'));
+      }
+    }
+    if (!kata) return;
+    const signature = JSON.stringify([state.mode, state.kataScoring, state.kataNames, state.judgeFlags, state.kataResults, state.rosters]);
+    if (signature !== lastKataSignature) {
+      lastKataSignature = signature;
+      for (const side of ['aka', 'ao']) {
+        $('arena-kata-' + side).textContent = `${side.toUpperCase()}: ${state.kataNames?.[side] || 'Kata not selected'}`;
+        $('arena-roster-' + side).textContent = (state.rosters?.[side] || []).filter(Boolean).join(' • ');
+        const cards = $('arena-judges-' + side); cards.replaceChildren();
+        const result = state.kataScoring === 'points' ? state.kataResults?.[side] : null;
+        if (result) result.values.forEach((value, i) => {
+          const card = text('div', value.toFixed(1), 'kata-scorecard' + (result.dropped.includes(i) ? ' dropped' : ''));
+          card.prepend(text('small', `J${i + 1}${result.dropped.includes(i) ? ' DROPPED' : ''}`)); cards.append(card);
+        });
+      }
+      const flags = $('arena-flags'); flags.replaceChildren();
+      flags.hidden = state.kataScoring !== 'flags';
+      if (!flags.hidden) (state.judgeFlags || Array(5).fill(null)).forEach((flag, i) => {
+        const el = text('div', 'J' + (i + 1) + ' ' + (flag ? flag.toUpperCase() : '—'), 'judge-flag');
+        el.dataset.flag = flag || ''; el.setAttribute('aria-label', `Judge ${i + 1}: ${flag || 'neutral'}`); flags.append(el);
+      });
+    }
+    const ms = state.bunkaiMs ?? 300000;
+    $('arena-bunkai-clock').textContent = `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}.${String(Math.floor(ms % 1000 / 10)).padStart(2, '0')}`;
+  }
+  window.TournamentDisplay = { render };
+})();
+
 /**
  * ============================================================
  * ARENA DISPLAY — PRODUCTION RECEIVER v2
@@ -98,6 +172,8 @@
      ============================================================ */
   let audioCtx = null;
   let customAudioBuffer = null;
+  let audioRevision = 0;
+  let audioMuted = false;
 
   function initAudio() {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -174,11 +250,17 @@
   }
 
   async function loadCustomBuzzer() {
+    const revision = audioRevision;
+    try {
+      if (localStorage.getItem('customBuzzerDisabled') === 'true') return;
+      const cached = localStorage.getItem('customBuzzerAudio');
+      if (cached) { await decodeBuzzer(cached); return; }
+    } catch (_) {}
     // 1. Try Electron IPC
     if (ipc) {
       try {
         const b64 = await ipc.invoke('load-buzzer');
-        if (b64) {
+        if (b64 && revision === audioRevision) {
           await decodeBuzzer(b64);
           return;
         }
@@ -192,19 +274,24 @@
   }
 
   async function decodeBuzzer(base64Str) {
+    const revision = ++audioRevision;
+    if (!base64Str) { customAudioBuffer = null; return; }
     try {
       initAudio();
       const binary = atob(base64Str);
       const bytes  = new Uint8Array(binary.length);
       for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      customAudioBuffer = await audioCtx.decodeAudioData(bytes.buffer);
+      const decoded = await audioCtx.decodeAudioData(bytes.buffer);
+      if (revision === audioRevision) customAudioBuffer = decoded;
     } catch (e) {}
   }
 
   let lastBuzzerTs = 0;
   function handleBuzzerEvent(ev) {
+    if (ev?.type === 'audio-config') { decodeBuzzer(ev.audio); return; }
     if (!ev || ev.ts <= lastBuzzerTs) return;
     lastBuzzerTs = ev.ts;
+    if (audioMuted) return;
 
     switch (ev.type) {
       case 'victory':   playVictoryBuzzer(); break;
@@ -245,6 +332,7 @@
   function renderDisplay(state) {
     if (!state) return;
     state = Tournament.viewState(state);
+    audioMuted = !!state.audioMuted;
     renderLogos(state.logos);
 
     /* ---- 1. Scores ---- */
@@ -252,10 +340,8 @@
     if (EL.aoScore)  EL.aoScore.textContent  = state.aoScore  ?? 0;
 
     /* ---- 2. Winner Blink Animation ---- */
-    EL.akaScore?.classList.remove('winner-blink');
-    EL.aoScore?.classList.remove('winner-blink');
-    if (state.winner === 'aka') EL.akaScore?.classList.add('winner-blink');
-    if (state.winner === 'ao')  EL.aoScore?.classList.add('winner-blink');
+    EL.akaScore?.classList.toggle('winner-blink', state.winner === 'aka');
+    EL.aoScore?.classList.toggle('winner-blink', state.winner === 'ao');
 
     /* ---- 3. Names & Countries ---- */
     if (EL.akaName)    EL.akaName.textContent    = state.akaName    || 'PLAYER 1 NAME';
@@ -271,6 +357,8 @@
     if (EL.tatamiName && state.tatamiName) EL.tatamiName.textContent = state.tatamiName;
     if (EL.boutNum    && state.boutNumber) EL.boutNum.textContent   = `BOUT #${state.boutNumber}`;
     if (EL.roundLabel && state.roundLabel) EL.roundLabel.textContent = state.roundLabel;
+    if ($('display-pool')) $('display-pool').textContent = state.poolText || '';
+    if ($('display-ruleset')) $('display-ruleset').textContent = state.rulesetText || '';
 
     /* ---- 6. Timer with Yellow Milliseconds ---- */
     if (EL.timer) {
@@ -324,7 +412,7 @@
     if (EL.medicalOverlay) {
       if (state.medicalActive) {
         EL.medicalOverlay.classList.add('open');
-        const secondsRemaining = Math.max(0, Math.ceil((state.medicalMs || 10000) / 1000));
+        const secondsRemaining = Math.max(0, Math.ceil((state.medicalMs ?? 10000) / 1000));
         if (EL.medicalCountdown) EL.medicalCountdown.textContent = secondsRemaining;
         if (state.medicalMs <= 3000) EL.medicalOverlay.classList.add('urgent');
         else EL.medicalOverlay.classList.remove('urgent');
@@ -386,6 +474,21 @@
       applyPenalty(EL.aoH,   state.aoPenalties.h,   'h');
     }
     window.TournamentDisplay?.render(state);
+    renderTheme(state.theme);
+  }
+
+  function renderTheme(theme) {
+    if (!document.body) return;
+    const light = theme === 'light';
+    document.body.classList.toggle('light-mode', light);
+    document.documentElement.classList.toggle('light', light);
+    document.documentElement.classList.toggle('dark', !light);
+    document.querySelectorAll('[data-theme-number]').forEach(element => {
+      element.classList.toggle('text-[#0f172a]', light);
+      element.classList.toggle('text-white', !light);
+      if (light) element.style.color = '#0f172a';
+      else if (element.id !== 'display-timer-ms') element.style.color = '';
+    });
   }
 
   /* ============================================================
@@ -406,7 +509,8 @@
 
   document.addEventListener('DOMContentLoaded', async () => {
     setupTimerNode();
-    await loadCustomBuzzer();
+    // Bind IPC before starting any asynchronous decode to avoid missing startup state.
+    loadCustomBuzzer();
 
     // 1. Initial State from localStorage
     try {
@@ -426,6 +530,8 @@
 
     // 3. Cross-Window Storage Event Listener (Browser or Electron fallback)
     window.addEventListener('storage', e => {
+      if (e.key === 'customBuzzerAudio') decodeBuzzer(e.newValue);
+      if (e.key === 'customBuzzerDisabled' && e.newValue === 'true') decodeBuzzer(null);
       if (e.key === 'karateBuzzerEvent' && e.newValue) {
         try { handleBuzzerEvent(JSON.parse(e.newValue)); } catch (err) {}
       }

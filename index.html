@@ -1,263 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>Karate Kumite — Arena Display</title>
-<!-- Tailwind CDN (works offline in Electron cache) -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&family=Montserrat:ital,wght@0,700;0,800;0,900;1,900&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/modes.css">
-</head>
-<body data-mode="kumite" class="w-screen h-screen flex flex-col bg-black text-white overflow-hidden select-none">
-
-<!-- ==================== TOP HEADER: TOURNAMENT TITLE ==================== -->
-<header class="w-full shrink-0 bg-[#0B0B0E] border-b border-white/20 px-6 py-1.5 flex items-center z-30 shadow-md justify-between" style="min-height:42px;">
-  <!-- Left logo -->
-  <div class="flex shrink-0 items-center gap-3">
-    <img id="logo-main-header" alt="Japan Karate-Do Hayashi-Ha logo" class="hidden h-10 max-h-12 w-auto max-w-24 object-contain">
-    <div class="flex flex-col gap-1 text-left leading-none">
-      <span class="text-[9px] tracking-[0.2em] text-white/70 font-bold uppercase">JAPAN KARATE-DO</span>
-      <span class="text-xs tracking-[0.15em] text-amber-400 font-black uppercase">HAYASHI-HA</span>
-    </div>
-  </div>
-
-  <!-- Center: Tournament Name -->
-  <h1 id="display-tournament-name" class="text-xs sm:text-sm font-black tracking-[0.2em] text-white uppercase drop-shadow text-center flex-1 px-4 leading-tight">
-    2028 10TH JAPAN KARATE-DO HAYASHI HA SHITORYU KAI WORLD KARATE TOURNAMENT — SRI LANKA
-  </h1>
-
-  <!-- Right: Tatami Badge & Federation Code -->
-  <div class="flex items-center gap-2">
-    <div id="display-tatami-badge" class="bg-white text-neutral-950 font-black text-sm px-4 py-1 rounded-xl shadow tracking-tight uppercase border border-white flex items-center gap-2">
-      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-ping"></span>
-      <span id="display-tatami-name">TATAMI 1</span>
-    </div>
-    <div class="bg-white/10 border border-white/20 px-3 py-1 rounded text-[10px] font-mono font-bold tracking-widest text-amber-400 uppercase">JKHK-SL</div>
-  </div>
-</header>
-
+<html lang="en" class="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Karate · Arena Display</title><link rel="stylesheet" href="css/style.css"><style>
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden}body{--ink:#fff;--panel:#10141c;--edge:#ffffff40;--muted:#cbd5e1;background:#050507;color:var(--ink);font:16px/1.25 system-ui,sans-serif;height:100dvh;display:flex;flex-direction:column}body.light-mode{--ink:#0f172a;--panel:#f1f5f9;--edge:#94a3b8;--muted:#334155;background:#f8fafc;color:#0f172a;color-scheme:light}.hidden,[hidden]{display:none!important}.object-contain{object-fit:contain}header{display:flex;align-items:center;gap:16px;background:var(--panel);border-bottom:1px solid var(--edge);padding:6px 20px;flex:none;min-height:52px}header h1{flex:1;text-align:center;font-size:clamp(12px,1.2vw,23px);text-transform:uppercase;margin:0;overflow-wrap:anywhere}header img{max-height:42px;max-width:100px}#display-tatami-name{font-size:18px;font-weight:900;white-space:nowrap}.arena-meta{display:flex;justify-content:center;gap:20px;padding:5px 12px;background:var(--panel);font-size:13px;font-weight:800;flex:none}.arena-meta span{min-width:0}#display-mode-label{color:#fbbf24}.team-tracker{background:var(--panel);padding:5px 12px;flex:none;text-align:center;border-bottom:1px solid var(--edge)}.team-summary{display:flex;justify-content:space-around;align-items:center;gap:10px}.team-summary strong{font-size:20px}.bout-pills{display:flex;justify-content:center;gap:5px;margin-top:4px}.bout-pill{font-size:11px;border:1px solid var(--edge);border-radius:20px;padding:3px 8px}.bout-pill[data-winner=aka]{background:#991b1b;color:white}.bout-pill[data-winner=ao]{background:#1e40af;color:white}
+#arena-workspace{position:relative;flex:1;min-height:0;display:flex;overflow:hidden}.arena-corner{flex:1;min-width:0;padding:18px;display:flex;flex-direction:column;position:relative}.arena-corner.aka{background:#ad1023}.arena-corner.ao{background:#123b99}.arena-identity{width:calc(100% - 12vw);min-height:120px;flex:none;align-self:flex-start}.arena-identity-ao{align-self:flex-end;text-align:right}.arena-identity h1{margin:0;font-size:clamp(40px,6vw,100px);line-height:1;font-weight:900}.identity-line{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--edge);padding:6px 0;min-width:0}.arena-identity-ao .identity-line{flex-direction:row-reverse}.identity-line>span:first-child{font-size:15px;border:1px solid var(--edge);padding:4px 7px;border-radius:6px}.identity-line>span:last-child{font-size:clamp(16px,1.9vw,36px);font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.kata-roster{font-size:16px;overflow-wrap:anywhere;margin-top:5px}.arena-score-block{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center}.arena-score{font-size:clamp(90px,25vh,300px);line-height:1;font-weight:900;font-variant-numeric:tabular-nums}.senshu-badge{margin-top:8px;background:#fbbf24;color:#0f172a;border-radius:999px;padding:6px 20px;font-weight:900}.opacity-0{visibility:hidden}.opacity-100{visibility:visible}.arena-penalties{display:flex;flex-direction:column;gap:5px;align-items:center;flex:none}.arena-penalties small{font-size:12px;letter-spacing:.1em}.arena-penalties>div{display:flex;gap:8px}.penalty-circle{width:clamp(32px,4.5vh,54px);height:clamp(32px,4.5vh,54px);border:2px solid var(--edge);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;background:#0004}
+#arena-center{position:absolute;left:50%;top:0;bottom:0;transform:translateX(-50%);width:27vw;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:20;pointer-events:none}#arena-center #arena-timer-wrapper{position:static;transform:none;width:100%;text-align:center}#display-category{position:absolute;top:12px;width:100%;text-align:center;font-size:clamp(12px,1.4vw,24px);font-weight:900;background:var(--panel);padding:8px;border-radius:8px;overflow-wrap:anywhere}#display-timer{font-size:clamp(40px,7vw,130px)!important;white-space:nowrap;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.05!important;text-shadow:0 1px 5px #0008;background:var(--panel);border-radius:12px;padding:6px}.ms-digits{font-size:.44em;color:#fde047}#display-match-status{font-size:clamp(11px,1vw,18px);font-weight:900;letter-spacing:.05em;text-align:center;padding:10px 0;background:var(--panel);border-radius:6px;margin-top:8px}
+.kata-center{position:absolute;left:50%;top:25%;transform:translateX(-50%);width:27vw;z-index:30;text-align:center;pointer-events:none}.kata-banner{background:var(--panel);border:1px solid #fbbf24;padding:10px;border-radius:8px;font-size:clamp(12px,1.1vw,20px);font-weight:800;overflow-wrap:anywhere;margin-bottom:12px}.judge-flags{display:flex;gap:4px}.judge-flag{flex:1;background:var(--panel);padding:10px 3px;border:1px solid var(--edge);border-radius:6px;font-size:12px;font-weight:800}.judge-flag[data-flag=aka]{background:#991b1b;color:#fff}.judge-flag[data-flag=ao]{background:#1e40af;color:#fff}.kata-scorecards{display:flex;gap:5px;justify-content:center;flex:none;min-height:0}.kata-scorecard{padding:8px;background:var(--panel);border:1px solid var(--edge);border-radius:6px;font-size:clamp(15px,1.6vw,28px)}.kata-scorecard small{display:block;font-size:9px}.kata-scorecard.dropped{opacity:.55;text-decoration:line-through}.platform-box{background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:8px;margin-top:12px}.bunkai-clock{font-size:clamp(28px,3.8vw,62px);font-weight:900;font-variant-numeric:tabular-nums}.bunkai-actions{display:flex;justify-content:center;gap:5px;pointer-events:auto}.bunkai-actions button{background:var(--panel);color:var(--ink);border:1px solid var(--edge);padding:5px 12px;cursor:pointer;font:inherit;border-radius:5px}body[data-mode=kata] #arena-timer-wrapper,body[data-mode=team_kata] #arena-timer-wrapper{display:none}body[data-mode=kata] .arena-score,body[data-mode=team_kata] .arena-score{font-size:clamp(70px,15vw,240px)}
+footer{background:var(--panel);border-top:1px solid var(--edge);display:flex;align-items:center;justify-content:center;gap:15px;padding:5px 12px;flex:none;height:62px}footer>small{font-size:10px;color:var(--muted);width:130px}footer>div{display:flex;align-items:center;gap:7px;min-width:0;flex:1;justify-content:center}footer figure{margin:0;display:flex;align-items:center;gap:7px;border:1px solid var(--edge);border-radius:6px;padding:4px 8px;min-width:0;height:48px;max-width:20%}footer figcaption{font-size:10px;color:var(--muted)}footer img{height:34px;max-width:100px}.overlay{color:#f8fafc}#win-reason-banner{bottom:70px;max-width:95vw;white-space:normal;font-size:clamp(12px,1.1vw,20px);padding:6px 18px}body.light-mode .arena-corner.aka{background:#fee2e2}body.light-mode .arena-corner.ao{background:#dbeafe}body.light-mode [data-theme-number]{color:#0f172a!important;text-shadow:none!important}body.light-mode #display-mode-label{color:#92400e}body.light-mode .penalty-circle{background:#ffffff70}body.light-mode .overlay{background:#e2e8f0f5!important;color:#0f172a}body.light-mode #medical-countdown{color:#0f172a!important}
+body:not([data-mode=team_kumite]) [data-team-kumite],body:not([data-mode=team_kata]) [data-team-kata],body:not([data-mode=kata]):not([data-mode=team_kata]) [data-kata],body[data-mode=kata] [data-kumite],body[data-mode=team_kata] [data-kumite]{display:none!important}
+</style></head>
+<body data-mode="kumite">
+<header><img id="logo-main-header" alt="Tournament logo" class="hidden object-contain"><h1 id="display-tournament-name">KARATE TOURNAMENT</h1><span id="display-tatami-name">TATAMI 1</span></header>
+<div class="arena-meta"><span id="display-mode-label">KUMITE</span><span id="display-bout-num">BOUT #14</span><span id="display-round">R1 ELIM</span><span id="display-pool">Semi-Finals</span><span id="display-ruleset">WKF</span></div>
 <div id="arena-team-tracker" data-team-kumite class="team-tracker"></div>
-<!-- ==================== MAIN: 50/50 SPLIT + CENTER FLOATING TIMER ==================== -->
-<main id="arena-workspace" class="w-full flex-1 min-h-0 flex overflow-hidden relative">
-
-  <!-- ==================== LEFT: AKA (RED CORNER) ==================== -->
-  <section id="arena-aka-panel" class="min-w-0 flex-1 bg-[#C01020] relative flex flex-col justify-between p-3.5 shadow-[inset_-15px_0_40px_rgba(0,0,0,0.4)] border-r-2 border-black/40 z-10 transition-colors duration-300">
-
-    <!-- Top: AKA Info & Team Kumite Indicator -->
-    <div class="arena-identity arena-identity-aka shrink-0 flex items-start justify-start">
-      <div class="space-y-0.5">
-        <div class="flex items-center gap-3">
-          <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
-            <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 1</span>
-          </div>
-        </div>
-
-        <h1 class="font-black uppercase tracking-tight text-white leading-none drop-shadow-md" style="font-size: clamp(2.2rem, 7.5vw, 6.5rem);">
-          AKA
-        </h1>
-        <p class="text-xs font-bold tracking-widest text-white/70 uppercase">赤 / RED</p>
-
-        <!-- Competitor Name & Country Flag/Code -->
-        <div class="pt-0.5 flex items-center gap-2 border-b border-white/30 pb-1">
-          <div class="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded border border-white/20">
-            <span id="display-aka-country" class="text-xs font-mono font-bold tracking-wider text-white">SRI</span>
-          </div>
-          <span id="display-aka-name" class="font-black uppercase tracking-wider text-white drop-shadow truncate max-w-[32vw]" style="font-size: clamp(1rem, 2.8vw, 2.5rem);">
-            PLAYER 1 NAME
-          </span>
-        </div>
-      </div>
-
-
-    </div>
-
-    <!-- Center: Huge Score Display & Senshu Badge -->
-    <div class="flex-1 flex flex-col items-center justify-center min-h-0 overflow-hidden">
-      <div id="display-aka-score"
-        class="leading-none font-black text-white score-glow-red select-none tabular-nums tracking-tighter transition-all duration-300"
-        style="font-size: clamp(5.5rem, 22vh, 25vh); line-height: 1;">
-        0
-      </div>
-
-      <!-- Senshu Advantage Badge -->
-      <div id="display-aka-senshu"
-        class="mt-2 flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.2em] uppercase senshu-glow border-2 border-white/90 transition-all duration-300 opacity-0 pointer-events-none"
-        style="font-size: clamp(0.9rem, 1.8vh, 1.35rem);">
-        <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <span>SENSHU</span>
-        <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>
-    </div>
-
-    <!-- Bottom: Penalties (Single Row) -->
-    <div class="shrink-0 w-full flex flex-col items-center gap-1 pb-1">
-      <span class="text-[10px] tracking-wider font-extrabold uppercase text-white/80">AKA PENALTIES</span>
-      <div class="flex items-center justify-center gap-2 sm:gap-2.5">
-        <div id="display-aka-ch1" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH1</div>
-        <div id="display-aka-ch2" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH2</div>
-        <div id="display-aka-ch3" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH3</div>
-        <div id="display-aka-hc"  class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">HC</div>
-        <div id="display-aka-h"   class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">H</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== CENTER FLOATING TIMER CARD ==================== -->
-  <div id="arena-center" class="absolute inset-y-0 left-1/2 -translate-x-1/2 flex flex-col items-center justify-between py-3 z-20 pointer-events-none">
-
-    <!-- Category Pill -->
-    <div class="arena-category-wrapper flex justify-center w-full">
-      <div id="display-category"
-        class="bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black px-5 py-1 rounded-full tracking-[0.15em] uppercase shadow-[0_0_20px_rgba(250,204,21,0.5)] border border-white/80 text-center transition-all duration-300"
-        style="font-size:clamp(0.6rem,1.4vh,1rem); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;">
-        Cadet | -52kg
-      </div>
-    </div>
-
-    <!-- Giant Match Clock with Milliseconds -->
-    <div id="arena-timer-wrapper" data-kumite class="flex flex-col items-center justify-center pointer-events-none z-20">
-      <div id="display-timer"
-        class="font-timer font-bold tracking-tighter text-white timer-glow tabular-nums leading-none select-none transition-colors duration-300 text-center"
-        style="font-size: clamp(3.5rem, 11vh, 13vh); line-height: 1;">
-        2:00<span id="display-timer-ms" class="ms-digits">.00</span>
-      </div>
-    </div>
-
-    <!-- Match Status & Bout Metadata -->
-    <div class="flex flex-col items-center gap-1 w-full">
-      <div id="display-match-status" class="text-white font-extrabold tracking-[0.2em] uppercase text-center drop-shadow transition-all duration-300" style="font-size:clamp(0.65rem,1.6vh,1.1rem);">
-        MATCH READY
-      </div>
-      <!-- Bout info -->
-      <div class="flex items-center gap-2 text-white/50 font-mono" style="font-size:clamp(0.5rem,1vh,0.75rem);">
-        <span id="display-bout-num">BOUT #14</span>
-        <span>·</span>
-        <span id="display-round">R1 ELIM</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== RIGHT: AO (BLUE CORNER) ==================== -->
-  <section id="arena-ao-panel" class="min-w-0 flex-1 bg-[#1245C8] relative flex flex-col justify-between p-3.5 shadow-[inset_15px_0_40px_rgba(0,0,0,0.4)] border-l-2 border-black/40 z-10 transition-colors duration-300">
-
-    <!-- Top: AO Info & Team Kumite Indicator -->
-    <div class="arena-identity arena-identity-ao shrink-0 flex items-end text-right justify-end">
-
-
-      <div class="min-w-0 flex flex-col items-end space-y-0.5 text-right">
-        <div class="flex items-center justify-end gap-3">
-          <div class="flex items-center gap-1.5">
-            <span class="text-[10px] tracking-[0.3em] uppercase font-bold text-white/70">Competitor 2</span>
-            <span class="w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-[0_0_10px_#fff]"></span>
-          </div>
-        </div>
-
-        <h1 class="font-black uppercase tracking-tight text-white leading-none drop-shadow-md" style="font-size: clamp(2.2rem, 7.5vw, 6.5rem);">
-          AO
-        </h1>
-        <p class="text-xs font-bold tracking-widest text-white/70 uppercase">青 / BLUE</p>
-
-        <!-- Competitor Name & Country Flag/Code -->
-        <div class="pt-0.5 flex items-center justify-end gap-2 border-b border-white/30 pb-1">
-          <span id="display-ao-name" class="font-black uppercase tracking-wider text-white drop-shadow truncate max-w-[32vw]" style="font-size: clamp(1rem, 2.8vw, 2.5rem);">
-            PLAYER 2 NAME
-          </span>
-          <div class="flex items-center gap-1 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded border border-white/20">
-            <span id="display-ao-country" class="text-xs font-mono font-bold tracking-wider text-white">JPN</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Center: Huge Score Display & Senshu Badge -->
-    <div class="flex-1 flex flex-col items-center justify-center min-h-0 overflow-hidden">
-      <div id="display-ao-score"
-        class="leading-none font-black text-white score-glow-blue select-none tabular-nums tracking-tighter transition-all duration-300"
-        style="font-size: clamp(5.5rem, 22vh, 25vh); line-height: 1;">
-        0
-      </div>
-
-      <!-- Senshu Advantage Badge -->
-      <div id="display-ao-senshu"
-        class="mt-2 flex items-center gap-2 px-6 py-2 rounded-full bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-neutral-950 font-black tracking-[0.2em] uppercase senshu-glow border-2 border-white/90 transition-all duration-300 opacity-0 pointer-events-none"
-        style="font-size: clamp(0.9rem, 1.8vh, 1.35rem);">
-        <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <span>SENSHU</span>
-        <svg class="w-4 h-4 fill-neutral-950 shrink-0" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      </div>
-    </div>
-
-    <!-- Bottom: Penalties (Single Row) -->
-    <div class="shrink-0 w-full flex flex-col items-center gap-1 pb-1">
-      <span class="text-[10px] tracking-wider font-extrabold uppercase text-white/80">AO PENALTIES</span>
-      <div class="flex items-center justify-center gap-2 sm:gap-2.5">
-        <div id="display-ao-ch1" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH1</div>
-        <div id="display-ao-ch2" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH2</div>
-        <div id="display-ao-ch3" class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">CH3</div>
-        <div id="display-ao-hc"  class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">HC</div>
-        <div id="display-ao-h"   class="penalty-circle rounded-full bg-black/40 border-2 border-white/30 backdrop-blur-md flex items-center justify-center text-white font-extrabold shadow-inner" style="width:clamp(2.4rem,4.5vh,3.5rem);height:clamp(2.4rem,4.5vh,3.5rem);font-size:clamp(0.65rem,1.2vh,1rem);">H</div>
-      </div>
-    </div>
-  </section>
-
+<main id="arena-workspace"><section id="arena-aka-panel" class="arena-corner aka">
+  <div class="arena-identity arena-identity-aka"><h1>AKA</h1><div class="identity-line"><span id="display-aka-country">SRI</span><span id="display-aka-name">AKA COMPETITOR</span></div><div data-team-kata id="arena-roster-aka" class="kata-roster"></div></div>
+  <div class="arena-score-block"><div id="display-aka-score" data-theme-number class="arena-score text-white">0</div><div data-kumite id="display-aka-senshu" class="senshu-badge opacity-0">★ SENSHU</div></div>
+  <div data-kumite class="arena-penalties"><small>AKA PENALTIES</small><div><span id="display-aka-ch1" class="penalty-circle">CH1</span><span id="display-aka-ch2" class="penalty-circle">CH2</span><span id="display-aka-ch3" class="penalty-circle">CH3</span><span id="display-aka-hc" class="penalty-circle">HC</span><span id="display-aka-h" class="penalty-circle">H</span></div></div>
+  <div data-kata id="arena-judges-aka" class="kata-scorecards"></div>
+</section><section id="arena-ao-panel" class="arena-corner ao">
+  <div class="arena-identity arena-identity-ao"><h1>AO</h1><div class="identity-line"><span id="display-ao-country">JPN</span><span id="display-ao-name">AO COMPETITOR</span></div><div data-team-kata id="arena-roster-ao" class="kata-roster"></div></div>
+  <div class="arena-score-block"><div id="display-ao-score" data-theme-number class="arena-score text-white">0</div><div data-kumite id="display-ao-senshu" class="senshu-badge opacity-0">★ SENSHU</div></div>
+  <div data-kumite class="arena-penalties"><small>AO PENALTIES</small><div><span id="display-ao-ch1" class="penalty-circle">CH1</span><span id="display-ao-ch2" class="penalty-circle">CH2</span><span id="display-ao-ch3" class="penalty-circle">CH3</span><span id="display-ao-hc" class="penalty-circle">HC</span><span id="display-ao-h" class="penalty-circle">H</span></div></div>
+  <div data-kata id="arena-judges-ao" class="kata-scorecards"></div>
+</section>
+<div id="arena-center"><div id="display-category">Cadet | -52kg</div><div id="arena-timer-wrapper" data-kumite><div id="display-timer" data-theme-number class="text-white">2:00<span id="display-timer-ms" data-theme-number class="ms-digits">.00</span></div><div id="display-match-status">MATCH READY</div></div></div>
+<div data-kata class="kata-center"><div class="kata-banner"><div id="arena-kata-aka">AKA: Kata not selected</div><div id="arena-kata-ao">AO: Kata not selected</div></div><div id="arena-flags" class="judge-flags"></div><div data-team-kata class="platform-box"><div>KATA &amp; BUNKAI</div><div id="arena-bunkai-clock" data-theme-number class="bunkai-clock text-white">5:00.00</div><div class="bunkai-actions"><button data-bunkai-action="start">Start</button><button data-bunkai-action="stop">Stop</button><button data-bunkai-action="reset">Reset</button></div></div></div>
 </main>
-
-<!-- ==================== DYNAMIC OVERLAYS ==================== -->
-
-<!-- 1. 10s Medical Timer Overlay -->
-<div id="medical-overlay">
-  <div class="text-emerald-400 font-black uppercase tracking-widest text-2xl sm:text-3xl flex items-center gap-2">
-    <span>⚕ MEDICAL STOPPAGE</span>
-  </div>
-  <div id="medical-countdown">10</div>
-  <div class="text-white/70 text-sm sm:text-base uppercase tracking-widest font-mono">Medical Assessment Time Remaining</div>
-</div>
-
-<!-- 2. Hantei (Referee Decision) Overlay -->
-<div id="hantei-overlay">
-  <div id="hantei-title">HANTEI</div>
-  <div class="text-white/80 text-xl sm:text-2xl uppercase tracking-[0.4em] font-bold">— REFEREE DECISION —</div>
-  <div id="hantei-winner-display" class="hidden text-5xl sm:text-7xl font-black text-amber-400 uppercase tracking-widest mt-4"></div>
-</div>
-
-<!-- 3. Win Reason Banner (Kiken / Shikkaku / Gap / Hantei) -->
-<div id="win-reason-banner"></div>
-
-<!-- ==================== BOTTOM FOOTER: SPONSORS ==================== -->
-<footer class="w-full shrink-0 bg-[#0B0B0E] border-t border-white/15 px-6 py-2 z-30 select-none flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-  <span class="text-[9px] font-black uppercase tracking-[0.3em] text-white/50">OFFICIAL TOURNAMENT SPONSORS &amp; PARTNERS</span>
-  <div class="flex min-w-0 max-w-full flex-wrap items-stretch justify-center gap-3">
-    <div class="flex w-36 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-amber-400/60 bg-gradient-to-r from-amber-400/15 via-white/5 to-amber-400/15 px-3 py-2">
-      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Title Sponsor</span>
-      <img id="logo-title-sponsor" alt="Title sponsor logo" class="hidden h-8 max-h-8 w-auto max-w-full object-contain">
-    </div>
-    <div class="flex w-32 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
-      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Platinum</span>
-      <img id="logo-platinum-partner" alt="Platinum sponsor logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
-    </div>
-    <div class="flex w-32 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
-      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Gold</span>
-      <img id="logo-gold-partner" alt="Gold sponsor logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
-    </div>
-    <div class="flex w-32 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
-      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Silver</span>
-      <img id="logo-silver-sponsor" alt="Silver sponsor logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
-    </div>
-    <div class="flex w-40 max-w-full flex-col items-center justify-center gap-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2">
-      <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">Association Partner</span>
-      <img id="logo-association-partner" alt="Association partner logo" class="hidden h-6 max-h-6 w-auto max-w-full object-contain">
-    </div>
-  </div>
-</footer>
-
-<script src="js/tournament.js"></script>
-<script src="js/mode-display.js"></script>
-<script src="js/display.js"></script>
-</body>
-</html>
+<div id="medical-overlay" class="overlay" role="status"><h2>MEDICAL STOPPAGE</h2><div id="medical-countdown">10</div><p>Medical assessment time remaining</p></div>
+<div id="hantei-overlay" class="overlay" role="status"><div id="hantei-title">HANTEI</div><h2>REFEREE DECISION REQUIRED</h2><div id="hantei-winner-display" class="hidden"></div></div>
+<div id="win-reason-banner" role="status"></div>
+<footer><small>OFFICIAL SPONSORS &amp; PARTNERS</small><div><figure><figcaption>Title sponsor</figcaption><img id="logo-title-sponsor" alt="Title sponsor logo" class="hidden object-contain"></figure><figure><figcaption>Platinum partner</figcaption><img id="logo-platinum-partner" alt="Platinum partner logo" class="hidden object-contain"></figure><figure><figcaption>Gold partner</figcaption><img id="logo-gold-partner" alt="Gold partner logo" class="hidden object-contain"></figure><figure><figcaption>Silver sponsor</figcaption><img id="logo-silver-sponsor" alt="Silver sponsor logo" class="hidden object-contain"></figure><figure><figcaption>Association partner</figcaption><img id="logo-association-partner" alt="Association partner logo" class="hidden object-contain"></figure></div></footer>
+<script src="js/tournament.js"></script><script src="js/display.js"></script>
+</body></html>

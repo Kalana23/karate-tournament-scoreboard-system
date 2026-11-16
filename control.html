@@ -1,773 +1,126 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
-<head>
-<meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>KUMITE DESK // TATAMI 1 — Control Console</title>
-
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com" rel="preconnect">
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script src="js/tailwind-config.js"></script>
+<html lang="en" class="dark">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Tatami Control Console</title>
 <link rel="stylesheet" href="css/control.css">
-<link rel="stylesheet" href="css/modes.css">
-</head>
-<body data-mode="kumite" class="control-platform bg-surface-container-lowest text-on-surface min-h-screen flex flex-col font-body-md overflow-y-auto antialiased select-none">
-
-<!-- ==================== TOP NAVBAR ==================== -->
-<header id="main-header" class="flex flex-wrap justify-between items-center w-full px-space-md py-space-sm bg-surface-container-lowest z-50 border-b-2 border-surface-container-highest gap-2">
-
-  <!-- Left: Tatami Title + Connection Status -->
-  <div class="flex items-center gap-space-md">
-    <div class="flex items-center gap-space-sm bg-surface-container-low px-space-sm py-1 border border-surface-container-highest rounded">
-      <!-- Editable Tatami Title -->
-      <span
-        id="tatami-title-display"
-        class="font-headline-md text-headline-md font-bold tracking-wider text-on-surface uppercase cursor-pointer"
-        title="Click to edit Tatami name"
-      >KUMITE DESK // TATAMI 1</span>
-      <input
-        id="tatami-title-input"
-        class="font-headline-md text-headline-md font-bold tracking-wider text-on-surface uppercase"
-        type="text"
-        value="KUMITE DESK // TATAMI 1"
-        maxlength="40"
-      >
-
-      <!-- Arena Display Connection Status / Force Sync -->
-      <button
-        id="btn-arena-sync"
-        class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-tertiary-container/30 border border-tertiary text-tertiary font-label-tactical text-label-tactical uppercase cursor-pointer hover:bg-tertiary/20 transition-all duration-300"
-        title="Click to force full state sync to Arena Display"
-      >
-        <span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
-        ARENA DISPLAY CONNECTED
-      </button>
-    </div>
-
-    <!-- Category / Pool / Ruleset nav inputs -->
-    <nav class="hidden xl:flex items-center gap-space-md ml-space-sm">
-      <input type="text" id="edit-category" value="Category: Male Senior -75kg"
-        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-tertiary border-b-2 border-tertiary font-headline-sm text-headline-sm pb-1 uppercase tracking-wider px-1 rounded transition-colors duration-300">
-      <input type="text" id="edit-pool" value="Pool: Semi-Finals"
-        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-on-surface-variant font-label-tactical text-label-tactical uppercase tracking-wider px-1 rounded transition-colors duration-300">
-      <input type="text" id="edit-ruleset" value="Ruleset: WKF 2024"
-        class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto text-on-surface-variant font-label-tactical text-label-tactical uppercase tracking-wider px-1 rounded transition-colors duration-300">
-    </nav>
-  </div>
-
-<nav class="mode-switch" aria-label="Tournament mode"><button type="button" data-set-mode="kumite" aria-pressed="true">KUMITE</button><button type="button" data-set-mode="team_kumite" aria-pressed="false">TEAM KUMITE</button><button type="button" data-set-mode="kata" aria-pressed="false">KATA</button><button type="button" data-set-mode="team_kata" aria-pressed="false">TEAM KATA</button></nav>
-  <!-- Center: Tournament Name -->
-  <div class="hidden 2xl:flex flex-col items-center text-center px-space-sm">
-    <div class="font-label-micro text-label-micro text-outline tracking-wider uppercase">Official Championship Interlock</div>
-    <input type="text" id="edit-tournament-name"
-      value="2028 10TH JAPAN KARATE-DO HAYASHI HA SHITORYU KAI WORLD KARATE TOURNAMENT — SRI LANKA"
-      class="bg-transparent outline-none focus:ring-1 w-full select-text pointer-events-auto font-label-tactical text-label-tactical font-bold text-on-surface text-center px-1 rounded transition-colors duration-300">
-  </div>
-
-  <!-- Right: Category Preset + Bout Metadata + Actions -->
-  <div class="flex items-center gap-space-sm flex-wrap">
-
-    <!-- Category Preset Dropdown -->
-    <div class="relative flex items-center bg-surface-container-low border-2 border-tertiary rounded px-space-sm py-1">
-      <span class="material-symbols-outlined text-tertiary mr-1 text-sm">tune</span>
-      <span class="font-label-micro text-label-micro text-tertiary uppercase mr-2 font-bold">PRESET:</span>
-      <select id="preset-select" class="bg-surface-container-low text-on-surface font-label-tactical text-label-tactical border-0 p-0 focus:ring-0 cursor-pointer outline-none">
-        <option value="ages67"   data-time="90"  data-cat="Ages 6-7 | -22kg">Ages 6-7 | -22kg (1:30)</option>
-        <option value="cadet"    data-time="120" data-cat="Cadet | -52kg" selected>Cadet | -52kg (2:00)</option>
-        <option value="junior"   data-time="120" data-cat="Junior | -61kg">Junior | -61kg (2:00)</option>
-        <option value="snrF"     data-time="180" data-cat="Senior Female | -61kg">Senior Female | -61kg (3:00)</option>
-        <option value="snrM"     data-time="180" data-cat="Senior Male | -75kg">Senior Male | -75kg (3:00)</option>
-        <option value="u21">Under 21 (3:00)</option><option value="senior">21 &amp; Over (3:00)</option>
-        <option value="custom"   data-time=""    data-cat="">Custom Category</option>
-      </select>
-    </div>
-
-    <!-- Bout Metadata Pills -->
-    <div class="hidden md:flex items-center gap-1 font-label-tactical text-label-tactical">
-      <span class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface flex items-center gap-1" title="Type bout number to auto-fill players from CSV">
-        BOUT #<input id="bout-number" type="text" value="14" class="bout-editable bg-[#182030] text-yellow-400 border border-white/20 font-bold text-center w-9 font-label-tactical text-label-tactical text-on-surface font-bold text-amber-300" maxlength="5">
-      </span>
-      <button id="btn-duration-cycle" class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface hover:border-tertiary transition-all duration-300" title="Click to cycle match duration (timer must be stopped)">
-        <span id="duration-label">2:00 MIN</span>
-      </button>
-      <span class="px-2 py-1 bg-surface-container-high border border-surface-container-highest rounded text-on-surface flex items-center gap-1">
-        <input id="round-label" type="text" value="R1 ELIM" class="bout-editable bg-[#182030] text-yellow-400 border border-white/20 font-bold text-center w-16 font-label-tactical text-label-tactical text-on-surface" maxlength="12">
-      </span>
-    </div>
-
-    <!-- 10s Medical Quick Button -->
-    <button id="btn-medical-timer"
-      class="px-space-sm py-1 bg-emerald-950/80 border-2 border-emerald-500 text-emerald-300 hover:bg-emerald-800 hover:text-white font-label-tactical text-label-tactical uppercase rounded transition-all duration-300 tactile-bevel flex items-center gap-1"
-      title="Start 10s Medical Stoppage Countdown (Keyboard shortcut: M)">
-      <span class="material-symbols-outlined text-sm">medical_services</span>
-      10s Medical
-    </button>
-
-    <!-- Emergency Buzzer -->
-    <button id="btn-emergency-buzzer"
-      class="px-space-sm py-1 bg-error-container border border-primary-container text-on-error-container font-label-tactical text-label-tactical uppercase rounded hover:bg-primary-container transition-all duration-300 tactile-bevel flex items-center gap-1">
-      <span class="material-symbols-outlined text-sm">notifications_active</span>
-      Emergency Buzzer
-    </button>
-
-    <!-- Arena Stream Toggle -->
-    <button id="btn-stream-toggle"
-      class="flex items-center gap-1 px-space-sm py-1 bg-surface-container-high border border-tertiary/40 rounded stream-live font-label-tactical text-label-tactical uppercase cursor-pointer transition-all duration-300">
-      <span class="material-symbols-outlined text-sm">sensors</span>
-      <span id="stream-status-text">Arena Stream: LIVE</span>
-    </button>
-
-    <!-- Trailing Icon Actions -->
-    <div class="flex items-center gap-1 text-on-surface-variant border-l border-surface-container-highest pl-space-sm">
-      <!-- Theme Toggle -->
-      <button id="btn-theme-toggle"
-        class="flex items-center gap-1 px-2 py-0.5 bg-surface-container border border-surface-container-highest rounded-full hover:border-outline transition-all duration-300 text-xs font-label-tactical uppercase text-on-surface-variant mr-1"
-        title="Toggle Light/Dark Theme">
-        <span id="theme-icon" class="material-symbols-outlined text-amber-400 text-sm" style="font-variation-settings: 'FILL' 1;">dark_mode</span>
-        <span id="theme-label" class="text-[11px] font-bold text-on-surface">DARK</span>
-      </button>
-
-      <!-- Timer Reset (Clock only) -->
-      <button id="btn-timer-reset-icon"
-        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
-        title="Reset Clock to Preset Duration">
-        <span class="material-symbols-outlined">timer</span>
-      </button>
-
-      <!-- Audio Mute Toggle -->
-      <button id="btn-audio-toggle"
-        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
-        title="Toggle Audio Mute">
-        <span id="audio-icon" class="material-symbols-outlined">volume_up</span>
-      </button>
-
-      <!-- Settings Gear -->
-      <button id="btn-settings"
-        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
-        title="Tournament & Hardware Settings">
-        <span class="material-symbols-outlined">settings</span>
-      </button>
-
-      <!-- Fullscreen -->
-      <button id="btn-fullscreen"
-        class="p-1 hover:bg-surface-container-high rounded transition-all duration-300"
-        title="Toggle Fullscreen">
-        <span id="fullscreen-icon" class="material-symbols-outlined">fullscreen</span>
-      </button>
-    </div>
-  </div>
+<!-- Local styles keep all four layouts usable without a CDN connection. -->
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden}body.control-platform{--bg:#0c0e14;--panel:#191d27;--box:#11151e;--edge:#3b4658;--ink:#f1f5f9;--muted:#aebace;background:var(--bg);color:var(--ink);font:13px/1.3 system-ui,sans-serif;display:flex;flex-direction:column;height:100dvh;color-scheme:dark}
+body.control-platform.light-mode{--bg:#f8fafc;--panel:#e8edf4;--box:#f8fafc;--edge:#94a3b8;--ink:#0f172a;--muted:#475569;color-scheme:light}
+.hidden,[hidden]{display:none!important}.row{display:flex;align-items:center;gap:6px;min-width:0}.grow{flex:1;min-width:0}.grid2,.grid3,.grid5{display:grid;gap:5px;min-width:0}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid5{grid-template-columns:repeat(5,minmax(0,1fr))}
+h1,h2,h3,p{margin:0}h2{font-size:15px;letter-spacing:.06em}h3{font-size:11px;letter-spacing:.08em}small,label{font-size:11px}label{display:block;color:var(--muted);min-width:0}input,select,button{font:inherit;color:var(--ink);background:var(--box);border:1px solid var(--edge);border-radius:5px;min-width:0}input,select{width:100%;padding:4px 6px;height:29px}input[type=file]{font-size:11px;padding:3px}button{padding:5px 9px;cursor:pointer;font-weight:700;line-height:1.2}button:hover{filter:brightness(1.15);border-color:#fbbf24}button:disabled{opacity:.45;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #eab308;outline-offset:1px}button[aria-pressed=true]{background:#fbbf24;color:#0f172a}
+#main-header{flex:none;display:grid;grid-template-columns:minmax(120px,1fr) auto minmax(120px,1fr);align-items:center;gap:8px;padding:4px 8px;border-bottom:1px solid var(--edge);background:var(--panel)}.brand{font-weight:900;font-size:12px;white-space:nowrap}#tatami-title-input{max-width:160px}.mode-switch{display:flex;gap:3px;border:1px solid var(--edge);padding:3px;border-radius:999px;background:var(--box)}.mode-switch button{padding:6px 16px;border:0;border-radius:999px;font-size:12px;white-space:nowrap}.header-actions{justify-content:flex-end}.header-actions button{font-size:11px;padding:5px 7px;white-space:nowrap}
+.metadata{display:flex;gap:6px;align-items:end;padding:4px 8px;flex:none}.metadata .category{flex:2}.metadata label{flex:1;min-width:60px}.metadata .bout{max-width:75px}.metadata .round{max-width:100px}.metadata .preset{flex:1.3}.metadata button{height:29px}.metadata input{font-size:12px}.country{width:70px;flex:none}
+main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1.06fr 1fr;gap:6px;padding:4px 6px;overflow:hidden}main>section{min-width:0;min-height:0;overflow:hidden;background:var(--panel);border:1px solid var(--edge);border-radius:8px;padding:7px;display:flex;flex-direction:column;gap:6px}main>.aka{border-top:4px solid #ef4444}main>.ao{border-top:4px solid #3b82f6}.panel-heading{display:flex;align-items:center;justify-content:space-between;gap:5px;flex:none}.panel-heading span{font-size:10px}.box,.score-box,#timer-box{display:block;background:var(--box);border:1px solid var(--edge);border-radius:6px;padding:6px}.score-box{display:flex}.score{display:block;font-size:clamp(38px,6vh,68px);line-height:1.05;font-weight:900;font-variant-numeric:tabular-nums}.score-box .score{padding:0 12px}.published-total{text-align:center}.score-buttons button{display:flex;flex-direction:column;align-items:center;padding:7px 4px}.score-buttons b{font-size:24px}.aka .score-buttons button{background:#8f1524;color:white;border-color:#f87171}.ao .score-buttons button{background:#153c93;color:white;border-color:#60a5fa}.penalty-controls{display:flex;flex-direction:column;gap:5px}.penalty-controls button{min-height:28px}.senshu{justify-content:space-between}.identity{align-items:end}.corner>.platform-stack{display:flex;flex-direction:column;gap:6px}.corner>.platform-stack .box{margin:0}.corner>.platform-stack .grid3{margin-top:5px}.judge-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px}.judge-grid input{padding:4px 1px;text-align:center;font-size:12px}.judge-grid label{text-align:center}
+#match-status-ribbon{display:flex;flex-direction:column;gap:3px;padding:6px;background:var(--box);border-radius:6px}#match-status-text{font-size:12px}#match-status-sub{font-size:11px;color:var(--muted)}#timer-box{text-align:center;min-height:0;padding:5px!important}#ctrl-timer-main{font-size:clamp(38px,6vw,86px);line-height:1.05;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}#ctrl-timer-ms{font-size:.48em}#timer-box small{display:block;color:var(--muted);font-size:10px}.timer-actions button{padding:9px;font-size:16px}.timer-actions button:first-child{background:#047857;color:white}.timer-actions button:last-child{background:#991b1b;color:white}.stepper{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.platform-stack{display:flex;flex-direction:column;gap:6px}.platform-box,.box{color:var(--ink)}.scoring-switch{display:flex;gap:4px}.scoring-switch button{flex:1}.judge-flags{display:flex;gap:4px}.judge-flag{flex:1;padding:7px 2px;font-size:11px}.judge-flag[data-flag=aka],.bout-pill[data-winner=aka]{background:#991b1b;color:white}.judge-flag[data-flag=ao],.bout-pill[data-winner=ao]{background:#1e40af;color:white}.quick-flags{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.bunkai-clock{font-size:36px;line-height:1.1;text-align:center;font-weight:900;font-variant-numeric:tabular-nums}.bunkai-actions{display:flex;gap:5px}.bunkai-actions button{flex:1}.team-series-row{display:grid;grid-template-columns:1fr 1fr;gap:4px;align-items:center}#team-status{font-size:11px;padding-top:5px}#platform-message{font-size:11px;min-height:16px;color:#fbbf24}#audit-log{height:54px;overflow:hidden}#audit-log .audit-entry{display:grid;grid-template-columns:55px 1fr 35px;gap:5px;color:var(--muted);font-size:10px}#audit-log .audit-entry span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.audit-box{margin-top:auto}
+footer{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:none;padding:4px 8px;background:var(--panel);border-top:1px solid var(--edge)}footer button{font-size:11px}footer .shortcuts{font-size:10px;color:var(--muted);flex:1}.footer-publish{margin-left:auto}#publish-status-badge{font-size:9px}
+#hantei-banner{display:none;flex:none;margin:0;padding:4px 8px;gap:6px;border-radius:0;font-size:12px}#hantei-banner.open{display:flex}#hantei-banner strong{flex:1}.overlay{color:#f1f5f9}#settings-modal .modal-box{width:min(940px,97vw);min-width:0;max-width:940px;padding:10px;max-height:96dvh;overflow:hidden;background:var(--panel);color:var(--ink);display:flex;flex-direction:column;gap:7px}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings-stack{display:flex;flex-direction:column;gap:7px}.settings-stack>.box{display:flex;flex-direction:column;gap:5px}.settings-logos{display:grid;grid-template-columns:1fr 1fr;gap:6px}.logo-field{border:1px solid var(--edge);border-radius:5px;padding:5px;min-width:0}.logo-field img{height:30px;max-width:80px;object-fit:contain}.logo-field label{font-size:10px}.logo-field input{font-size:10px}.logo-field .row{margin-top:3px}.logo-field small{font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.logo-field button{font-size:10px;padding:3px 5px}#logo-settings-status{min-height:15px;font-size:11px;color:#f59e0b}.modal-actions{justify-content:flex-end}.modal-title{font-size:15px}
+body.light-mode :is(#aka-score-display,#ao-score-display,#kata-total-aka,#kata-total-ao,#ctrl-timer-main,#ctrl-timer-ms,#bunkai-control-clock){color:#0f172a!important;text-shadow:none!important}body.light-mode :is(#timer-box,main,header,footer,.modal-box){background-color:var(--panel)!important}body.light-mode #timer-box{background-color:var(--box)!important}body.light-mode .score-buttons button{background:#e2e8f0!important;color:#0f172a!important}body.light-mode #platform-message{color:#854d0e}body.light-mode .overlay{background:#e2e8f0f5!important;color:#0f172a}body.light-mode #medical-countdown-ctrl{color:#0f172a!important}body.light-mode #hantei-banner{background:#fef3c7;color:#0f172a}
+body:not([data-mode=team_kumite]) [data-team-kumite],body:not([data-mode=team_kata]) [data-team-kata],body:not([data-mode=kata]):not([data-mode=team_kata]) [data-kata],body[data-mode=kata] [data-kumite],body[data-mode=team_kata] [data-kumite]{display:none!important}
+@media(max-width:1250px){.mode-switch button{padding:6px 9px;font-size:11px}.header-actions button{font-size:10px;padding:4px}.brand{font-size:11px}.secondary-action{display:none}.metadata{gap:4px}footer .shortcuts{display:none}}
+@media(max-height:760px){main>section{gap:4px;padding:5px}.box,.score-box{padding:4px}.score-buttons button{padding:4px}.score{font-size:42px}#ctrl-timer-main{font-size:55px}.timer-actions button{padding:5px}#audit-log{height:32px}.settings-stack>.box{gap:3px}.logo-field img{height:20px}}
+</style></head>
+<body class="control-platform" data-mode="kumite">
+<header id="main-header">
+  <div class="brand row"><span>KARATE DESK /</span><span id="tatami-title-display" tabindex="0">TATAMI 1</span><input id="tatami-title-input" aria-label="Tatami name" value="TATAMI 1" maxlength="40"></div>
+  <nav class="mode-switch" aria-label="Competition mode">
+    <button data-set-mode="kumite" aria-pressed="true">KUMITE</button><button data-set-mode="team_kumite" aria-pressed="false">TEAM KUMITE</button><button data-set-mode="kata" aria-pressed="false">KATA</button><button data-set-mode="team_kata" aria-pressed="false">TEAM KATA</button>
+  </nav>
+  <div class="row header-actions"><button id="btn-medical-timer" data-kumite title="10-second medical timer (M)">10s Med</button><button id="btn-emergency-buzzer" class="secondary-action">Buzzer</button><button id="btn-theme-toggle" title="Toggle light/dark theme"><span id="theme-icon" class="hidden"></span><span id="theme-label">DARK</span></button><button id="btn-settings">Settings</button><button id="btn-fullscreen" class="secondary-action" title="Fullscreen"><span id="fullscreen-icon">Fullscreen</span></button></div>
 </header>
-
-<!-- ==================== HANTEI DECISION BANNER (TRIGGERED ON TIED TIME UP) ==================== -->
-<div id="hantei-banner" class="w-full px-space-md py-2 border-b-2 border-amber-500 bg-gradient-to-r from-amber-950/90 via-black to-amber-950/90 flex items-center justify-between transition-all duration-300">
-  <div class="flex items-center gap-3">
-    <span class="material-symbols-outlined text-2xl text-amber-400 animate-pulse">gavel</span>
-    <div class="flex flex-col">
-      <span class="font-headline-md text-headline-md font-black text-amber-300 uppercase tracking-widest leading-none">HANTEI — REFEREE DECISION REQUIRED</span>
-      <span class="text-xs text-amber-200/70 uppercase tracking-wider font-mono">Bout ended tied without Senshu advantage. Select winning competitor:</span>
-    </div>
-  </div>
-  <div class="flex items-center gap-3">
-    <button id="btn-hantei-aka" class="tactile-bevel px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white font-headline-sm text-headline-sm font-black rounded uppercase flex items-center gap-1.5 shadow-[0_0_15px_rgba(220,38,38,0.7)] transition-all duration-300">
-      🔴 AKA WINNER
-    </button>
-    <button id="btn-hantei-ao" class="tactile-bevel px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-headline-sm text-headline-sm font-black rounded uppercase flex items-center gap-1.5 shadow-[0_0_15px_rgba(37,99,235,0.7)] transition-all duration-300">
-      🔵 AO WINNER
-    </button>
-    <button id="btn-hantei-cancel" class="px-3 py-1.5 bg-surface-container border border-surface-container-highest text-on-surface-variant hover:text-white rounded font-label-tactical text-label-tactical uppercase transition-all duration-300">
-      DISMISS
-    </button>
-  </div>
+<div class="metadata">
+  <label class="category">Category<input id="edit-category" value="Cadet | -52kg"></label><label>Pool<input id="edit-pool" value="Semi-Finals"></label><label>Ruleset<input id="edit-ruleset" value="WKF"></label>
+  <label class="preset" data-kumite>Preset<select id="preset-select"><option value="ages67">Ages 6–7 (1:30)</option><option value="cadet" selected>Cadet (2:00)</option><option value="junior">Junior (2:00)</option><option value="snrF">Senior Female (3:00)</option><option value="snrM">Senior Male (3:00)</option><option value="custom">Custom</option></select></label>
+  <button id="btn-duration-cycle" data-kumite title="Cycle duration while stopped"><span id="duration-label">2:00 MIN</span></button><label class="bout">Bout #<input id="bout-number" value="14" maxlength="8" title="Auto-fill from loaded CSV"></label><label class="round">Round<input id="round-label" value="R1 ELIM" maxlength="20"></label>
+  <button id="btn-stream-toggle" class="stream-live"><span id="stream-status-text">LIVE</span></button><button id="btn-arena-sync">Arena Sync</button><button id="btn-audio-toggle" title="Mute/unmute horn"><span id="audio-icon">volume_up</span></button>
 </div>
-
-<!-- ==================== MAIN 12-COLUMN CONSOLE GRID ==================== -->
-<main class="flex-1 grid grid-cols-12 gap-space-sm p-space-sm bg-surface-container-lowest">
-
-  <!-- ==================== LEFT: AKA (RED CORNER) ==================== -->
-  <section id="aka-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-primary-container/80 rounded-lg p-space-sm shadow-2xl relative overflow-hidden transition-all duration-300">
-    <div class="absolute -top-12 -left-12 w-48 h-48 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <!-- Corner Header & Team Wins Indicator -->
-    <div class="flex items-center justify-between bg-error-container/80 border-b-2 border-primary-container px-space-md py-space-xs rounded">
-      <div class="flex items-center gap-2">
-        <span class="w-3.5 h-3.5 rounded-full bg-primary-container animate-pulse border border-white"></span>
-        <h2 class="font-headline-md text-headline-md tracking-wider text-white font-extrabold uppercase">🔴 AKA (RED CORNER)</h2>
-      </div>
-      <!-- Team Kumite Mode Counter -->
-      <div class="flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded border border-primary/40">
-        <span class="text-[10px] font-bold text-primary-fixed uppercase tracking-wider">TEAM WINS:</span>
-        <button id="btn-aka-team-dec" class="px-1 text-primary-fixed hover:text-white font-black text-xs cursor-pointer">-</button>
-        <span id="aka-team-wins-label" class="font-mono font-black text-amber-300 text-sm px-1">0</span>
-        <button id="btn-aka-team-inc" class="px-1 text-primary-fixed hover:text-white font-black text-xs cursor-pointer">+</button>
-      </div>
+<div id="hantei-banner" role="status"><strong>HANTEI · REFEREE DECISION</strong><button id="btn-hantei-aka">AKA winner</button><button id="btn-hantei-ao">AO winner</button><button id="btn-hantei-cancel">Dismiss</button></div>
+<main>
+  <section id="aka-panel" class="corner aka">
+    <div class="panel-heading"><h2>AKA · RED CORNER</h2><span data-team-kumite>TEAM WINS <strong id="aka-team-wins-label">0</strong></span></div>
+    <div id="identity-aka" class="identity row">
+      <label class="grow">Competitor name<input id="input-aka-name" value="Kasun Perera" autocomplete="off"></label>
+      <label class="country">Country<input id="input-aka-country-code" value="SRI" maxlength="4"></label>
     </div>
-
-    <!-- Competitor Identity -->
-    <div class="grid grid-cols-3 gap-2 bg-surface-container-lowest p-space-sm border border-surface-container-highest rounded">
-      <div class="col-span-2 flex flex-col">
-        <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Competitor Name</label>
-        <input id="input-aka-name" class="w-full bg-surface-container border border-surface-container-highest focus:border-primary-container rounded px-2.5 py-1 text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider outline-none transition-colors duration-300" type="text" value="Kasun Perera">
-      </div>
-      <div class="flex flex-col">
-        <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Country</label>
-        <div class="flex items-center h-full bg-surface-container border border-surface-container-highest rounded px-2 gap-1.5">
-          <span class="text-base">🇱🇰</span>
-          <input type="text" id="input-aka-country-code" class="bg-transparent outline-none w-full font-headline-sm text-headline-sm font-bold text-on-surface uppercase transition-colors duration-300" value="SRI" maxlength="4">
-        </div>
-      </div>
+    <div data-kumite class="score-box row"><div class="grow"><small>SCORE</small><div id="aka-lead-text">Even</div></div><strong id="aka-score-display" data-theme-number class="score text-white">0</strong><button id="btn-aka-undo">Undo</button></div>
+    <button data-kumite id="btn-aka-senshu" class="senshu row"><span id="aka-senshu-label">SENSHU READY</span><span id="aka-senshu-dot"></span></button>
+    <div data-kumite id="aka-score-btns" class="score-buttons grid3">
+      <button id="btn-aka-yuko"><b>+1</b><small>YUKO</small></button>
+      <button id="btn-aka-wazaari"><b>+2</b><small>WAZA-ARI</small></button>
+      <button id="btn-aka-ippon"><b>+3</b><small>IPPON</small></button>
     </div>
-
-    <!-- Score + Undo -->
-    <div class="bg-surface-container-lowest border-2 border-primary-container/60 rounded-lg p-space-md flex items-center justify-between relative shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)]">
-      <div class="flex flex-col">
-        <span class="font-label-tactical text-label-tactical text-primary font-bold uppercase tracking-wider">TOTAL SCORE</span>
-        <span id="aka-lead-text" class="font-label-micro text-label-micro text-outline lead-even">Even</span>
-      </div>
-      <div id="aka-score-display" class="font-score-display text-score-display font-extrabold theme-text tracking-tight drop-shadow-[0_0_18px_rgba(255,84,81,0.65)] px-space-md transition-all duration-300">0</div>
-      <button id="btn-aka-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-primary/60 hover:border-primary text-primary-fixed rounded transition-all duration-300">
-        <span class="material-symbols-outlined text-2xl font-bold">undo</span>
-        <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
-        <span class="font-label-micro text-label-micro text-outline">(REVERT LAST)</span>
-      </button>
+    <div data-kumite class="box penalty-controls">
+      <div class="row"><h3 class="grow">PENALTIES</h3><button id="btn-aka-clear-penalties">Clear</button></div>
+      <div class="grid5"><button id="btn-aka-ch1" class="penalty-btn" aria-pressed="false">CH1</button><button id="btn-aka-ch2" class="penalty-btn" aria-pressed="false">CH2</button><button id="btn-aka-ch3" class="penalty-btn" aria-pressed="false">CH3</button><button id="btn-aka-hc" class="penalty-btn" aria-pressed="false">HC</button><button id="btn-aka-h" class="penalty-btn" aria-pressed="false">H</button></div>
+      <div class="grid2"><button id="btn-aka-kiken" class="dq-btn">Kiken</button><button id="btn-aka-shikkaku" class="dq-btn">Shikkaku</button></div>
     </div>
-
-    <!-- Senshu Toggle -->
-    <button id="btn-aka-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-all duration-300">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-outline">stars</span>
-        <span id="aka-senshu-label">★ SENSHU READY (Click to Award)</span>
-      </div>
-      <span id="aka-senshu-dot" class="w-2.5 h-2.5 rounded-full bg-surface-container-highest"></span>
-    </button>
-
-    <!-- Scoring Buttons -->
-    <div id="aka-score-btns" class="grid grid-cols-1 gap-2.5">
-      <button id="btn-aka-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-all duration-300">
-        <div class="flex items-center gap-3">
-          <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">+1</span>
-          <div class="text-left">
-            <div class="font-headline-md text-headline-md tracking-wider leading-none">YUKO</div>
-            <div class="font-label-micro text-label-micro text-on-surface-variant">Punch to Head or Torso</div>
-          </div>
-        </div>
-        <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
-      </button>
-      <button id="btn-aka-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-error-container hover:bg-primary-container text-white border-2 border-primary rounded-lg flex items-center justify-between transition-all duration-300">
-        <div class="flex items-center gap-3">
-          <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-primary">+2</span>
-          <div class="text-left">
-            <div class="font-headline-md text-headline-md tracking-wider leading-none">WAZA-ARI</div>
-            <div class="font-label-micro text-label-micro text-on-surface-variant">Mid-level Body Kick (Chudan Geri)</div>
-          </div>
-        </div>
-        <span class="material-symbols-outlined text-2xl">flash_on</span>
-      </button>
-      <button id="btn-aka-ippon" class="tactile-bevel w-full py-2 px-space-md bg-primary-container hover:bg-error text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(255,84,81,0.4)] transition-all duration-300">
-        <div class="flex items-center gap-3">
-          <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-primary-container px-3.5 py-1 rounded border border-white">+3</span>
-          <div class="text-left">
-            <div class="font-headline-lg text-headline-lg font-black tracking-wider leading-none text-surface-container-lowest">IPPON</div>
-            <div class="font-label-micro text-label-micro text-surface-container-lowest/80 font-bold">Jodan Kick or Sweep / Takedown Follow-up</div>
-          </div>
-        </div>
-        <span class="material-symbols-outlined text-3xl text-surface-container-lowest" style="font-variation-settings: 'FILL' 1;">military_tech</span>
-      </button>
-    </div>
-
-    <!-- WKF Penalties & Disqualifications (AKA) -->
-    <div class="bg-surface-container-lowest border-2 border-primary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]">
-      <div class="flex items-center justify-between border-b border-surface-container-highest pb-1">
-        <div class="flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-base text-amber-400">warning</span>
-          <span class="font-label-tactical text-label-tactical text-amber-300 uppercase font-bold tracking-wider">WKF PENALTIES (AKA)</span>
-        </div>
-        <button id="btn-aka-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors duration-300 uppercase font-bold underline flex items-center gap-0.5">
-          <span class="material-symbols-outlined text-xs">close</span>CLEAR
-        </button>
-      </div>
-
-      <!-- Warning Row -->
-      <div class="grid grid-cols-3 gap-2">
-        <button id="btn-aka-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
-          CH1<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 1</span>
-        </button>
-        <button id="btn-aka-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
-          CH2<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 2</span>
-        </button>
-        <button id="btn-aka-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
-          CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span>
-        </button>
-      </div>
-
-      <!-- Serious Penalties Row -->
-      <div class="grid grid-cols-2 gap-2">
-        <button id="btn-aka-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
-          <span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span>
-        </button>
-        <button id="btn-aka-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-amber-400 text-on-surface-variant hover:text-amber-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
-          <span class="font-extrabold">H</span><span class="text-[10px] font-normal text-outline uppercase">HANSOKU (DQ)</span>
-        </button>
-      </div>
-
-      <!-- Explicit Kiken & Shikkaku Row -->
-      <div class="grid grid-cols-2 gap-2 pt-1 border-t border-surface-container-highest">
-        <button id="btn-aka-kiken" class="dq-btn tactile-bevel py-1.5 px-2 bg-red-950/60 border border-red-500/80 hover:bg-red-900 text-red-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex items-center justify-center gap-1" title="Withdrawal: AKA forfeits, AO wins immediately">
-          <span class="material-symbols-outlined text-sm">person_off</span>
-          KIKEN (WITHDRAW)
-        </button>
-        <button id="btn-aka-shikkaku" class="dq-btn tactile-bevel py-1.5 px-2 bg-red-950/80 border border-red-400 hover:bg-red-800 text-white rounded font-label-tactical text-label-tactical uppercase text-center font-black transition-all duration-300 flex items-center justify-center gap-1" title="Disqualification: AKA expelled from tournament, AO wins immediately">
-          <span class="material-symbols-outlined text-sm">gavel</span>
-          SHIKKAKU (DQ)
-        </button>
-      </div>
+    <div data-kata class="platform-stack">
+      <div data-team-kata class="box"><label>Team / Dojo / Country<input id="team-name-aka"></label><div class="grid3"><label>Athlete 1<input id="athlete-aka-0"></label><label>Athlete 2<input id="athlete-aka-1"></label><label>Athlete 3<input id="athlete-aka-2"></label></div></div>
+      <label class="box">Kata name<input id="kata-name-aka" list="kata-options" placeholder="Search or enter a kata"></label>
+      <div class="box published-total"><h3>PUBLISHED TOTAL</h3><strong id="kata-total-aka" data-theme-number class="score text-white">0</strong></div>
+      <div id="kata-judge-inputs-aka" class="box"><h3>JUDGE SCORES · 7.0–10.0</h3><div class="judge-grid"><label>J1<input data-judge-input data-side="aka" data-index="0" type="number" min="7" max="10" step="0.1" aria-label="AKA judge 1 score"></label><label>J2<input data-judge-input data-side="aka" data-index="1" type="number" min="7" max="10" step="0.1" aria-label="AKA judge 2 score"></label><label>J3<input data-judge-input data-side="aka" data-index="2" type="number" min="7" max="10" step="0.1" aria-label="AKA judge 3 score"></label><label>J4<input data-judge-input data-side="aka" data-index="3" type="number" min="7" max="10" step="0.1" aria-label="AKA judge 4 score"></label><label>J5<input data-judge-input data-side="aka" data-index="4" type="number" min="7" max="10" step="0.1" aria-label="AKA judge 5 score"></label><label>J6<input data-judge-input data-side="aka" data-index="5" type="number" min="7" max="10" step="0.1" aria-label="AKA judge 6 score"></label><label>J7<input data-judge-input data-side="aka" data-index="6" type="number" min="7" max="10" step="0.1" aria-label="AKA judge 7 score"></label></div></div>
     </div>
   </section>
-
-  <!-- ==================== CENTER: TIMER COCKPIT ==================== -->
-  <section id="center-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-surface-container-highest rounded-lg p-space-sm relative">
-
-    <!-- Status Ribbon -->
-    <div id="match-status-ribbon" class="flex items-center justify-between bg-surface-container-lowest border border-surface-container-highest px-space-md py-1.5 rounded transition-all duration-300">
-      <div class="flex items-center gap-2">
-        <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-tertiary animate-ping"></span>
-        <span id="match-status-text" class="font-label-tactical text-label-tactical text-tertiary uppercase font-extrabold tracking-wider">STATUS: READY</span>
-      </div>
-      <span id="match-status-sub" class="font-label-micro text-label-micro text-outline uppercase font-semibold">Timer Stopped</span>
+  <section id="center-panel">
+    <div data-team-kumite class="box team-series"><h3>TEAM KUMITE SERIES</h3><div class="team-series-row"><select id="team-format" aria-label="Team format"><option value="3">3+1 fighters</option><option value="5">5+2 fighters</option></select><strong id="team-active-bout"></strong><button id="record-team-bout">Record Bout &amp; Next Fighter</button><button id="reset-team-match">Reset Team Match</button></div><p id="team-status"></p></div>
+    <div data-kumite id="match-status-ribbon"><span id="status-dot" class="hidden"></span><strong id="match-status-text">STATUS: READY</strong><span id="match-status-sub">Timer stopped</span></div>
+    <div data-kumite id="timer-box"><span id="ctrl-timer-main" data-theme-number class="text-white">2:00<span id="ctrl-timer-ms" data-theme-number class="text-yellow-400">.00</span></span><small id="preset-duration-label">DURATION 2:00</small><small id="center-round-label">R1 ELIM</small></div>
+    <div data-kumite class="grid2 timer-actions"><button id="btn-timer-start">START</button><button id="btn-timer-stop">STOP</button></div>
+    <div data-kumite class="stepper"><button id="btn-time-minus-10">−10s</button><button id="btn-time-minus-1">−1s</button><button id="btn-time-plus-1">+1s</button><button id="btn-time-plus-10">+10s</button></div>
+    <button id="btn-timer-reset-icon" data-kumite>Reset clock to preset</button>
+    <div data-kata class="platform-stack">
+      <div class="scoring-switch"><button data-scoring="flags" aria-pressed="true">FLAG SYSTEM / HANTEI</button><button data-scoring="points" aria-pressed="false">POINT SYSTEM</button></div>
+      <div id="flag-controls" class="box platform-stack"><h3>FIVE JUDGE FLAGS · CLICK TO CYCLE</h3><div class="judge-flags"><button data-flag-index="0" class="judge-flag">J1: Neutral</button><button data-flag-index="1" class="judge-flag">J2: Neutral</button><button data-flag-index="2" class="judge-flag">J3: Neutral</button><button data-flag-index="3" class="judge-flag">J4: Neutral</button><button data-flag-index="4" class="judge-flag">J5: Neutral</button></div><div class="quick-flags"><button data-quick-flags="5">5–0 AKA</button><button data-quick-flags="4">4–1 AKA</button><button data-quick-flags="3">3–2 AKA</button><button data-quick-flags="2">2–3 AO</button><button data-quick-flags="1">1–4 AO</button><button data-quick-flags="0">0–5 AO</button></div><button id="clear-flags">Clear flags</button></div>
+      <div id="point-controls" class="box platform-stack" hidden><div class="scoring-switch"><button data-judge-count="5" aria-pressed="true">5 judges</button><button data-judge-count="7" aria-pressed="false">7 judges</button></div><button id="calculate-kata">CALCULATE &amp; PUBLISH SCORE</button><small>Drop one highest and one lowest mark per competitor. Equal totals remain tied. Edited marks stay drafts until published.</small></div>
+      <div data-team-kata class="box platform-stack"><h3>KATA &amp; BUNKAI</h3><label>Duration<select id="bunkai-duration"><option value="300000">5:00</option><option value="360000">6:00</option></select></label><div id="bunkai-control-clock" data-theme-number class="bunkai-clock text-white">5:00.00</div><div class="bunkai-actions"><button id="bunkai-start">Start</button><button id="bunkai-stop">Stop</button><button id="bunkai-reset">Reset</button></div></div>
+      <button id="reset-kata">Reset Kata scoring</button>
     </div>
-
-    <!-- Main Timer Clock -->
-    <div id="timer-box" class="bg-surface-container-lowest border-4 border-tertiary/60 rounded-xl px-2 py-3 flex flex-col items-center justify-center relative shadow-[inset_0_4px_16px_rgba(0,0,0,0.95)]">
-      <div class="absolute inset-0 bg-tertiary/5 pointer-events-none"></div>
-      <div class="flex items-baseline justify-center tracking-tight theme-text leading-none">
-        <span id="ctrl-timer-main" class="font-timer-display text-timer-display font-black tracking-normal transition-colors duration-300">2:00<span id="ctrl-timer-ms" class="text-[32px] text-amber-400 font-bold">.00</span></span>
-      </div>
-      <div class="mt-2 flex items-center gap-space-md text-outline font-label-tactical text-label-tactical">
-        <span class="flex items-center gap-1">
-          <span class="material-symbols-outlined text-sm">schedule</span>
-          <span id="preset-duration-label">OFFICIAL DURATION 2:00</span>
-        </span>
-        <span class="w-1.5 h-1.5 rounded-full bg-surface-container-highest"></span>
-        <span id="center-round-label">ROUND 1</span>
-      </div>
+    <p id="platform-message" role="status" aria-live="polite"></p>
+    <button id="btn-manual-buzzer">MANUAL HORN / B</button>
+    <div class="box audit-box"><h3>OPERATIONAL AUDIT <span id="audit-sync-label">SYNCED</span></h3><div id="audit-log" aria-live="off"></div></div>
+  </section>
+  <section id="ao-panel" class="corner ao">
+    <div class="panel-heading"><h2>AO · BLUE CORNER</h2><span data-team-kumite>TEAM WINS <strong id="ao-team-wins-label">0</strong></span></div>
+    <div id="identity-ao" class="identity row">
+      <label class="grow">Competitor name<input id="input-ao-name" value="Kenji Sato" autocomplete="off"></label>
+      <label class="country">Country<input id="input-ao-country-code" value="JPN" maxlength="4"></label>
     </div>
-
-    <!-- START / STOP Buttons -->
-    <div class="grid grid-cols-2 gap-space-sm">
-      <button id="btn-timer-start" class="tactile-bevel py-2 px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary-container rounded-lg border-2 border-tertiary flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(0,165,114,0.4)] transition-all duration-300">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
-          <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">START</span>
-        </div>
-        <span class="font-label-micro text-label-micro font-bold uppercase tracking-widest text-on-tertiary">Space / Click</span>
-      </button>
-      <button id="btn-timer-stop" class="tactile-bevel py-2 px-space-sm bg-error-container hover:bg-primary-container text-white rounded-lg border-2 border-primary-container flex flex-col items-center justify-center gap-1 shadow-[0_0_16px_rgba(255,84,81,0.35)] transition-all duration-300">
-        <div class="flex items-center gap-2">
-          <span class="material-symbols-outlined text-3xl font-extrabold" style="font-variation-settings: 'FILL' 1;">pause</span>
-          <span class="font-headline-lg text-headline-lg font-black tracking-wider leading-none">STOP</span>
-        </div>
-        <span class="font-label-micro text-label-micro font-bold uppercase tracking-widest text-on-primary-fixed">Instant Halt</span>
-      </button>
+    <div data-kumite class="score-box row"><div class="grow"><small>SCORE</small><div id="ao-lead-text">Even</div></div><strong id="ao-score-display" data-theme-number class="score text-white">0</strong><button id="btn-ao-undo">Undo</button></div>
+    <button data-kumite id="btn-ao-senshu" class="senshu row"><span id="ao-senshu-label">SENSHU READY</span><span id="ao-senshu-dot"></span></button>
+    <div data-kumite id="ao-score-btns" class="score-buttons grid3">
+      <button id="btn-ao-yuko"><b>+1</b><small>YUKO</small></button>
+      <button id="btn-ao-wazaari"><b>+2</b><small>WAZA-ARI</small></button>
+      <button id="btn-ao-ippon"><b>+3</b><small>IPPON</small></button>
     </div>
-
-    <!-- Manual Buzzer -->
-    <button id="btn-manual-buzzer" class="tactile-bevel w-full py-2 px-space-md bg-amber-500 hover:bg-amber-400 text-surface-container-lowest border-2 border-amber-300 rounded-lg flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all duration-300 active:scale-98">
-      <span class="material-symbols-outlined text-3xl font-black" style="font-variation-settings: 'FILL' 1;">volume_up</span>
-      <span class="font-headline-md text-headline-md font-extrabold tracking-wider leading-none">📢 MANUAL BUZZER / HORN</span>
-    </button>
-
-    <!-- Clock Stepper -->
-    <div class="bg-surface-container-lowest border border-surface-container-highest p-space-sm rounded-lg flex flex-col gap-1.5">
-      <div class="font-label-micro text-label-micro text-outline text-center uppercase tracking-wider">Clock Stepper Trim</div>
-      <div class="grid grid-cols-4 gap-2">
-        <button id="btn-time-minus-10" class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">-10s</button>
-        <button id="btn-time-minus-1"  class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">-1s</button>
-        <button id="btn-time-plus-1"   class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">+1s</button>
-        <button id="btn-time-plus-10"  class="tactile-bevel py-2 bg-surface-container-high border border-surface-container-highest hover:border-outline text-on-surface font-headline-sm text-headline-sm rounded text-center transition-all duration-300">+10s</button>
-      </div>
+    <div data-kumite class="box penalty-controls">
+      <div class="row"><h3 class="grow">PENALTIES</h3><button id="btn-ao-clear-penalties">Clear</button></div>
+      <div class="grid5"><button id="btn-ao-ch1" class="penalty-btn" aria-pressed="false">CH1</button><button id="btn-ao-ch2" class="penalty-btn" aria-pressed="false">CH2</button><button id="btn-ao-ch3" class="penalty-btn" aria-pressed="false">CH3</button><button id="btn-ao-hc" class="penalty-btn" aria-pressed="false">HC</button><button id="btn-ao-h" class="penalty-btn" aria-pressed="false">H</button></div>
+      <div class="grid2"><button id="btn-ao-kiken" class="dq-btn">Kiken</button><button id="btn-ao-shikkaku" class="dq-btn">Shikkaku</button></div>
     </div>
-
-    <!-- Audit Trail Log -->
-    <div class="bg-surface-container-lowest border border-surface-container-highest p-space-sm rounded-lg mt-auto flex flex-col gap-1 max-h-28 overflow-hidden">
-      <div class="flex items-center justify-between text-outline font-label-micro text-label-micro">
-        <span>OPERATIONAL AUDIT TRAIL</span>
-        <span id="audit-sync-label" class="text-tertiary">SYNCED</span>
-      </div>
-      <div id="audit-log" class="flex flex-col-reverse gap-0.5 overflow-hidden">
-        <!-- Populated dynamically -->
-      </div>
+    <div data-kata class="platform-stack">
+      <div data-team-kata class="box"><label>Team / Dojo / Country<input id="team-name-ao"></label><div class="grid3"><label>Athlete 1<input id="athlete-ao-0"></label><label>Athlete 2<input id="athlete-ao-1"></label><label>Athlete 3<input id="athlete-ao-2"></label></div></div>
+      <label class="box">Kata name<input id="kata-name-ao" list="kata-options" placeholder="Search or enter a kata"></label>
+      <div class="box published-total"><h3>PUBLISHED TOTAL</h3><strong id="kata-total-ao" data-theme-number class="score text-white">0</strong></div>
+      <div id="kata-judge-inputs-ao" class="box"><h3>JUDGE SCORES · 7.0–10.0</h3><div class="judge-grid"><label>J1<input data-judge-input data-side="ao" data-index="0" type="number" min="7" max="10" step="0.1" aria-label="AO judge 1 score"></label><label>J2<input data-judge-input data-side="ao" data-index="1" type="number" min="7" max="10" step="0.1" aria-label="AO judge 2 score"></label><label>J3<input data-judge-input data-side="ao" data-index="2" type="number" min="7" max="10" step="0.1" aria-label="AO judge 3 score"></label><label>J4<input data-judge-input data-side="ao" data-index="3" type="number" min="7" max="10" step="0.1" aria-label="AO judge 4 score"></label><label>J5<input data-judge-input data-side="ao" data-index="4" type="number" min="7" max="10" step="0.1" aria-label="AO judge 5 score"></label><label>J6<input data-judge-input data-side="ao" data-index="5" type="number" min="7" max="10" step="0.1" aria-label="AO judge 6 score"></label><label>J7<input data-judge-input data-side="ao" data-index="6" type="number" min="7" max="10" step="0.1" aria-label="AO judge 7 score"></label></div></div>
     </div>
   </section>
-
-  <!-- ==================== RIGHT: AO (BLUE CORNER) ==================== -->
-  <section id="ao-panel" class="col-span-12 lg:col-span-4 flex flex-col gap-space-sm bg-surface-container-low border-2 border-secondary-container/80 rounded-lg p-space-sm shadow-2xl relative overflow-hidden transition-all duration-300">
-    <div class="absolute -top-12 -right-12 w-48 h-48 bg-secondary-container/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <!-- Corner Header & Team Wins Indicator -->
-    <div class="flex items-center justify-between bg-on-secondary/70 border-b-2 border-secondary-container px-space-md py-space-xs rounded">
-      <div class="flex items-center gap-2">
-        <span class="w-3.5 h-3.5 rounded-full bg-secondary-fixed animate-pulse border border-white"></span>
-        <h2 class="font-headline-md text-headline-md tracking-wider text-white font-extrabold uppercase">🔵 AO (BLUE CORNER)</h2>
-      </div>
-      <!-- Team Kumite Mode Counter -->
-      <div class="flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded border border-secondary/40">
-        <span class="text-[10px] font-bold text-secondary-fixed uppercase tracking-wider">TEAM WINS:</span>
-        <button id="btn-ao-team-dec" class="px-1 text-secondary-fixed hover:text-white font-black text-xs cursor-pointer">-</button>
-        <span id="ao-team-wins-label" class="font-mono font-black text-amber-300 text-sm px-1">0</span>
-        <button id="btn-ao-team-inc" class="px-1 text-secondary-fixed hover:text-white font-black text-xs cursor-pointer">+</button>
-      </div>
-    </div>
-
-    <!-- Competitor Identity -->
-    <div class="grid grid-cols-3 gap-2 bg-surface-container-lowest p-space-sm border border-surface-container-highest rounded">
-      <div class="col-span-2 flex flex-col">
-        <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Competitor Name</label>
-        <input id="input-ao-name" class="w-full bg-surface-container border border-surface-container-highest focus:border-secondary-container rounded px-2.5 py-1 text-on-surface font-headline-sm text-headline-sm uppercase tracking-wider outline-none transition-colors duration-300" type="text" value="Kenji Sato">
-      </div>
-      <div class="flex flex-col">
-        <label class="font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Country</label>
-        <div class="flex items-center h-full bg-surface-container border border-surface-container-highest rounded px-2 gap-1.5">
-          <span class="text-base">🇯🇵</span>
-          <input type="text" id="input-ao-country-code" class="bg-transparent outline-none w-full font-headline-sm text-headline-sm font-bold text-on-surface uppercase transition-colors duration-300" value="JPN" maxlength="4">
-        </div>
-      </div>
-    </div>
-
-    <!-- Score + Undo -->
-    <div class="bg-surface-container-lowest border-2 border-secondary-container/60 rounded-lg p-space-md flex items-center justify-between relative shadow-[inset_0_2px_8px_rgba(0,0,0,0.8)]">
-      <div class="flex flex-col">
-        <span class="font-label-tactical text-label-tactical text-secondary-fixed font-bold uppercase tracking-wider">TOTAL SCORE</span>
-        <span id="ao-lead-text" class="font-label-micro text-label-micro text-outline lead-even">Even</span>
-      </div>
-      <div id="ao-score-display" class="font-score-display text-score-display font-extrabold theme-text tracking-tight drop-shadow-[0_0_18px_rgba(0,83,219,0.7)] px-space-md transition-all duration-300">0</div>
-      <button id="btn-ao-undo" class="tactile-bevel flex flex-col items-center justify-center px-space-md py-space-sm bg-surface-container-high border-2 border-secondary/60 hover:border-secondary text-secondary-fixed rounded transition-all duration-300">
-        <span class="material-symbols-outlined text-2xl font-bold">undo</span>
-        <span class="font-label-tactical text-label-tactical uppercase">↺ UNDO</span>
-        <span class="font-label-micro text-label-micro text-outline">(REVERT LAST)</span>
-      </button>
-    </div>
-
-    <!-- Senshu Toggle -->
-    <button id="btn-ao-senshu" class="w-full py-2.5 px-space-md bg-surface-container-lowest border-2 border-surface-container-highest hover:border-amber-400/60 text-outline hover:text-amber-200 font-label-tactical text-label-tactical uppercase tracking-wider rounded flex items-center justify-between tactile-bevel transition-all duration-300">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-outline">stars</span>
-        <span id="ao-senshu-label">★ SENSHU READY (Click to Award)</span>
-      </div>
-      <span id="ao-senshu-dot" class="w-2.5 h-2.5 rounded-full bg-surface-container-highest"></span>
-    </button>
-
-    <!-- Scoring Buttons -->
-    <div id="ao-score-btns" class="grid grid-cols-1 gap-2.5">
-      <button id="btn-ao-yuko" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-all duration-300">
-        <div class="flex items-center gap-3">
-          <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">+1</span>
-          <div class="text-left">
-            <div class="font-headline-md text-headline-md tracking-wider leading-none">YUKO</div>
-            <div class="font-label-micro text-label-micro text-secondary-fixed-dim">Punch to Head or Torso</div>
-          </div>
-        </div>
-        <span class="material-symbols-outlined text-2xl">sports_martial_arts</span>
-      </button>
-      <button id="btn-ao-wazaari" class="tactile-bevel w-full py-1.5 px-space-md bg-secondary-container hover:bg-blue-600 text-white border-2 border-secondary-fixed rounded-lg flex items-center justify-between transition-all duration-300">
-        <div class="flex items-center gap-3">
-          <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest/80 text-white px-3 py-1 rounded border border-secondary">+2</span>
-          <div class="text-left">
-            <div class="font-headline-md text-headline-md tracking-wider leading-none">WAZA-ARI</div>
-            <div class="font-label-micro text-label-micro text-secondary-fixed-dim">Mid-level Body Kick (Chudan Geri)</div>
-          </div>
-        </div>
-        <span class="material-symbols-outlined text-2xl">flash_on</span>
-      </button>
-      <button id="btn-ao-ippon" class="tactile-bevel w-full py-2 px-space-md bg-secondary-fixed hover:bg-blue-400 text-surface-container-lowest border-2 border-white rounded-lg flex items-center justify-between shadow-[0_0_12px_rgba(0,83,219,0.4)] transition-all duration-300">
-        <div class="flex items-center gap-3">
-          <span class="font-control-action text-control-action font-extrabold bg-surface-container-lowest text-secondary-container px-3.5 py-1 rounded border border-white">+3</span>
-          <div class="text-left">
-            <div class="font-headline-lg text-headline-lg font-black tracking-wider leading-none text-surface-container-lowest">IPPON</div>
-            <div class="font-label-micro text-label-micro text-surface-container-lowest/80 font-bold">Jodan Kick or Sweep / Takedown Follow-up</div>
-          </div>
-        </div>
-        <span class="material-symbols-outlined text-3xl text-surface-container-lowest" style="font-variation-settings: 'FILL' 1;">military_tech</span>
-      </button>
-    </div>
-
-    <!-- WKF Penalties & Disqualifications (AO) -->
-    <div class="bg-surface-container-lowest border-2 border-secondary-container/40 p-2.5 rounded-lg flex flex-col gap-2 mt-1 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)]">
-      <div class="flex items-center justify-between border-b border-surface-container-highest pb-1">
-        <div class="flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-base text-secondary">warning</span>
-          <span class="font-label-tactical text-label-tactical text-secondary-fixed font-bold uppercase tracking-wider">WKF PENALTIES (AO)</span>
-        </div>
-        <button id="btn-ao-clear-penalties" class="font-label-micro text-label-micro text-outline hover:text-error transition-colors duration-300 uppercase font-bold underline flex items-center gap-0.5">
-          <span class="material-symbols-outlined text-xs">close</span>CLEAR
-        </button>
-      </div>
-
-      <!-- Warning Row -->
-      <div class="grid grid-cols-3 gap-2">
-        <button id="btn-ao-ch1" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
-          CH1<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 1</span>
-        </button>
-        <button id="btn-ao-ch2" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
-          CH2<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 2</span>
-        </button>
-        <button id="btn-ao-ch3" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300">
-          CH3<span class="block text-[9px] font-normal tracking-tight text-outline">WARN 3</span>
-        </button>
-      </div>
-
-      <!-- Serious Penalties Row -->
-      <div class="grid grid-cols-2 gap-2">
-        <button id="btn-ao-hc" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
-          <span class="font-extrabold">HC</span><span class="text-[10px] font-normal text-outline uppercase">HAN-CHUI (-2)</span>
-        </button>
-        <button id="btn-ao-h" class="penalty-btn tactile-bevel py-2.5 px-2 bg-surface-container border-2 border-surface-container-highest hover:border-secondary-container text-on-surface-variant hover:text-secondary rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex flex-col items-center justify-center leading-tight">
-          <span class="font-extrabold">H</span><span class="text-[10px] font-normal text-outline uppercase">HANSOKU (DQ)</span>
-        </button>
-      </div>
-
-      <!-- Explicit Kiken & Shikkaku Row -->
-      <div class="grid grid-cols-2 gap-2 pt-1 border-t border-surface-container-highest">
-        <button id="btn-ao-kiken" class="dq-btn tactile-bevel py-1.5 px-2 bg-blue-950/60 border border-blue-500/80 hover:bg-blue-900 text-blue-300 rounded font-label-tactical text-label-tactical uppercase text-center font-bold transition-all duration-300 flex items-center justify-center gap-1" title="Withdrawal: AO forfeits, AKA wins immediately">
-          <span class="material-symbols-outlined text-sm">person_off</span>
-          KIKEN (WITHDRAW)
-        </button>
-        <button id="btn-ao-shikkaku" class="dq-btn tactile-bevel py-1.5 px-2 bg-blue-950/80 border border-blue-400 hover:bg-blue-800 text-white rounded font-label-tactical text-label-tactical uppercase text-center font-black transition-all duration-300 flex items-center justify-center gap-1" title="Disqualification: AO expelled from tournament, AKA wins immediately">
-          <span class="material-symbols-outlined text-sm">gavel</span>
-          SHIKKAKU (DQ)
-        </button>
-      </div>
-    </div>
-  </section>
-
 </main>
-
-<!-- ==================== BOTTOM ACTION & SAFETY BAR ==================== -->
-<footer class="w-full mt-auto z-40 flex flex-wrap justify-between items-center px-space-lg py-1.5 bg-surface-container-lowest border-t-2 border-surface-container-highest shadow-[0_-4px_16px_rgba(0,0,0,0.8)] gap-2">
-
-  <!-- Left: Reset & Export Result -->
-  <div class="flex items-center gap-space-sm flex-wrap">
-    <button id="btn-reset-match" class="tactile-bevel px-space-md py-2 bg-surface-container border border-surface-container-highest hover:border-error-container text-on-surface hover:text-error rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase transition-all duration-300">
-      <span class="material-symbols-outlined text-lg">restart_alt</span>
-      RESET MATCH
-    </button>
-
-    <button id="btn-export-result" class="tactile-bevel px-space-md py-2 bg-surface-container-high border-2 border-emerald-500/70 hover:border-emerald-400 text-emerald-300 hover:text-white rounded flex items-center gap-2 font-label-tactical text-label-tactical uppercase transition-all duration-300" title="Append match result to results.csv">
-      <span class="material-symbols-outlined text-lg">save_as</span>
-      EXPORT RESULT
-    </button>
-  </div>
-
-  <!-- Center: Keyboard Reference & Arbiters Actions -->
-  <div class="hidden lg:flex items-center gap-space-md">
-    <button id="btn-hantei" class="px-space-sm py-1.5 bg-surface-container-high border border-surface-container-highest hover:bg-surface-bright rounded text-on-surface font-label-tactical text-label-tactical uppercase transition-all duration-300">
-      Hantei Decision
-    </button>
-    <button id="btn-doctor-time" class="px-space-sm py-1.5 bg-surface-container-high border border-surface-container-highest hover:bg-surface-bright rounded text-on-surface font-label-tactical text-label-tactical uppercase transition-all duration-300">
-      Doctor Time (+1:00)
-    </button>
-    <div class="flex items-center gap-3 border-l border-surface-container-highest pl-space-md">
-      <span class="font-label-tactical text-label-tactical text-outline uppercase tracking-wider">
-        Keys: <span class="text-tertiary">Space</span>=Start/Stop | <span class="text-primary">Q/W/E</span>=AKA | <span class="text-secondary">I/O/P</span>=AO | <span class="text-amber-400">Z</span>=Undo | <span class="text-emerald-400">M</span>=Medical | <span class="text-amber-400">B</span>=Horn
-      </span>
-    </div>
-  </div>
-
-  <!-- Right: Publish to Main Display -->
-  <div class="flex items-center gap-space-sm">
-    <button id="btn-publish" class="tactile-bevel px-space-lg py-2.5 bg-tertiary-container hover:bg-tertiary text-on-tertiary-container border-2 border-tertiary rounded-lg flex items-center gap-3 font-headline-sm text-headline-sm font-extrabold uppercase tracking-wider shadow-[0_0_24px_rgba(78,222,163,0.5)] transition-all duration-300">
-      <span class="material-symbols-outlined text-2xl text-tertiary-fixed-dim spin-slow">sync</span>
-      <span>PUBLISH TO ARENA</span>
-      <span id="publish-status-badge" class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-on-tertiary-container text-tertiary border border-tertiary/60">● LIVE SYNC ACTIVE</span>
-    </button>
-  </div>
-</footer>
-
-<!-- ==================== 10s MEDICAL OVERLAY (CONTROL CONSOLE) ==================== -->
-<div id="medical-overlay-ctrl">
-  <div class="flex items-center gap-2 text-emerald-400 font-headline-lg text-headline-lg font-black tracking-widest uppercase">
-    <span class="material-symbols-outlined text-4xl">medical_services</span>
-    10-SECOND MEDICAL TIMEOUT
-  </div>
-  <div id="medical-countdown-ctrl">10</div>
-  <div class="text-white/60 font-mono text-sm uppercase tracking-wider">Doctor & Athlete Assessment Time Remaining</div>
-  <button id="btn-medical-dismiss" class="tactile-bevel px-6 py-2.5 mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-headline-sm font-black rounded-lg uppercase tracking-wider transition-all duration-300">
-    STOP & RESUME MATCH
-  </button>
-</div>
-
-<!-- ==================== SETTINGS MODAL ==================== -->
-<div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-  <div class="modal-box">
-    <div class="flex items-center justify-between mb-4 border-b border-surface-container-highest pb-3">
-      <div class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-tertiary">tune</span>
-        <h2 id="modal-title" class="font-headline-lg text-headline-lg font-black text-on-surface uppercase tracking-wider">Settings & Tournament Interlock</h2>
-      </div>
-      <button id="btn-modal-close" class="p-1 hover:bg-surface-container-high rounded text-on-surface-variant transition-colors duration-300">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-
-    <!-- 1. Tournament Header Title -->
-    <div class="mb-4">
-      <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Tournament Header Title</label>
-      <input id="modal-tournament-name" type="text"
-        class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary transition-colors duration-300"
-        value="2028 10TH JAPAN KARATE-DO HAYASHI HA SHITORYU KAI WORLD KARATE TOURNAMENT — SRI LANKA">
-    </div>
-
-    <!-- Tournament branding: staged until Save & Sync -->
-    <section aria-labelledby="tournament-logos-heading" class="mb-4 p-3 rounded-lg border-2 border-tertiary/50 bg-surface-container">
-      <h3 id="tournament-logos-heading" class="font-label-tactical text-label-tactical font-bold text-tertiary uppercase tracking-wider mb-2">TOURNAMENT LOGOS &amp; SPONSORS</h3>
-      <p class="text-xs text-on-surface-variant mb-3">PNG, JPEG, or SVG, up to 200 KB each. Preview your logos, then choose Save &amp; Sync to update the arena.</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div class="min-w-0 rounded-lg border border-surface-container-highest bg-surface-container-lowest p-3">
-          <label for="input-logo-main-header" class="block text-xs font-bold text-on-surface mb-2">Main Header Logo (Top Left)</label>
-          <div class="flex items-center gap-3 mb-2">
-            <img id="preview-logo-main-header" alt="Main Header Logo (Top Left) preview" class="hidden h-10 max-h-10 w-16 shrink-0 object-contain">
-            <span id="filename-logo-main-header" class="min-w-0 truncate text-[11px] text-on-surface-variant">No logo selected</span>
-          </div>
-          <input id="input-logo-main-header" type="file" accept="image/png, image/jpeg, image/svg+xml"
-            class="block w-full min-w-0 text-[11px] text-on-surface-variant file:mr-2 file:rounded file:border-0 file:bg-surface-container-high file:px-2 file:py-1.5 file:text-xs file:font-bold file:text-tertiary cursor-pointer">
-          <button id="remove-logo-main-header" type="button" class="mt-2 text-[11px] text-outline hover:text-error underline">Remove logo</button>
-        </div>
-        <div class="min-w-0 rounded-lg border border-surface-container-highest bg-surface-container-lowest p-3">
-          <label for="input-logo-title-sponsor" class="block text-xs font-bold text-on-surface mb-2">Title Sponsor</label>
-          <div class="flex items-center gap-3 mb-2">
-            <img id="preview-logo-title-sponsor" alt="Title Sponsor preview" class="hidden h-10 max-h-10 w-16 shrink-0 object-contain">
-            <span id="filename-logo-title-sponsor" class="min-w-0 truncate text-[11px] text-on-surface-variant">No logo selected</span>
-          </div>
-          <input id="input-logo-title-sponsor" type="file" accept="image/png, image/jpeg, image/svg+xml"
-            class="block w-full min-w-0 text-[11px] text-on-surface-variant file:mr-2 file:rounded file:border-0 file:bg-surface-container-high file:px-2 file:py-1.5 file:text-xs file:font-bold file:text-tertiary cursor-pointer">
-          <button id="remove-logo-title-sponsor" type="button" class="mt-2 text-[11px] text-outline hover:text-error underline">Remove logo</button>
-        </div>
-        <div class="min-w-0 rounded-lg border border-surface-container-highest bg-surface-container-lowest p-3">
-          <label for="input-logo-platinum-partner" class="block text-xs font-bold text-on-surface mb-2">Platinum Partner</label>
-          <div class="flex items-center gap-3 mb-2">
-            <img id="preview-logo-platinum-partner" alt="Platinum Partner preview" class="hidden h-10 max-h-10 w-16 shrink-0 object-contain">
-            <span id="filename-logo-platinum-partner" class="min-w-0 truncate text-[11px] text-on-surface-variant">No logo selected</span>
-          </div>
-          <input id="input-logo-platinum-partner" type="file" accept="image/png, image/jpeg, image/svg+xml"
-            class="block w-full min-w-0 text-[11px] text-on-surface-variant file:mr-2 file:rounded file:border-0 file:bg-surface-container-high file:px-2 file:py-1.5 file:text-xs file:font-bold file:text-tertiary cursor-pointer">
-          <button id="remove-logo-platinum-partner" type="button" class="mt-2 text-[11px] text-outline hover:text-error underline">Remove logo</button>
-        </div>
-        <div class="min-w-0 rounded-lg border border-surface-container-highest bg-surface-container-lowest p-3">
-          <label for="input-logo-gold-partner" class="block text-xs font-bold text-on-surface mb-2">Gold Partner</label>
-          <div class="flex items-center gap-3 mb-2">
-            <img id="preview-logo-gold-partner" alt="Gold Partner preview" class="hidden h-10 max-h-10 w-16 shrink-0 object-contain">
-            <span id="filename-logo-gold-partner" class="min-w-0 truncate text-[11px] text-on-surface-variant">No logo selected</span>
-          </div>
-          <input id="input-logo-gold-partner" type="file" accept="image/png, image/jpeg, image/svg+xml"
-            class="block w-full min-w-0 text-[11px] text-on-surface-variant file:mr-2 file:rounded file:border-0 file:bg-surface-container-high file:px-2 file:py-1.5 file:text-xs file:font-bold file:text-tertiary cursor-pointer">
-          <button id="remove-logo-gold-partner" type="button" class="mt-2 text-[11px] text-outline hover:text-error underline">Remove logo</button>
-        </div>
-        <div class="min-w-0 rounded-lg border border-surface-container-highest bg-surface-container-lowest p-3">
-          <label for="input-logo-silver-sponsor" class="block text-xs font-bold text-on-surface mb-2">Silver Sponsor</label>
-          <div class="flex items-center gap-3 mb-2">
-            <img id="preview-logo-silver-sponsor" alt="Silver Sponsor preview" class="hidden h-10 max-h-10 w-16 shrink-0 object-contain">
-            <span id="filename-logo-silver-sponsor" class="min-w-0 truncate text-[11px] text-on-surface-variant">No logo selected</span>
-          </div>
-          <input id="input-logo-silver-sponsor" type="file" accept="image/png, image/jpeg, image/svg+xml"
-            class="block w-full min-w-0 text-[11px] text-on-surface-variant file:mr-2 file:rounded file:border-0 file:bg-surface-container-high file:px-2 file:py-1.5 file:text-xs file:font-bold file:text-tertiary cursor-pointer">
-          <button id="remove-logo-silver-sponsor" type="button" class="mt-2 text-[11px] text-outline hover:text-error underline">Remove logo</button>
-        </div>
-        <div class="min-w-0 rounded-lg border border-surface-container-highest bg-surface-container-lowest p-3">
-          <label for="input-logo-association-partner" class="block text-xs font-bold text-on-surface mb-2">Association Partner</label>
-          <div class="flex items-center gap-3 mb-2">
-            <img id="preview-logo-association-partner" alt="Association Partner preview" class="hidden h-10 max-h-10 w-16 shrink-0 object-contain">
-            <span id="filename-logo-association-partner" class="min-w-0 truncate text-[11px] text-on-surface-variant">No logo selected</span>
-          </div>
-          <input id="input-logo-association-partner" type="file" accept="image/png, image/jpeg, image/svg+xml"
-            class="block w-full min-w-0 text-[11px] text-on-surface-variant file:mr-2 file:rounded file:border-0 file:bg-surface-container-high file:px-2 file:py-1.5 file:text-xs file:font-bold file:text-tertiary cursor-pointer">
-          <button id="remove-logo-association-partner" type="button" class="mt-2 text-[11px] text-outline hover:text-error underline">Remove logo</button>
-        </div>
-      </div>
-      <p id="logo-settings-status" role="status" aria-live="polite" class="mt-2 text-xs text-amber-300"></p>
-    </section>
-
-    <!-- 2. Point Gap & Match Time -->
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      <div>
-        <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Winning Point Gap (Mercy Rule)</label>
-        <input id="modal-point-gap" type="number" min="1" max="20"
-          class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary transition-colors duration-300"
-          value="8">
-        <span class="font-label-micro text-label-micro text-outline">Default: 8 points gap ends match automatically</span>
-      </div>
-      <div>
-        <label class="block font-label-micro text-label-micro text-outline uppercase tracking-wider mb-1">Custom Match Time (seconds)</label>
-        <input id="modal-custom-time" type="number" min="30" max="600"
-          class="w-full bg-surface-container border border-surface-container-highest rounded px-3 py-2 text-on-surface font-body-md outline-none focus:border-tertiary transition-colors duration-300"
-          value="120">
-        <span class="font-label-micro text-label-micro text-outline">For "Custom Category" preset</span>
-      </div>
-    </div>
-
-    <!-- 3. Tournament CSV Match Data Auto-Fill -->
-    <div class="mb-4 p-3 bg-surface-container rounded-lg border border-surface-container-highest">
-      <div class="flex items-center justify-between mb-2">
-        <div class="flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-amber-400 text-sm">table_rows</span>
-          <span class="font-label-tactical text-label-tactical font-bold text-on-surface uppercase">Tournament Bouts CSV Auto-Fill</span>
-        </div>
-        <span id="csv-status-badge" class="text-[10px] font-mono font-bold text-outline uppercase px-2 py-0.5 rounded bg-surface-container-lowest">NO CSV LOADED</span>
-      </div>
-      <p class="font-label-micro text-label-micro text-outline mb-2">
-        Upload CSV containing: <code>Bout Number, AKA Name, AKA Country, AO Name, AO Country</code>. Entering the bout # in the navbar will auto-fill competitor names.
-      </p>
-      <div class="flex items-center gap-2">
-        <button id="btn-load-csv" class="tactile-bevel px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-black border border-amber-500 rounded font-label-tactical text-label-tactical uppercase font-bold flex items-center gap-1 transition-all duration-300">
-          <span class="material-symbols-outlined text-sm">upload_file</span>
-          Load Match CSV
-        </button>
-        <input type="file" id="csv-file-input" accept=".csv,text/csv,text/plain" class="hidden">
-        <span id="csv-filename" class="text-xs font-mono text-tertiary truncate flex-1"></span>
-      </div>
-    </div>
-
-    <!-- 4. Custom Horn Audio (MP3 Upload) -->
-    <div class="mb-5 p-3 bg-surface-container rounded-lg border border-surface-container-highest">
-      <div class="flex items-center justify-between mb-2">
-        <div class="flex items-center gap-1.5">
-          <span class="material-symbols-outlined text-amber-400 text-sm">volume_up</span>
-          <span class="font-label-tactical text-label-tactical font-bold text-on-surface uppercase">Custom Buzzer Audio (horn.mp3)</span>
-        </div>
-        <span id="buzzer-status-badge" class="text-[10px] font-mono font-bold text-tertiary uppercase px-2 py-0.5 rounded bg-surface-container-lowest">SYNTHESIZED HORN ACTIVE</span>
-      </div>
-      <p class="font-label-micro text-label-micro text-outline mb-2">
-        Select a custom MP3/WAV buzzer audio file. Falls back automatically to multi-tone Web Audio horn if none provided.
-      </p>
-      <div class="flex items-center gap-2">
-        <label class="tactile-bevel px-3 py-1.5 bg-surface-container-high hover:bg-surface-bright border border-surface-container-highest text-on-surface rounded font-label-tactical text-label-tactical uppercase cursor-pointer flex items-center gap-1 transition-all duration-300">
-          <span class="material-symbols-outlined text-sm">audio_file</span>
-          Choose Audio File
-          <input type="file" id="custom-buzzer-input" accept="audio/*,.mp3,.wav" class="hidden">
-        </label>
-        <button id="btn-test-buzzer" class="px-3 py-1.5 bg-surface-container-high hover:bg-surface-bright border border-surface-container-highest text-amber-300 rounded font-label-tactical text-label-tactical uppercase transition-all duration-300">
-          Test Sound
-        </button>
-        <button id="btn-reset-buzzer" class="px-2 py-1.5 text-xs text-outline hover:text-error uppercase underline transition-colors duration-300">
-          Reset Default
-        </button>
-      </div>
-      <span id="buzzer-filename" class="block text-xs font-mono text-on-surface-variant mt-1.5 truncate"></span>
-    </div>
-
-    <!-- Save / Cancel -->
-    <div class="flex gap-3 justify-end pt-3 border-t border-surface-container-highest">
-      <button id="btn-modal-cancel" class="px-space-md py-2 bg-surface-container border border-surface-container-highest rounded text-on-surface font-label-tactical text-label-tactical uppercase hover:bg-surface-container-high transition-colors duration-300">Cancel</button>
-      <button id="btn-modal-save" class="tactile-bevel px-space-md py-2 bg-tertiary-container border-2 border-tertiary rounded text-on-tertiary-container font-label-tactical text-label-tactical uppercase hover:bg-tertiary transition-all duration-300 disabled:opacity-50 disabled:cursor-wait">Save &amp; Sync</button>
-    </div>
-  </div>
-</div>
-
-<script src="js/tournament.js"></script>
-<script src="js/control.js"></script>
-<script src="js/mode-control.js"></script>
-</body>
-</html>
+<footer><button id="btn-reset-match" data-kumite>Reset bout</button><button id="btn-export-result">Export result</button><button id="btn-hantei" data-kumite>Hantei decision</button><button id="btn-doctor-time" data-kumite>Doctor +1:00</button><span class="shortcuts">Space: timer · Q/W/E: AKA · I/O/P: AO · Z: undo · M: 10s medical · B: horn</span><button id="btn-publish" class="footer-publish">Publish to arena <span id="publish-status-badge">LIVE</span></button></footer>
+<div id="medical-overlay-ctrl" class="overlay" role="dialog" aria-modal="true" aria-label="Medical timer"><h2>10-SECOND MEDICAL TIMEOUT</h2><div id="medical-countdown-ctrl">10</div><p>Match clock is paused</p><button id="btn-medical-dismiss">Dismiss · keep match paused</button></div>
+<div id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal-box">
+  <div class="row"><h2 id="modal-title" class="grow modal-title">TOURNAMENT SETTINGS</h2><button id="btn-modal-close" aria-label="Close settings">Close</button></div>
+  <div class="settings-grid"><div class="settings-stack">
+    <div class="box"><label>Tournament title<input id="modal-tournament-name"></label><input id="edit-tournament-name" class="hidden" aria-label="Tournament title mirror"><div class="grid2"><label>Winning point gap<input id="modal-point-gap" type="number" min="1" max="20" value="8"></label><label>Custom duration (seconds)<input id="modal-custom-time" type="number" min="30" max="600" value="120"></label></div></div>
+    <div class="box"><h3>CSV COMPETITOR AUTO-FILL</h3><small>Bout Number, AKA Name, AKA Country, AO Name, AO Country, Category (optional)</small><div class="row"><button id="btn-load-csv">Load match CSV</button><span id="csv-status-badge">NO CSV LOADED</span></div><small id="csv-filename"></small><input id="csv-file-input" type="file" accept=".csv,text/csv,text/plain" class="hidden"></div>
+    <div class="box"><h3>CUSTOM MP3 / WAV HORN</h3><input id="custom-buzzer-input" type="file" accept="audio/*,.mp3,.wav" aria-label="Custom horn audio"><small id="buzzer-status-badge">SYNTH HORN ACTIVE</small><small id="buzzer-filename"></small><div class="row"><button id="btn-test-buzzer">Test sound</button><button id="btn-reset-buzzer">Reset default</button></div></div>
+  </div><div class="settings-stack"><h3>TOURNAMENT LOGOS &amp; SPONSORS</h3><small>PNG, JPEG or SVG · maximum 200 KB each · Save &amp; Sync to publish</small><div class="settings-logos">
+    <div class="logo-field"><label>Main header<input id="input-logo-main-header" type="file" accept="image/png, image/jpeg, image/svg+xml"></label><div class="row"><img id="preview-logo-main-header" alt="Main header preview" class="hidden object-contain"><small id="filename-logo-main-header" class="grow">No logo selected</small><button id="remove-logo-main-header">Remove</button></div></div>
+    <div class="logo-field"><label>Title sponsor<input id="input-logo-title-sponsor" type="file" accept="image/png, image/jpeg, image/svg+xml"></label><div class="row"><img id="preview-logo-title-sponsor" alt="Title sponsor preview" class="hidden object-contain"><small id="filename-logo-title-sponsor" class="grow">No logo selected</small><button id="remove-logo-title-sponsor">Remove</button></div></div>
+    <div class="logo-field"><label>Platinum partner<input id="input-logo-platinum-partner" type="file" accept="image/png, image/jpeg, image/svg+xml"></label><div class="row"><img id="preview-logo-platinum-partner" alt="Platinum partner preview" class="hidden object-contain"><small id="filename-logo-platinum-partner" class="grow">No logo selected</small><button id="remove-logo-platinum-partner">Remove</button></div></div>
+    <div class="logo-field"><label>Gold partner<input id="input-logo-gold-partner" type="file" accept="image/png, image/jpeg, image/svg+xml"></label><div class="row"><img id="preview-logo-gold-partner" alt="Gold partner preview" class="hidden object-contain"><small id="filename-logo-gold-partner" class="grow">No logo selected</small><button id="remove-logo-gold-partner">Remove</button></div></div>
+    <div class="logo-field"><label>Silver sponsor<input id="input-logo-silver-sponsor" type="file" accept="image/png, image/jpeg, image/svg+xml"></label><div class="row"><img id="preview-logo-silver-sponsor" alt="Silver sponsor preview" class="hidden object-contain"><small id="filename-logo-silver-sponsor" class="grow">No logo selected</small><button id="remove-logo-silver-sponsor">Remove</button></div></div>
+    <div class="logo-field"><label>Association partner<input id="input-logo-association-partner" type="file" accept="image/png, image/jpeg, image/svg+xml"></label><div class="row"><img id="preview-logo-association-partner" alt="Association partner preview" class="hidden object-contain"><small id="filename-logo-association-partner" class="grow">No logo selected</small><button id="remove-logo-association-partner">Remove</button></div></div>
+  </div></div></div><p id="logo-settings-status" role="status" aria-live="polite"></p><div class="row modal-actions"><button id="btn-modal-cancel">Cancel</button><button id="btn-modal-save">Save &amp; Sync</button></div>
+</div></div>
+<datalist id="kata-options"><option value="Papuren"><option value="Chatanyara Kushanku"><option value="Suparinpei"><option value="Seipai"><option value="Kururunfa"><option value="Bassai Dai"><option value="Kanku Dai"><option value="Seienchin"><option value="Gojushiho"></datalist>
+<script src="js/tournament.js"></script><script src="js/control.js"></script>
+</body></html>

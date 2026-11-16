@@ -51,14 +51,20 @@ const STATE = {
   streamLive:        true,
   audioMuted:        false,
   atoshiBarakuFired: false,
+  theme: 'dark',
+  poolText: 'Semi-Finals',
+  rulesetText: 'WKF',
 };
+// One authoritative state for every mode and both renderers.
+window.state = STATE;
 
 // Independent action history stacks for undo
 const akaHistory = [];
 const aoHistory  = [];
+let actionSequence = 0;
 
 // Loaded CSV bouts directory: { [boutNumber]: { akaName, akaCountry, aoName, aoCountry, category } }
-let loadedBouts = {};
+let loadedBouts = Object.create(null);
 
 // Audit log
 const auditEntries = [];
@@ -121,7 +127,7 @@ function timerTick(ts) {
 
 function startTimer() {
   if (Tournament.isKata(STATE.mode)) return;
-  if (STATE.isRunning || STATE.timerMs <= 0 || STATE.winner || STATE.medicalActive) return;
+  if (STATE.isRunning || STATE.timerMs <= 0 || STATE.winner || STATE.medicalActive || STATE.hanteiMode) return;
   STATE.isRunning = true;
   lastTimestamp = null;
   rafId = requestAnimationFrame(timerTick);
@@ -152,11 +158,11 @@ function resetTimerOnly() {
 
 /** Handles time up logic including Hantei check */
 function onMatchTimeExpired() {
-  playVictoryBuzzer();
   updateTimerDisplay();
 
   // WKF Rule: Check for tie without Senshu
   if (STATE.akaScore === STATE.aoScore && !STATE.akaSenshu && !STATE.aoSenshu) {
+    playVictoryBuzzer();
     // Tied without Senshu -> trigger Hantei Mode
     STATE.hanteiMode = true;
     STATE.winner = null;
@@ -191,6 +197,7 @@ let medicalRafId = null;
 let medicalLastTs = null;
 
 function startMedicalTimer() {
+  if (Tournament.isKata(STATE.mode) || STATE.winner) return;
   // 1. Immediately halt match timer
   stopTimer();
 
@@ -198,6 +205,7 @@ function startMedicalTimer() {
   STATE.medicalActive = true;
   STATE.medicalMs = 10000;
   medicalLastTs = null;
+  updateStatusRibbon();
 
   // 3. Show overlay on control console
   const overlayCtrl = document.getElementById('medical-overlay-ctrl');
@@ -284,7 +292,8 @@ function showHanteiBanner(show) {
 }
 
 function awardHantei(corner) {
-  STATE.hanteiMode = true;
+  if (Tournament.isKata(STATE.mode)) return;
+  STATE.hanteiMode = false;
   STATE.hanteiWinner = corner;
   showHanteiBanner(false);
   declareWinner(corner, `HANTEI (${corner.toUpperCase()} REFEREE DECISION)`);
@@ -296,15 +305,16 @@ function awardHantei(corner) {
    ============================================================ */
 function addPoints(corner, points) {
   if (Tournament.isKata(STATE.mode)) return;
-  if (STATE.winner) return;
+  if (STATE.winner || STATE.hanteiMode || STATE.medicalActive) return;
+  if (!['aka', 'ao'].includes(corner) || !Number.isFinite(points) || points <= 0) return;
 
   if (corner === 'aka') {
     STATE.akaScore += points;
-    akaHistory.push({ corner, points });
+    akaHistory.push({ corner, points, order: ++actionSequence });
     addAudit(nowHHMMSS(), `AKA: +${points} ${pointsLabel(points)}`, 'OK');
   } else {
     STATE.aoScore += points;
-    aoHistory.push({ corner, points });
+    aoHistory.push({ corner, points, order: ++actionSequence });
     addAudit(nowHHMMSS(), `AO: +${points} ${pointsLabel(points)}`, 'OK');
   }
 
@@ -318,6 +328,7 @@ function pointsLabel(p) {
 }
 
 function undoAka() {
+  if (Tournament.isKata(STATE.mode) || !akaHistory.length) return;
   if (STATE.winner) {
     STATE.winner = null;
     STATE.winReason = null;
@@ -328,10 +339,13 @@ function undoAka() {
   STATE.akaScore = Math.max(0, STATE.akaScore - last.points);
   addAudit(nowHHMMSS(), `AKA UNDO: -${last.points} ${pointsLabel(last.points)}`, 'UND');
   updateScoreDisplay();
+  checkGapRule();
+  updateStatusRibbon();
   broadcastState();
 }
 
 function undoAo() {
+  if (Tournament.isKata(STATE.mode) || !aoHistory.length) return;
   if (STATE.winner) {
     STATE.winner = null;
     STATE.winReason = null;
@@ -342,6 +356,8 @@ function undoAo() {
   STATE.aoScore = Math.max(0, STATE.aoScore - last.points);
   addAudit(nowHHMMSS(), `AO UNDO: -${last.points} ${pointsLabel(last.points)}`, 'UND');
   updateScoreDisplay();
+  checkGapRule();
+  updateStatusRibbon();
   broadcastState();
 }
 
@@ -349,7 +365,7 @@ function undoLast() {
   if (akaHistory.length === 0 && aoHistory.length === 0) return;
   if (akaHistory.length > 0 && aoHistory.length === 0) { undoAka(); return; }
   if (aoHistory.length > 0 && akaHistory.length === 0) { undoAo(); return; }
-  undoAka();
+  akaHistory.at(-1).order > aoHistory.at(-1).order ? undoAka() : undoAo();
 }
 
 /* ============================================================
@@ -366,6 +382,8 @@ function checkGapRule() {
 function declareWinner(corner, reason) {
   STATE.winner = corner;
   STATE.winReason = reason;
+  STATE.hanteiMode = false;
+  showHanteiBanner(false);
   stopTimer();
   playVictoryBuzzer();
   lockScoringButtons(true);
@@ -389,6 +407,7 @@ function lockScoringButtons(lock) {
    SECTION 8: WKF PENALTIES, KIKEN & SHIKKAKU
    ============================================================ */
 function togglePenalty(corner, type) {
+  if (Tournament.isKata(STATE.mode) || STATE.winner) return;
   const penObj = corner === 'aka' ? STATE.akaPenalties : STATE.aoPenalties;
   penObj[type] = !penObj[type];
 
@@ -403,6 +422,7 @@ function togglePenalty(corner, type) {
 }
 
 function clearPenalties(corner) {
+  if (Tournament.isKata(STATE.mode)) return;
   const penObj = corner === 'aka' ? STATE.akaPenalties : STATE.aoPenalties;
   Object.keys(penObj).forEach(k => penObj[k] = false);
   renderPenalties();
@@ -411,6 +431,7 @@ function clearPenalties(corner) {
 }
 
 function handleKiken(corner) {
+  if (Tournament.isKata(STATE.mode) || STATE.winner) return;
   const winCorner = corner === 'aka' ? 'ao' : 'aka';
   if (!confirm(`CONFIRM KIKEN (Withdrawal) for ${corner.toUpperCase()}?\n${winCorner.toUpperCase()} will be declared the winner.`)) return;
   declareWinner(winCorner, `${corner.toUpperCase()} KIKEN (WITHDRAWAL) — ${winCorner.toUpperCase()} WINS`);
@@ -418,6 +439,7 @@ function handleKiken(corner) {
 }
 
 function handleShikkaku(corner) {
+  if (Tournament.isKata(STATE.mode) || STATE.winner) return;
   const winCorner = corner === 'aka' ? 'ao' : 'aka';
   if (!confirm(`CONFIRM SHIKKAKU (Disqualification from Tournament) for ${corner.toUpperCase()}?\n${winCorner.toUpperCase()} will be declared the winner.`)) return;
   if (corner === 'aka') STATE.akaPenalties.h = true;
@@ -428,6 +450,7 @@ function handleShikkaku(corner) {
 }
 
 function toggleSenshu(corner) {
+  if (Tournament.isKata(STATE.mode) || STATE.winner) return;
   if (corner === 'aka') {
     STATE.akaSenshu = !STATE.akaSenshu;
     if (STATE.akaSenshu) STATE.aoSenshu = false;
@@ -463,6 +486,7 @@ function resetMatch() {
   if (!confirm('RESET MATCH?\nScores, match clock, and penalties will be reset to zero.')) return;
 
   stopTimer(false);
+  if (STATE.medicalActive) stopMedicalTimer();
 
   STATE.akaScore          = 0;
   STATE.aoScore           = 0;
@@ -594,26 +618,22 @@ function broadcastBuzzer(type) {
   } catch (e) {}
 }
 
+function sendAudioConfig(audio) {
+  if (ipc) ipc.send('broadcast-buzzer-instant', { type: 'audio-config', audio, ts: Date.now() });
+}
+
 async function loadCustomBuzzerOnStartup() {
-  // Check Electron IPC first
-  if (ipc) {
-    try {
-      const b64 = await ipc.invoke('load-buzzer');
-      if (b64) {
-        decodeAndSetBuzzerBuffer(b64);
-        updateBuzzerUI('Custom Horn Loaded (Local File)');
-        return;
-      }
-    } catch (e) {}
-  }
-  // Check localStorage base64 fallback
   try {
-    const b64 = localStorage.getItem('customBuzzerAudio');
-    if (b64) {
-      decodeAndSetBuzzerBuffer(b64);
-      updateBuzzerUI('Custom Horn Loaded (Cached)');
+    if (localStorage.getItem('customBuzzerDisabled') === 'true') return;
+    // Prefer the latest upload; legacy native storage can contain several files.
+    let audio = localStorage.getItem('customBuzzerAudio');
+    if (!audio && ipc) audio = await ipc.invoke('load-buzzer');
+    if (audio) {
+      await decodeAndSetBuzzerBuffer(audio);
+      sendAudioConfig(audio);
+      updateBuzzerUI('Saved custom horn');
     }
-  } catch (e) {}
+  } catch (error) { console.warn('Saved horn could not be loaded:', error); }
 }
 
 async function decodeAndSetBuzzerBuffer(base64Str) {
@@ -646,41 +666,42 @@ function updateBuzzerUI(label) {
 
 /** Parses CSV text into dictionary of bouts */
 function parseMatchCsv(csvText) {
-  const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
-  if (lines.length === 0) return {};
-
-  const bouts = {};
-  let headerIndex = -1;
-
-  // Detect header row
-  for (let i = 0; i < Math.min(3, lines.length); i++) {
-    if (/bout/i.test(lines[i])) {
-      headerIndex = i;
-      break;
-    }
+  // Preserve empty columns, quoted commas, escaped quotes and multiline names.
+  const rows = [];
+  let row = [], cell = '', quoted = false;
+  const text = String(csvText).replace(/^\uFEFF/, '');
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') {
+      if (quoted && text[i + 1] === '"') { cell += '"'; i++; }
+      else quoted = !quoted;
+    } else if (ch === ',' && !quoted) { row.push(cell.trim()); cell = ''; }
+    else if ((ch === '\n' || ch === '\r') && !quoted) {
+      if (ch === '\r' && text[i + 1] === '\n') i++;
+      row.push(cell.trim());
+      if (row.some(Boolean)) rows.push(row);
+      row = []; cell = '';
+    } else cell += ch;
   }
-
-  const startLine = headerIndex >= 0 ? headerIndex + 1 : 0;
-
-  for (let i = startLine; i < lines.length; i++) {
-    // Basic CSV cell extraction respecting quotes
-    const cells = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',').map(s => s.trim());
-    const cleanCells = cells.map(c => c.replace(/^["']|["']$/g, '').trim());
-
-    if (cleanCells.length >= 4) {
-      // Structure: BoutNumber, AkaName, AkaCountry, AoName, AoCountry
-      const boutNum = cleanCells[0].replace(/^#/, '');
-      bouts[boutNum] = {
-        boutNumber: boutNum,
-        akaName:    cleanCells[1] || 'AKA',
-        akaCountry: cleanCells[2] || 'SRI',
-        aoName:     cleanCells[3] || 'AO',
-        aoCountry:  cleanCells[4] || 'JPN',
-        category:   cleanCells[5] || ''
-      };
-    }
+  if (quoted) throw new Error('CSV contains an unclosed quoted field.');
+  row.push(cell.trim());
+  if (row.some(Boolean)) rows.push(row);
+  const normalize = value => value.toLowerCase().replace(/[^a-z0-9]/g, '');
+  const headerIndex = rows.slice(0, 3).findIndex(r => r.some(v => /^bout(number|no)?$/.test(normalize(v))));
+  const header = headerIndex >= 0 ? rows[headerIndex].map(normalize) : [];
+  const column = (aliases, fallback) => header.length ? header.findIndex(v => aliases.includes(v)) : fallback;
+  const columns = [column(['bout', 'boutnumber', 'boutno'], 0), column(['akaname', 'aka'], 1),
+    column(['akacountry', 'akacountrycode'], 2), column(['aoname', 'ao'], 3),
+    column(['aocountry', 'aocountrycode'], 4), column(['category'], 5)];
+  if (columns[0] < 0 || columns[1] < 0 || columns[3] < 0) throw new Error('CSV requires Bout Number, AKA Name and AO Name columns.');
+  const bouts = Object.create(null);
+  for (const values of rows.slice(headerIndex + 1)) {
+    const [bout, akaName, akaCountry, aoName, aoCountry, category] = columns.map(index => values[index] || '');
+    const boutNumber = bout.replace(/^#/, '').trim();
+    if (!boutNumber || values.length < 4) continue;
+    bouts[boutNumber] = { boutNumber, akaName: akaName || 'AKA', akaCountry: akaCountry || 'SRI',
+      aoName: aoName || 'AO', aoCountry: aoCountry || 'JPN', category };
   }
-
   return bouts;
 }
 
@@ -698,6 +719,12 @@ function loadBoutFromCsv(boutNum) {
   if (akaCountryInput) akaCountryInput.value = match.akaCountry;
   if (aoNameInput) aoNameInput.value = match.aoName;
   if (aoCountryInput) aoCountryInput.value = match.aoCountry;
+  if (STATE.mode === 'team_kata') {
+    STATE.teamNames.aka = match.akaName;
+    STATE.teamNames.ao = match.aoName;
+    document.getElementById('team-name-aka').value = match.akaName;
+    document.getElementById('team-name-ao').value = match.aoName;
+  }
 
   if (match.category) {
     STATE.categoryText = match.category;
@@ -726,7 +753,12 @@ async function handleLoadCsvButton() {
 }
 
 function processCsvContent(content, filename) {
-  loadedBouts = parseMatchCsv(content);
+  try { loadedBouts = parseMatchCsv(content); }
+  catch (error) {
+    const status = document.getElementById('csv-status-badge');
+    if (status) status.textContent = error.message;
+    return;
+  }
   const count = Object.keys(loadedBouts).length;
   const badge = document.getElementById('csv-status-badge');
   const fname = document.getElementById('csv-filename');
@@ -819,11 +851,17 @@ function createStatePayload() {
     tatamiName:        STATE.tatamiName,
     boutNumber:        STATE.boutNumber,
     roundLabel:        STATE.roundLabel,
+    theme:             STATE.theme,
+    audioMuted:        STATE.audioMuted,
+    poolText:          STATE.poolText,
+    rulesetText:       STATE.rulesetText,
+    pointGapLimit:     STATE.pointGapLimit,
+    customTimeS:       STATE.customTimeS,
     ts:                Date.now(),
   };
 }
 
-function broadcastState(force = false) {
+function broadcastState(force = false, requireStorage = false) {
   if (!STATE.streamLive && force !== true) return false;
   const payload = createStatePayload();
 
@@ -833,7 +871,7 @@ function broadcastState(force = false) {
     localStorage.setItem('karateMatchState', JSON.stringify(payload));
     stored = true;
   } catch (e) {
-    if (force === true) return false;
+    if (requireStorage) return false;
   }
 
   if (ipc) ipc.send('broadcast-state-instant', payload);
@@ -841,7 +879,7 @@ function broadcastState(force = false) {
 }
 
 function forceSync() {
-  broadcastState();
+  broadcastState(true);
   const btn = document.getElementById('btn-arena-sync');
   if (btn) {
     btn.classList.add('sync-flash');
@@ -882,10 +920,8 @@ function updateScoreDisplay() {
   if (aoEl)  aoEl.textContent  = STATE.aoScore;
 
   // Winner blink
-  akaEl?.classList.remove('winner-blink-ctrl');
-  aoEl?.classList.remove('winner-blink-ctrl');
-  if (STATE.winner === 'aka') akaEl?.classList.add('winner-blink-ctrl');
-  if (STATE.winner === 'ao')  aoEl?.classList.add('winner-blink-ctrl');
+  akaEl?.classList.toggle('winner-blink-ctrl', STATE.winner === 'aka');
+  aoEl?.classList.toggle('winner-blink-ctrl', STATE.winner === 'ao');
 
   // Lead telemetry
   const diff = STATE.akaScore - STATE.aoScore;
@@ -905,25 +941,16 @@ function updateScoreDisplay() {
 }
 
 function updateTimerDisplay() {
-  const mainEl = document.getElementById('ctrl-timer-main');
-  const msEl   = document.getElementById('ctrl-timer-ms');
-  if (!mainEl) return;
-
-  const { main, ms } = formatMs(STATE.timerMs);
-
-  if (mainEl.firstChild) mainEl.firstChild.textContent = main;
-  if (msEl) msEl.textContent = '.' + ms;
-
-  mainEl.classList.remove('atoshi-baraku', 'timer-ended');
-  if (msEl) msEl.style.color = '';
-
-  if (STATE.timerMs <= 0) {
-    mainEl.classList.add('timer-ended');
-    if (msEl) msEl.style.color = '#ef4444';
-  } else if (STATE.timerMs <= 15000) {
-    mainEl.classList.add('atoshi-baraku');
-    if (msEl) msEl.style.color = '#f59e0b';
-  }
+  const main = document.getElementById('ctrl-timer-main');
+  const fraction = document.getElementById('ctrl-timer-ms');
+  if (!main) return;
+  const formatted = formatMs(STATE.timerMs);
+  if (main.firstChild) main.firstChild.textContent = formatted.main;
+  if (fraction) fraction.textContent = '.' + formatted.ms;
+  main.classList.toggle('timer-ended', STATE.timerMs <= 0);
+  main.classList.toggle('atoshi-baraku', STATE.timerMs > 0 && STATE.timerMs <= 15000);
+  // Light mode always retains dark numbers, including warning and ended states.
+  applyNumberTheme();
 }
 
 function updateStatusRibbon() {
@@ -964,6 +991,7 @@ function renderPenalties() {
   const apply = (id, active, isDanger) => {
     const el = document.getElementById(id);
     if (!el) return;
+    el.setAttribute('aria-pressed', String(active));
     el.classList.remove('penalty-btn-active-warn', 'penalty-btn-active-danger');
     if (active) {
       el.classList.add(isDanger ? 'penalty-btn-active-danger' : 'penalty-btn-active-warn');
@@ -1018,7 +1046,11 @@ function renderAuditLog() {
   auditEntries.slice(0, 5).forEach(e => {
     const row = document.createElement('div');
     row.className = 'audit-entry';
-    row.innerHTML = `<span>${e.time}</span><span class="flex-1 mx-2 truncate">${e.msg}</span><span class="text-tertiary">${e.status}</span>`;
+    for (const value of [e.time, e.msg, e.status]) {
+      const cell = document.createElement('span');
+      cell.textContent = value;
+      row.appendChild(cell);
+    }
     log.appendChild(row);
   });
 }
@@ -1120,27 +1152,52 @@ function toggleStream() {
   }
 }
 
-function toggleTheme() {
-  const html  = document.documentElement;
-  const icon  = document.getElementById('theme-icon');
+function applyNumberTheme() {
+  const light = STATE.theme === 'light';
+  document.querySelectorAll('[data-theme-number]').forEach(element => {
+    const fraction = element.id === 'ctrl-timer-ms';
+    element.classList.toggle('text-[#0f172a]', light);
+    element.classList.toggle('text-white', !light && !fraction);
+    element.classList.toggle('text-yellow-400', !light && fraction);
+    element.classList.remove('text-[#c2410c]');
+    element.style.color = light ? '#0f172a' : fraction ? '#facc15' : '#ffffff';
+  });
+}
+
+function applyTheme() {
+  const light = STATE.theme === 'light';
+  document.documentElement.classList.toggle('light', light);
+  document.documentElement.classList.toggle('dark', !light);
+  document.body.classList.toggle('light-mode', light);
   const label = document.getElementById('theme-label');
-  if (html.classList.contains('dark')) {
-    html.classList.replace('dark', 'light');
-    document.body.classList.add('light-mode');
-    if (icon) { icon.textContent = 'light_mode'; icon.style.color = '#fbbf24'; }
-    if (label) label.textContent = 'LIGHT';
-  } else {
-    html.classList.replace('light', 'dark');
-    document.body.classList.remove('light-mode');
-    if (icon) { icon.textContent = 'dark_mode'; icon.style.color = '#fbbf24'; }
-    if (label) label.textContent = 'DARK';
-  }
+  if (label) label.textContent = light ? 'LIGHT' : 'DARK';
+  document.getElementById('btn-theme-toggle')?.setAttribute('aria-pressed', String(light));
+  applyNumberTheme();
+}
+
+function toggleTheme() {
+  STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
+  applyTheme();
+  broadcastState(true);
+}
+
+function restorePreferences() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('karateMatchState'));
+    if (!saved) return;
+    if (typeof saved.tournamentName === 'string') STATE.tournamentName = saved.tournamentName;
+    if (Number.isInteger(saved.pointGapLimit) && saved.pointGapLimit >= 1 && saved.pointGapLimit <= 20) STATE.pointGapLimit = saved.pointGapLimit;
+    if (Number.isInteger(saved.customTimeS) && saved.customTimeS >= 30 && saved.customTimeS <= 600) STATE.customTimeS = saved.customTimeS;
+    STATE.theme = saved.theme === 'light' ? 'light' : 'dark';
+  } catch (_) { /* Start with defaults when no valid preferences exist. */ }
+  applyTheme();
 }
 
 function toggleAudio() {
   STATE.audioMuted = !STATE.audioMuted;
   const icon = document.getElementById('audio-icon');
   if (icon) icon.textContent = STATE.audioMuted ? 'volume_off' : 'volume_up';
+  broadcastState(true);
 }
 
 function toggleFullscreen() {
@@ -1328,7 +1385,7 @@ function saveSettings() {
 
   STATE.logos = { ...draftLogos };
   // Explicit Save & Sync publishes even while the automatic arena stream is paused.
-  if (!broadcastState(true)) {
+  if (!broadcastState(true, true)) {
     Object.assign(STATE, previous);
     logoMessage('Settings could not be saved. Storage may be full or unavailable. Remove a logo or choose smaller images, then try again.');
     return;
@@ -1350,6 +1407,7 @@ function attachKeyboard() {
       return;
     }
     if (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable) return;
+    if (e.repeat || e.ctrlKey || e.metaKey || e.altKey) return;
     if (Tournament.isKata(STATE.mode)) {
       if (e.code === 'Space' && STATE.mode === 'team_kata') {
         e.preventDefault(); window.TournamentControl?.bunkaiAction(STATE.bunkaiRunning ? 'stop' : 'start');
@@ -1395,6 +1453,7 @@ function attachKeyboard() {
 document.addEventListener('DOMContentLoaded', async () => {
   // Restore logos before the first broadcast overwrites the saved match payload.
   restoreLogos();
+  restorePreferences();
   initLogoInputs();
   // Rebuild timer display node cleanly
   const mainTimerSpan = document.getElementById('ctrl-timer-main');
@@ -1402,16 +1461,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     const msSpan = document.getElementById('ctrl-timer-ms');
     mainTimerSpan.innerHTML = '';
     mainTimerSpan.appendChild(document.createTextNode('2:00'));
+    const isLight = document.body.classList.contains('light-mode') || document.documentElement.classList.contains('light');
+    if (isLight) {
+      mainTimerSpan.className = 'font-timer-display text-4xl lg:text-5xl font-black tracking-normal transition-colors text-[#0f172a]';
+      mainTimerSpan.style.color = '#0f172a';
+    } else {
+      mainTimerSpan.className = 'font-timer-display text-4xl lg:text-5xl font-black tracking-normal transition-colors text-white';
+      mainTimerSpan.style.color = '#ffffff';
+    }
     if (msSpan) {
       mainTimerSpan.appendChild(msSpan);
-      msSpan.className = 'text-amber-400 font-bold';
-      msSpan.style.fontSize = '32px';
+      if (isLight) {
+        msSpan.className = 'text-xl lg:text-2xl text-[#c2410c] font-bold';
+        msSpan.style.color = '#c2410c';
+      } else {
+        msSpan.className = 'text-xl lg:text-2xl text-yellow-400 font-bold';
+        msSpan.style.color = '#facc15';
+      }
       msSpan.textContent = '.00';
     }
   }
 
   // Load custom buzzer if saved
-  await loadCustomBuzzerOnStartup();
+  // Audio decoding must not delay mode/keyboard event binding.
+  loadCustomBuzzerOnStartup();
 
   // Initial renders
   updateScoreDisplay();
@@ -1440,15 +1513,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // --- HANTEI BUTTONS ---
   document.getElementById('btn-hantei')?.addEventListener('click', () => {
+    if (Tournament.isKata(STATE.mode) || STATE.winner) return;
+    stopTimer(false);
     STATE.hanteiMode = true;
+    STATE.hanteiWinner = null;
     showHanteiBanner(true);
+    updateStatusRibbon();
     broadcastState();
   });
   document.getElementById('btn-hantei-aka')?.addEventListener('click', () => awardHantei('aka'));
   document.getElementById('btn-hantei-ao')?.addEventListener('click',  () => awardHantei('ao'));
   document.getElementById('btn-hantei-cancel')?.addEventListener('click', () => {
     STATE.hanteiMode = false;
+    STATE.hanteiWinner = null;
+    STATE.winReason = null;
     showHanteiBanner(false);
+    updateStatusRibbon();
     broadcastState();
   });
 
@@ -1531,45 +1611,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('custom-buzzer-input')?.addEventListener('change', async e => {
     const file = e.target.files[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async ev => {
-      const buffer = ev.target.result;
+    try {
+      const buffer = await file.arrayBuffer();
       initAudio();
-      customAudioBuffer = await audioCtx.decodeAudioData(buffer.slice(0));
-
-      // Save via Electron IPC if available
-      if (ipc) {
-        await ipc.invoke('save-buzzer', { name: file.name, buffer });
-      }
-
-      // Convert to base64 for localStorage fallback
+      const decoded = await audioCtx.decodeAudioData(buffer.slice(0));
       let binary = '';
       const bytes = new Uint8Array(buffer);
-      for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-      const b64 = btoa(binary);
+      for (let i = 0; i < bytes.length; i += 8192) binary += String.fromCharCode(...bytes.subarray(i, i + 8192));
+      const audio = btoa(binary);
+      let persisted = false;
       try {
-        localStorage.setItem('customBuzzerAudio', b64);
-      } catch (err) {}
-
-      updateBuzzerUI(file.name);
-      addAudit(nowHHMMSS(), `Custom Horn Loaded: ${file.name}`, 'AUDIO');
-    };
-    reader.readAsArrayBuffer(file);
+        localStorage.setItem('customBuzzerAudio', audio);
+        localStorage.removeItem('customBuzzerDisabled');
+        persisted = true;
+      } catch (_) {}
+      if (ipc) {
+        try {
+          const saved = await ipc.invoke('save-buzzer', { name: file.name, buffer });
+          persisted ||= saved?.success === true;
+        } catch (_) {}
+      }
+      customAudioBuffer = decoded;
+      sendAudioConfig(audio);
+      updateBuzzerUI(file.name + (persisted ? '' : ' (this session only; storage unavailable)'));
+      addAudit(nowHHMMSS(), 'Custom horn loaded: ' + file.name, 'AUDIO');
+    } catch (error) {
+      const label = document.getElementById('buzzer-filename');
+      if (label) label.textContent = 'Could not load audio: ' + error.message;
+    } finally { e.target.value = ''; }
   });
-
-  document.getElementById('btn-test-buzzer')?.addEventListener('click', () => {
-    initAudio();
-    playManualHorn();
-  });
-
+  document.getElementById('btn-test-buzzer')?.addEventListener('click', playManualHorn);
   document.getElementById('btn-reset-buzzer')?.addEventListener('click', () => {
     customAudioBuffer = null;
     try {
       localStorage.removeItem('customBuzzerAudio');
-    } catch (e) {}
-    updateBuzzerUI('Synthesized Horn Active');
-    addAudit(nowHHMMSS(), 'Buzzer sound reset to standard synth', 'AUDIO');
+      localStorage.setItem('customBuzzerDisabled', 'true');
+    } catch (_) {}
+    sendAudioConfig(null);
+    updateBuzzerUI('Synthesized horn active');
   });
 
   // --- BOUT NUMBER AUTO-FILL ON TYPE ---
@@ -1586,6 +1665,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('round-label')?.addEventListener('input', e => {
     STATE.roundLabel = e.target.value;
+    document.getElementById('center-round-label').textContent = STATE.roundLabel;
     broadcastState();
   });
 
@@ -1602,6 +1682,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     STATE.tournamentName = e.target.value;
     broadcastState();
   });
+  for (const [id, key] of [['edit-pool', 'poolText'], ['edit-ruleset', 'rulesetText']]) {
+    document.getElementById(id)?.addEventListener('input', e => { STATE[key] = e.target.value; broadcastState(); });
+  }
 
   // Preset select
   document.getElementById('preset-select')?.addEventListener('change', e => {
@@ -1614,3 +1697,158 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Keyboard
   attachKeyboard();
 });
+
+/* Unified mode controller: static compact controls, one shared state and clock owner. */
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  let lastBunkaiTick = 0;
+  function message(text = '') { $('platform-message').textContent = text; }
+  function publish(force = false) { render(); broadcastState(force); }
+  function resetFighter() {
+    stopTimer(false);
+    if (STATE.medicalActive) stopMedicalTimer();
+    Object.assign(STATE, { akaScore: 0, aoScore: 0, akaSenshu: false, aoSenshu: false,
+      winner: null, winReason: null, hanteiMode: false, hanteiWinner: null,
+      timerMs: STATE.matchDurationMs, atoshiBarakuFired: false, medicalActive: false, medicalMs: 10000 });
+    for (const side of ['aka', 'ao']) Object.keys(STATE[side + 'Penalties']).forEach(key => STATE[side + 'Penalties'][key] = false);
+    akaHistory.length = 0; aoHistory.length = 0;
+    showHanteiBanner(false); lockScoringButtons(false);
+    updateScoreDisplay(); updateTimerDisplay(); renderPenalties(); renderSenshu(); updateStatusRibbon();
+    broadcastState();
+  }
+  function setMode(mode) {
+    if (!Tournament.modes.includes(mode) || mode === STATE.mode) return;
+    stopTimer(false);
+    if (STATE.medicalActive) stopMedicalTimer();
+    STATE.bunkaiRunning = false;
+    STATE.mode = mode;
+    showHanteiBanner(!Tournament.isKata(mode) && STATE.hanteiMode);
+    updateScoreDisplay(); updateStatusRibbon(); message();
+    // Mode selection explicitly switches both windows, even with stream paused.
+    publish(true);
+  }
+  function recordBout() {
+    if (STATE.mode !== 'team_kumite') return;
+    const status = Tournament.teamStatus(STATE);
+    if (status.complete) return message('Series complete. Reset the team match to start another series.');
+    if (STATE.isRunning || STATE.medicalActive) return message('Stop the match clock and medical timer before recording.');
+    let winner = STATE.winner;
+    if (!winner && STATE.timerMs > 0) return message('Finish the bout before recording it. Use Hantei for a decision.');
+    if (!winner && STATE.akaScore !== STATE.aoScore) winner = STATE.akaScore > STATE.aoScore ? 'aka' : 'ao';
+    STATE.teamBouts.push({ akaScore: STATE.akaScore, aoScore: STATE.aoScore, winner,
+      akaName: $('input-aka-name').value, aoName: $('input-ao-name').value, reason: STATE.winReason || 'DRAW', ts: Date.now() });
+    const result = Tournament.teamStatus(STATE);
+    STATE.akaTeamWins = result.akaWins; STATE.aoTeamWins = result.aoWins;
+    resetFighter();
+    if (!result.complete) {
+      $('input-aka-name').value = ''; $('input-ao-name').value = '';
+    }
+    message(result.complete ? (result.winner ? `${result.winner.toUpperCase()} wins the team match.` : 'Series tied. A referee decision is required.') : 'Next fighter ready.');
+    publish();
+  }
+  function resetTeam() {
+    if (!confirm('Reset the entire team series and current bout?')) return;
+    STATE.teamBouts = []; STATE.akaTeamWins = 0; STATE.aoTeamWins = 0;
+    resetFighter(); message(); publish();
+  }
+  function bunkaiAction(action) {
+    if (STATE.mode !== 'team_kata') return;
+    if (action === 'start' && STATE.bunkaiMs > 0) { STATE.bunkaiRunning = true; lastBunkaiTick = performance.now(); }
+    if (action === 'stop') STATE.bunkaiRunning = false;
+    if (action === 'reset') { STATE.bunkaiRunning = false; STATE.bunkaiMs = STATE.bunkaiDurationMs; }
+    publish();
+  }
+  function clock(ms) {
+    return `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, '0')}.${String(Math.floor(ms % 1000 / 10)).padStart(2, '0')}`;
+  }
+  function render() {
+    document.body.dataset.mode = STATE.mode;
+    document.querySelectorAll('[data-set-mode]').forEach(el => el.setAttribute('aria-pressed', el.dataset.setMode === STATE.mode));
+    const kata = Tournament.isKata(STATE.mode);
+    for (const side of ['aka', 'ao']) {
+      $('identity-' + side).hidden = STATE.mode === 'team_kata';
+      $('kata-judge-inputs-' + side).hidden = STATE.kataScoring !== 'points';
+    }
+    if (kata) {
+      const r = Tournament.kataResult(STATE);
+      for (const side of ['aka', 'ao']) {
+        const total = $('kata-total-' + side);
+        total.textContent = STATE.kataScoring === 'points' ? r[side].toFixed(1) : r[side];
+        total.classList.toggle('winner-blink-ctrl', r.winner === side);
+      }
+    }
+    document.querySelectorAll('[data-scoring]').forEach(el => el.setAttribute('aria-pressed', el.dataset.scoring === STATE.kataScoring));
+    $('flag-controls').hidden = STATE.kataScoring !== 'flags';
+    $('point-controls').hidden = STATE.kataScoring !== 'points';
+    document.querySelectorAll('[data-judge-count]').forEach(el => el.setAttribute('aria-pressed', Number(el.dataset.judgeCount) === STATE.judgeCount));
+    document.querySelectorAll('[data-judge-input]').forEach(el => { el.parentElement.hidden = Number(el.dataset.index) >= STATE.judgeCount; });
+    document.querySelectorAll('[data-flag-index]').forEach(el => {
+      const flag = STATE.judgeFlags[Number(el.dataset.flagIndex)];
+      el.dataset.flag = flag || '';
+      el.textContent = `J${Number(el.dataset.flagIndex) + 1}: ${flag ? flag.toUpperCase() : 'Neutral'}`;
+      el.setAttribute('aria-label', `${el.textContent}. Click to cycle Neutral, AKA, AO.`);
+    });
+    const s = Tournament.teamStatus(STATE);
+    $('team-status').textContent = `AKA ${s.akaWins} wins / ${s.akaPoints} pts — AO ${s.aoWins} wins / ${s.aoPoints} pts`;
+    $('team-active-bout').textContent = s.complete ? 'SERIES COMPLETE' : `Next: ${s.next > STATE.teamFormat ? 'Extra Bout ' + (s.next - STATE.teamFormat) : 'Bout ' + s.next}`;
+    $('record-team-bout').disabled = s.complete;
+    $('team-format').value = STATE.teamFormat;
+    $('team-format').disabled = STATE.teamBouts.length > 0;
+    $('bunkai-control-clock').textContent = clock(STATE.bunkaiMs);
+    $('bunkai-duration').disabled = STATE.bunkaiRunning;
+    $('aka-team-wins-label').textContent = STATE.akaTeamWins;
+    $('ao-team-wins-label').textContent = STATE.aoTeamWins;
+    applyNumberTheme();
+  }
+  function init() {
+    for (const side of ['aka', 'ao']) {
+      $('kata-name-' + side).addEventListener('input', e => { STATE.kataNames[side] = e.target.value; publish(); });
+      $('team-name-' + side).addEventListener('input', e => { STATE.teamNames[side] = e.target.value; publish(); });
+      for (let i = 0; i < 3; i++) $('athlete-' + side + '-' + i).addEventListener('input', e => { STATE.rosters[side][i] = e.target.value; publish(); });
+    }
+    $('reset-kata').addEventListener('click', () => {
+      STATE.judgeFlags.fill(null); STATE.kataResults = null;
+      STATE.kataScores = { aka: Array(7).fill(''), ao: Array(7).fill('') };
+      document.querySelectorAll('[data-judge-input]').forEach(el => { el.value = ''; });
+      message(); publish();
+    });
+    document.querySelectorAll('[data-set-mode]').forEach(el => el.addEventListener('click', () => setMode(el.dataset.setMode)));
+    document.querySelectorAll('[data-scoring]').forEach(el => el.addEventListener('click', () => { STATE.kataScoring = el.dataset.scoring; message(); publish(); }));
+    document.querySelectorAll('[data-flag-index]').forEach(el => el.addEventListener('click', () => {
+      const i = Number(el.dataset.flagIndex); STATE.judgeFlags[i] = [null, 'aka', 'ao'][([null, 'aka', 'ao'].indexOf(STATE.judgeFlags[i]) + 1) % 3]; publish();
+    }));
+    document.querySelectorAll('[data-quick-flags]').forEach(el => el.addEventListener('click', () => { STATE.judgeFlags = Array.from({ length: 5 }, (_, i) => i < Number(el.dataset.quickFlags) ? 'aka' : 'ao'); publish(); }));
+    $('clear-flags').addEventListener('click', () => { STATE.judgeFlags.fill(null); publish(); });
+    document.querySelectorAll('[data-judge-count]').forEach(el => el.addEventListener('click', () => { STATE.judgeCount = Number(el.dataset.judgeCount); STATE.kataResults = null; publish(); }));
+    document.querySelectorAll('[data-judge-input]').forEach(el => el.addEventListener('input', () => { STATE.kataScores[el.dataset.side][Number(el.dataset.index)] = el.value; }));
+    $('calculate-kata').addEventListener('click', () => {
+      try {
+        const aka = Tournament.points(STATE.kataScores.aka, STATE.judgeCount);
+        const ao = Tournament.points(STATE.kataScores.ao, STATE.judgeCount);
+        STATE.kataResults = { aka, ao }; message(); publish();
+      } catch (e) { message(e.message); }
+    });
+    $('team-format').addEventListener('change', e => { if (!STATE.teamBouts.length) STATE.teamFormat = Number(e.target.value); publish(); });
+    $('record-team-bout').addEventListener('click', recordBout);
+    $('reset-team-match').addEventListener('click', resetTeam);
+    $('bunkai-duration').addEventListener('change', e => { STATE.bunkaiDurationMs = Number(e.target.value); bunkaiAction('reset'); });
+    for (const action of ['start', 'stop', 'reset']) $('bunkai-' + action).addEventListener('click', () => bunkaiAction(action));
+    if (ipc) ipc.on('bunkai-action', (_, action) => bunkaiAction(action));
+    window.addEventListener('storage', e => {
+      if (e.key === 'karateBunkaiAction' && e.newValue) {
+        try { bunkaiAction(JSON.parse(e.newValue).action); } catch (error) { console.warn(error); }
+      }
+    });
+    setInterval(() => {
+      const now = performance.now();
+      if (!STATE.bunkaiRunning || STATE.mode !== 'team_kata') return;
+      STATE.bunkaiMs = Math.max(0, STATE.bunkaiMs - (now - lastBunkaiTick)); lastBunkaiTick = now;
+      if (!STATE.bunkaiMs) { STATE.bunkaiRunning = false; playVictoryBuzzer(); }
+      publish();
+    }, 50);
+    render();
+  }
+  window.TournamentControl = { setMode, recordBout, bunkaiAction, resetFighter };
+  document.addEventListener('DOMContentLoaded', init);
+})();

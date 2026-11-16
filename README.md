@@ -20,9 +20,17 @@ Kata, and Team Kata. Existing Kumite controls and Settings uploads remain availa
 - Settings → Tournament Logos & Sponsors accepts PNG, JPEG, and SVG uploads
   up to 200 KB each. Save & Sync persists logos and publishes the full state.
 
-The requested tournament scoring rules live in `js/tournament.js`; mode controls,
-arena presentation, and layout styles are in `js/mode-control.js`,
-`js/mode-display.js`, and `css/modes.css`. Both HTML entry points load these modules.
+The shared tournament scoring rules live in `js/tournament.js`. All four mode
+workflows are integrated into `js/control.js`, and their arena presentation is
+integrated into `js/display.js`. Each HTML entry point loads the shared rules and
+its own controller. Compact layout styles are included in the HTML so both
+windows work without downloading Tailwind or fonts. The older `mode-control.js`,
+`mode-display.js`, and `modes.css` files are retained but are no longer loaded.
+
+Light/dark theme changes explicitly swap numeric text classes in both windows.
+The medical shortcut is **M**; dismissing its overlay leaves the match paused.
+Custom horn uploads and resetting to the synthesized horn update the arena
+immediately. Mode selection and Arena Sync publish even when streaming is paused.
 
 Validation:
 
@@ -31,4 +39,6 @@ node --test tests/tournament.test.js tests/dynamic-logos.test.js
 # Hidden Electron integration test; uses an isolated temporary app profile.
 $env:ELECTRON_RUN_AS_NODE = $null
 .\node_modules\.bin\electron.cmd tests/electron-modes.cjs
+# If the test host cannot start a GPU process:
+.\node_modules\.bin\electron.cmd --disable-gpu --in-process-gpu tests/electron-modes.cjs
 ```

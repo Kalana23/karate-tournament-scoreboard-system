@@ -12,11 +12,11 @@
 
 /* ---- Tactile Button Bevel ---- */
 .tactile-bevel {
-  box-shadow: 0 4px 0 #07080b, inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  box-shadow: 0 3px 0 #07080b, inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .tactile-bevel:active {
-  transform: translateY(3px);
+  transform: translateY(2px);
   box-shadow: 0 1px 0 #07080b, inset 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
@@ -27,26 +27,26 @@
 
 /* ---- Penalty button active states ---- */
 .penalty-btn-active-warn {
-  background-color: rgba(245, 158, 11, 0.15) !important;
+  background-color: rgba(245, 158, 11, 0.2) !important;
   border-color: #f59e0b !important;
   color: #fcd34d !important;
   font-weight: 900;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 .penalty-btn-active-danger {
-  background-color: rgba(239, 68, 68, 0.2) !important;
+  background-color: rgba(239, 68, 68, 0.25) !important;
   border-color: #ef4444 !important;
   color: #fca5a5 !important;
   font-weight: 900;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 /* ---- Senshu Active ---- */
 .senshu-active {
-  background-color: rgba(245, 158, 11, 0.12) !important;
+  background-color: rgba(245, 158, 11, 0.15) !important;
   border-color: #f59e0b !important;
   color: #fcd34d !important;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 /* ---- Score Winner Blink (Control) ---- */
@@ -109,14 +109,14 @@ html.light .border-surface-container-highest { border-color: #c9ccd6 !important;
 #settings-modal.open { display: flex; }
 .modal-box {
   background: #191b22; border: 2px solid #33343b; border-radius: 0.75rem;
-  padding: 1.5rem; min-width: 480px; max-width: 640px; width: 95%;
+  padding: 1.25rem; min-width: 480px; max-width: 640px; width: 95%;
   box-shadow: 0 20px 60px rgba(0,0,0,0.9);
   max-height: 90vh; overflow-y: auto;
 }
 html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 
 /* ---- Audit Log ---- */
-.audit-entry { display:flex; justify-content:space-between; font-family:monospace; font-size:11px; color:#9ea3af; padding:1px 0; }
+.audit-entry { display:flex; justify-content:space-between; font-family:monospace; font-size:10px; color:#9ea3af; padding:1px 0; }
 
 /* ---- Scorer locked overlay ---- */
 .scoring-locked { pointer-events: none; opacity: 0.45; transition: opacity 0.3s ease; }
@@ -128,7 +128,7 @@ html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 #tatami-title-input.active { display: inline-block; }
 
 /* ---- Bout metadata pill edits ---- */
-.bout-editable { background:transparent; border:none; border-bottom:1px solid transparent; color:inherit; font:inherit; outline:none; text-align:center; text-transform:uppercase; letter-spacing:0.08em; min-width:60px; cursor:text; transition:border-color 0.2s; }
+.bout-editable { background:transparent; border:none; border-bottom:1px solid transparent; color:inherit; font:inherit; outline:none; text-align:center; text-transform:uppercase; letter-spacing:0.08em; min-width:50px; cursor:text; transition:border-color 0.2s; }
 .bout-editable:focus { border-bottom-color: #4edea3; }
 
 /* ---- Publish spin ---- */
@@ -141,18 +141,18 @@ html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 .lead-even     { color: #74777f; }
 
 /* ============================================================
-   NEW IN v2: Medical Timer, Hantei, Team Wins, CSV
+   Medical Timer, Hantei, Team Wins
    ============================================================ */
 
 /* ---- Medical Timer Overlay (control side) ---- */
 #medical-overlay-ctrl {
   display: none;
   position: fixed; inset: 0; z-index: 8888;
-  background: rgba(0,0,0,0.80);
+  background: rgba(0,0,0,0.85);
   backdrop-filter: blur(8px);
   align-items: center; justify-content: center;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 }
 #medical-overlay-ctrl.open { display: flex; }
 
@@ -162,7 +162,7 @@ html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 }
 #medical-countdown-ctrl {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 120px;
+  font-size: 90px;
   font-weight: 900;
   line-height: 1;
   color: #fff;
@@ -179,8 +179,8 @@ html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
   background: linear-gradient(135deg, #1a0a00, #3d1a00);
   border: 2px solid #f59e0b;
   border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-  margin: 0 0 0.5rem 0;
+  padding: 0.5rem 0.75rem;
+  margin: 0 0 0.25rem 0;
   align-items: center; justify-content: space-between;
   gap: 0.5rem;
 }
@@ -188,100 +188,112 @@ html.light .modal-box { background: #f4f5f9; border-color: #c9ccd6; }
 
 @keyframes hantei-glow {
   0%,100% { box-shadow: 0 0 10px rgba(245,158,11,0.4); }
-  50%     { box-shadow: 0 0 30px rgba(245,158,11,0.9), inset 0 0 10px rgba(245,158,11,0.1); }
+  50%     { box-shadow: 0 0 25px rgba(245,158,11,0.9), inset 0 0 10px rgba(245,158,11,0.1); }
 }
 #hantei-banner.open { animation: hantei-glow 1.5s ease-in-out infinite; }
 
 /* ---- Team Win counter ---- */
 .team-wins-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 8px; border-radius: 9999px;
-  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 6px; border-radius: 9999px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 .team-wins-badge.aka-badge { background: rgba(255,84,81,0.15); border: 1px solid rgba(255,84,81,0.4); color: #ffb3ad; }
 .team-wins-badge.ao-badge  { background: rgba(0,83,219,0.15);  border: 1px solid rgba(0,83,219,0.4);  color: #b4c5ff; }
-.team-wins-badge span.count { font-size: 14px; font-weight: 900; }
 
 /* ---- DQ / Kiken buttons ---- */
 .dq-btn {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 .dq-btn:hover {
   filter: brightness(1.2);
   transform: translateY(-1px);
 }
 
-/* ---- Score update flash ---- */
-@keyframes score-flash {
-  0%   { background-color: rgba(255,255,255,0.15); }
-  100% { background-color: transparent; }
+/* ---- Smooth transitions for interactive elements ---- */
+button, input, select { transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease; }
+
+/* ============================================================
+   STRICT LIGHT MODE & COMPACT VERTICAL FIT
+   ============================================================ */
+html, body {
+  height: 100%;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
-.score-flash { animation: score-flash 0.4s ease-out; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
-/* ---- Smooth transitions for all interactive elements ---- */
-button, input, select { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease; }
+.control-platform {
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
 
-/* Viewport layout: shrink spacing, never the content inside a timer or action. */
-body.control-platform { height: 100dvh; min-height: 0; overflow: hidden; }
-.control-platform > header, .control-platform > footer { flex-shrink: 0; }
-.control-platform > main { flex: 1 1 0; min-height: 0; gap: 4px; padding: 6px; overflow: hidden; }
-.control-platform > main > section { min-height: 0; min-width: 0; gap: 4px; padding: 6px; overflow: visible; }
-.control-platform > main > section > * { flex-shrink: 0; min-width: 0; }
-.control-platform #main-header { padding: 6px 12px; gap: 6px; }
-.control-platform #main-header nav:not(.mode-switch) { display: none; }
-.control-platform .mode-switch { margin-inline: auto; }
-.control-platform #aka-panel > [data-kumite], .control-platform #ao-panel > [data-kumite] { padding: 6px; }
-.control-platform :is(#aka-score-display, #ao-score-display) { font-size: 44px; line-height: 1.1; }
-.control-platform :is(#btn-aka-senshu, #btn-ao-senshu) { padding-block: 6px; }
-.control-platform :is(#aka-score-btns, #ao-score-btns) { gap: 6px; padding: 0; }
-.control-platform :is(#aka-score-btns, #ao-score-btns) > button { padding: 4px 8px; min-height: 40px; }
-.control-platform .penalty-btn { padding: 4px 3px; min-height: 34px; }
-.control-platform .dq-btn { padding: 5px; }
-.control-platform .platform-box { padding: 8px; }
-.control-platform .platform-stack { gap: 6px; }
-.control-platform .platform-box h3 { margin-bottom: 5px; }
-.control-platform .platform-box input { padding: 4px 6px; }
-.control-platform .athlete-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 6px; }
-.control-platform .published-total { display: flex; justify-content: space-between; align-items: center; }
-.control-platform .published-total [id^="kata-total-"] { font-size: 36px; line-height: 1.1; }
-#timer-box { overflow: visible; height: auto; min-height: max-content; padding: 12px 8px; }
+#timer-box {
+  overflow: visible;
+  height: auto;
+  min-height: max-content;
+  padding: 2px 6px;
+}
 #timer-box > div { flex-shrink: 0; }
-#ctrl-timer-main { display: inline-block; white-space: nowrap; font-size: clamp(44px, 5vw, 64px); line-height: 1.1; padding-block: 3px; }
-#ctrl-timer-main #ctrl-timer-ms { line-height: 1.1; }
-.control-platform .team-series-row { display: grid; grid-template-columns: minmax(80px, .9fr) minmax(70px, 1fr) auto auto; gap: 6px; align-items: center; }
-.control-platform .team-series-row :is(button, select) { padding: 5px 6px; font-size: 11px; white-space: nowrap; }
-.control-platform .team-series-row strong { font-size: 11px; }
-.control-platform .team-series #team-status { margin-top: 4px; font-size: 10px; }
-.control-platform .bout-editable { background: #182030; color: #facc15; border: 1px solid #ffffff33; border-radius: 4px; font-weight: 700; text-align: center; padding: 3px; }
-.control-platform input:focus-visible, .control-platform button:focus-visible, .control-platform select:focus-visible { outline: 2px solid #fbbf24; outline-offset: 2px; }
-@media (max-height: 800px) and (min-width: 1024px) {
-  .control-platform > main > section { gap: 4px; padding: 6px; }
-  .control-platform :is(#aka-score-display, #ao-score-display) { font-size: 36px; }
-  .control-platform :is(#aka-panel, #ao-panel) .text-headline-md { font-size: 17px; line-height: 20px; }
-  .control-platform :is(#aka-score-btns, #ao-score-btns) > button { min-height: 40px; padding-block: 3px; }
-  .control-platform .penalty-btn { min-height: 34px; padding-block: 3px; }
-  .control-platform #center-panel > [data-kumite] { padding: 6px; }
-  .control-platform #timer-box { padding-block: 12px; }
-  .control-platform #ctrl-timer-main { font-size: 52px; }
-  .control-platform #center-panel [class*="max-h-28"] { max-height: 64px; }
+#ctrl-timer-main {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: clamp(34px, 3.8vw, 48px);
+  line-height: 1.0;
+  padding-block: 1px;
+}
+#ctrl-timer-main #ctrl-timer-ms { line-height: 1.0; }
+
+.control-platform .penalty-btn {
+  min-height: 24px;
+  padding: 1px 2px;
+}
+.control-platform .dq-btn {
+  padding: 1px 4px;
 }
 
-/* One theme contract covers Tailwind controls, generated mode cards, and settings. */
+/* Force Light Mode Color on Timer via explicit class selector */
+#ctrl-timer-main.text-\[\#0f172a\] {
+  color: #0f172a !important;
+}
+#ctrl-timer-ms.text-\[\#c2410c\] {
+  color: #c2410c !important;
+}
+#ctrl-timer-main.text-white {
+  color: #ffffff !important;
+}
+#ctrl-timer-ms.text-yellow-400 {
+  color: #facc15 !important;
+}
+
 body.control-platform { --console-foreground: #f8fafc; }
 .theme-text { color: var(--console-foreground, #f8fafc); }
 body.light-mode { --console-foreground: #0f172a; background: #f8fafc !important; color: #0f172a !important; color-scheme: light; }
-/* Apply theme contrast immediately, including in throttled projector windows. */
-body.light-mode * { transition-property: transform, opacity, box-shadow !important; }
-body.light-mode :is(header, footer, main, .modal-box) { background: #f8fafc !important; color: #0f172a !important; border-color: #94a3b8 !important; }
-body.light-mode :is(header, footer, main, .modal-box) :is([class*="bg-"], .platform-box, .mode-switch, .scoring-switch, button, input, select) {
-  background: #e2e8f0 !important; color: #0f172a !important; border-color: #94a3b8 !important;
+
+body.light-mode #timer-box {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
 }
-body.light-mode :is(header, footer, main, .modal-box) :is(span, label, p, h2, h3, strong, small, [id$="score-display"], [id^="kata-total-"], .audit-entry, .audit-entry *) {
-  color: #0f172a !important; text-shadow: none !important;
+body.light-mode #ctrl-timer-main {
+  color: #0f172a !important;
 }
-body.light-mode input::placeholder { color: #475569; opacity: 1; }
+body.light-mode #ctrl-timer-ms {
+  color: #c2410c !important;
+}
+
 body.light-mode :is(input, select, button) { border-color: #94a3b8 !important; }
 body.light-mode .bout-editable { background: #f8fafc !important; color: #0f172a !important; }
 body.light-mode button[aria-pressed="true"], body.light-mode .senshu-active { background: #fde68a !important; color: #0f172a !important; border-color: #a16207 !important; }
@@ -289,10 +301,10 @@ body.light-mode .judge-flag[data-flag="aka"], body.light-mode .penalty-btn-activ
 body.light-mode .judge-flag[data-flag="ao"] { background: #bfdbfe !important; border-color: #1d4ed8 !important; }
 body.light-mode .penalty-btn-active-warn { background: #fef08a !important; border-color: #a16207 !important; }
 body.light-mode .mode-message { color: #854d0e; }
-body.light-mode :is(#aka-score-display, #ao-score-display, #ctrl-timer-main, #kata-total-aka, #kata-total-ao) {
+
+body.light-mode :is(#aka-score-display, #ao-score-display, #kata-total-aka, #kata-total-ao) {
   color: var(--console-foreground) !important; text-shadow: none !important;
 }
-/* Catch utility classes on nested divs too, including labels with white opacity. */
 body.light-mode :is(header, main, footer, .modal-box) :is(.text-white, [class*="text-white/"], .theme-text) {
   color: var(--console-foreground) !important;
   text-shadow: none !important;
@@ -301,25 +313,8 @@ body.light-mode :is(header, main, footer, .modal-box) .bg-black\/40 {
   background: #f1f5f9 !important;
   border-color: #cbd5e1 !important;
 }
-.control-platform :is(#aka-panel, #ao-panel) > .absolute { display: none; }
-
-/* Final utility overrides: keep these after all general theme rules. */
-body.light-mode #timer-box span,
-body.light-mode #ctrl-timer-main,
-body.light-mode #ctrl-timer-ms,
-body.light-mode .text-white {
-    color: #000000 !important;
-}
-/* Force inputs and static text to also turn black */
 body.light-mode input,
 body.light-mode button,
 body.light-mode .text-gray-400 {
-    color: #1a1a1a !important;
-}
-/* Match the specificity of earlier panel rules as well as Tailwind utilities. */
-body.light-mode :is(header, main, footer, .modal-box) :is(input, button, .text-gray-400) {
   color: #1a1a1a !important;
-}
-body.light-mode :is(header, main, footer, .modal-box) .text-white {
-  color: #000000 !important;
 }

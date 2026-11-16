@@ -6,8 +6,14 @@ const assert = require('node:assert/strict');
 app.setPath('userData', fs.mkdtempSync(path.join(os.tmpdir(), 'karate-modes-test-')));
 const errors = [];
 let control, arena;
+const buzzerEvents = [];
 ipcMain.handle('load-buzzer', () => null);
+ipcMain.handle('save-buzzer', () => ({ success: true }));
 ipcMain.on('broadcast-state-instant', (_, state) => arena?.webContents.send('arena-state-update', state));
+ipcMain.on('broadcast-buzzer-instant', (_, event) => {
+  buzzerEvents.push(event);
+  arena?.webContents.send('arena-buzzer-trigger', event);
+});
 ipcMain.on('bunkai-action', (_, action) => control.webContents.send('bunkai-action', action));
 const run = code => control.webContents.executeJavaScript(code);
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -16,7 +22,7 @@ app.whenReady().then(async () => {
     for (const file of ['index.html', 'control.html']) {
       const win = new BrowserWindow({ show: false, width: 1920, height: 1080, useContentSize: true,
         webPreferences: { nodeIntegration: true, contextIsolation: false, backgroundThrottling: false, offscreen: true } });
-      win.webContents.on('console-message', (_, level, message) => { if (level === 3 && !/Failed to load resource|Content Security Policy/.test(message)) errors.push(message); });
+      win.webContents.on('console-message', (_, level, message) => { if (level === 3 && !/Failed to load resource|Content Security Policy|AudioContext encountered an error from the audio device/.test(message)) errors.push(message); });
       win.webContents.on('render-process-gone', (_, details) => errors.push(JSON.stringify(details)));
       if (file === 'index.html') arena = win; else control = win;
       await win.loadFile(path.join(__dirname, '..', file));
@@ -30,7 +36,8 @@ app.whenReady().then(async () => {
     assert.equal(await run('STATE.winner'), 'aka');
     await run('TournamentControl.resetFighter()');
     for (const mode of ['kumite', 'team_kumite', 'kata', 'team_kata']) {
-      await run(`TournamentControl.setMode('${mode}')`); await delay(150);
+      await run(`document.querySelector('[data-set-mode="${mode}"]').click()`); await delay(150);
+      assert.equal(await run('state.mode'), mode);
       if (mode.includes('kata')) await run(`document.querySelector('[data-scoring="points"]').click();document.querySelector('[data-judge-count="7"]').click()`);
       assert.equal(await arena.webContents.executeJavaScript('document.body.dataset.mode'), mode);
       const geometry = await run(`JSON.stringify({ height: innerHeight, scroll: document.documentElement.scrollHeight,
@@ -63,11 +70,10 @@ app.whenReady().then(async () => {
           assert.equal(await run(`getComputedStyle(document.getElementById('aka-score-display')).color`), 'rgb(15, 23, 42)');
           assert.equal(await run(`document.body.classList.contains('light-mode')`), true);
           for (const id of ['ctrl-timer-main', 'ctrl-timer-ms']) {
-            assert.equal(await run(`getComputedStyle(document.getElementById('${id}')).color`), 'rgb(0, 0, 0)');
+            assert.equal(await run(`getComputedStyle(document.getElementById('${id}')).color`), 'rgb(15, 23, 42)');
           }
-          for (const selector of ['#timer-box span', '.text-white']) {
-            assert.equal(await run(`[...document.querySelectorAll('${selector}')].every(el => getComputedStyle(el).color === 'rgb(0, 0, 0)')`), true);
-          }
+          assert.equal(await run(`[...document.querySelectorAll('[data-theme-number]')].every(el => getComputedStyle(el).color === 'rgb(15, 23, 42)' && el.classList.contains('text-[#0f172a]'))`), true);
+          assert.equal(await arena.webContents.executeJavaScript(`[...document.querySelectorAll('[data-theme-number]')].every(el => getComputedStyle(el).color === 'rgb(15, 23, 42)' && el.classList.contains('text-[#0f172a]'))`), true);
         }
       }
     }
@@ -97,8 +103,74 @@ app.whenReady().then(async () => {
     assert.equal(await run('STATE.bunkaiRunning && STATE.bunkaiMs < 300000'), true);
     await run(`TournamentControl.bunkaiAction('stop'); TournamentControl.setMode('team_kumite'); STATE.akaScore=6;STATE.aoScore=2;STATE.winner='aka';TournamentControl.recordBout()`);
     assert.equal(await run('STATE.teamBouts.length === 1 && STATE.akaTeamWins === 1 && STATE.akaScore === 0 && STATE.aoScore === 0'), true);
+
+    // Regression checks for the advanced controls and cross-window state.
+    await run(`TournamentControl.setMode('kumite'); TournamentControl.resetFighter(); startTimer(); document.dispatchEvent(new KeyboardEvent('keydown', {code:'KeyM',key:'m',bubbles:true}))`);
+    await delay(160);
+    assert.equal(await run(`STATE.medicalActive && !STATE.isRunning && STATE.medicalMs < 10000 && document.getElementById('medical-overlay-ctrl').classList.contains('open')`), true);
+    assert.equal(await arena.webContents.executeJavaScript(`document.getElementById('medical-overlay').classList.contains('open')`), true);
+    await run(`STATE.medicalMs=20`); await delay(180);
+    assert.equal(await run('!STATE.medicalActive && !STATE.isRunning'), true);
+    await run(`startTimer(); document.getElementById('btn-hantei').click()`); await delay(120);
+    assert.equal(await run(`STATE.hanteiMode && !STATE.isRunning && getComputedStyle(document.getElementById('hantei-banner')).display !== 'none'`), true);
+    assert.equal(await arena.webContents.executeJavaScript(`document.getElementById('hantei-overlay').classList.contains('open')`), true);
+    await run(`document.getElementById('btn-hantei-ao').click()`); await delay(120);
+    assert.equal(await run(`STATE.winner === 'ao' && !STATE.hanteiMode`), true);
+    assert.equal(await arena.webContents.executeJavaScript(`!document.getElementById('hantei-overlay').classList.contains('open') && document.getElementById('display-ao-score').classList.contains('winner-blink')`), true);
+    await run(`TournamentControl.resetFighter(); STATE.timerMs=40; startTimer()`); await delay(220);
+    assert.equal(await run('STATE.hanteiMode && !STATE.isRunning'), true);
+    await run(`TournamentControl.resetFighter(); startTimer(); document.getElementById('btn-aka-ippon').click();document.getElementById('btn-aka-ippon').click();document.getElementById('btn-aka-wazaari').click()`);
+    await delay(120);
+    assert.equal(await run(`STATE.akaScore === 8 && STATE.winner === 'aka' && !STATE.isRunning && document.getElementById('aka-score-btns').classList.contains('scoring-locked')`), true);
+    assert.equal(await arena.webContents.executeJavaScript(`document.getElementById('display-aka-score').classList.contains('winner-blink')`), true);
+    await run(`document.getElementById('btn-aka-undo').click()`);
+    assert.equal(await run(`STATE.akaScore === 6 && !STATE.winner`), true);
+    await run(`TournamentControl.resetFighter();addPoints('aka',1);addPoints('ao',2);undoLast()`);
+    assert.equal(await run('STATE.akaScore === 1 && STATE.aoScore === 0'), true);
+    await run(`window.confirm=()=>true;handleKiken('aka')`);
+    assert.equal(await run(`STATE.winner === 'ao' && STATE.winReason.includes('KIKEN')`), true);
+    await run(`TournamentControl.resetFighter();handleShikkaku('ao')`);
+    assert.equal(await run(`STATE.winner === 'aka' && STATE.aoPenalties.h && STATE.winReason.includes('SHIKKAKU')`), true);
+    const csv = 'Bout Number,AKA Name,AKA Country,AO Name,AO Country,Category\r\n21,"Perera, Kasun",,"Sato ""Kenji""",JPN,Senior\r\n';
+    await run(`processCsvContent(${JSON.stringify(csv)}, 'bouts.csv');document.getElementById('bout-number').value='21';document.getElementById('bout-number').dispatchEvent(new Event('input'))`);
+    await delay(120);
+    assert.equal(await run(`document.getElementById('input-aka-name').value`), 'Perera, Kasun');
+    assert.equal(await arena.webContents.executeJavaScript(`document.getElementById('display-ao-name').textContent`), 'Sato "Kenji"');
+    assert.equal(await run(`document.getElementById('input-aka-country-code').value`), 'SRI');
+    await run(`STATE.streamLive=false;document.querySelector('[data-set-mode="team_kata"]').click()`);await delay(120);
+    assert.equal(await arena.webContents.executeJavaScript('document.body.dataset.mode'), 'team_kata');
+    await run(`STATE.streamLive=true;document.querySelector('[data-set-mode="kumite"]').click();TournamentControl.resetFighter();STATE.timerMs=10000;if(STATE.theme!=='light')toggleTheme();updateTimerDisplay()`);
+    assert.equal(await run(`getComputedStyle(document.getElementById('ctrl-timer-main')).color`), 'rgb(15, 23, 42)');
+    assert.equal(await run(`getComputedStyle(document.getElementById('ctrl-timer-ms')).color`), 'rgb(15, 23, 42)');
+
+    // Exercise the shared MP3/WAV upload pipeline with a small valid PCM WAV.
+    await arena.webContents.executeJavaScript(`window.customSourceCount=0;const originalSource=AudioContext.prototype.createBufferSource;AudioContext.prototype.createBufferSource=function(){window.customSourceCount++;return originalSource.call(this)};true`);
+    await run(`(async()=>{
+      const bytes=new Uint8Array(1644), view=new DataView(bytes.buffer);
+      const write=(offset,text)=>[...text].forEach((ch,i)=>bytes[offset+i]=ch.charCodeAt(0));
+      write(0,'RIFF');view.setUint32(4,1636,true);write(8,'WAVE');write(12,'fmt ');view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);view.setUint32(24,8000,true);view.setUint32(28,16000,true);view.setUint16(32,2,true);view.setUint16(34,16,true);write(36,'data');view.setUint32(40,1600,true);
+      const transfer=new DataTransfer();transfer.items.add(new File([bytes],'test-horn.wav',{type:'audio/wav'}));
+      const input=document.getElementById('custom-buzzer-input');input.files=transfer.files;input.dispatchEvent(new Event('change'));
+    })()`);await delay(500);
+    assert.equal(await run('!!customAudioBuffer'), true);
+    assert.ok(buzzerEvents.some(event=>event.type==='audio-config' && event.audio));
+    await run('playManualHorn()');await delay(150);
+    const count = await arena.webContents.executeJavaScript('window.customSourceCount');
+    assert.ok(count > 0, 'Arena must play the newly uploaded custom horn without reloading');
+    await run(`document.getElementById('btn-reset-buzzer').click();playManualHorn()`);await delay(150);
+    assert.equal(await arena.webContents.executeJavaScript('window.customSourceCount'), count);
+
+    // Fit the actual single-monitor fallback window and settings as well as 1080p.
+    control.webContents.enableDeviceEmulation({screenPosition:'desktop',screenSize:{width:1280,height:720},viewSize:{width:1280,height:720},deviceScaleFactor:1,scale:1});
+    for (const mode of ['kumite','team_kumite','kata','team_kata']) {
+      await run(`TournamentControl.setMode('${mode}')`);
+      assert.equal(await run(`[...document.querySelectorAll('main>section')].every(el=>el.scrollHeight<=el.clientHeight+1) && document.documentElement.scrollWidth<=innerWidth && document.documentElement.scrollHeight<=innerHeight`), true, mode + ' must fit 720p');
+    }
+    await run('openSettingsModal()');
+    assert.equal(await run(`document.querySelector('.modal-box').scrollHeight <= document.querySelector('.modal-box').clientHeight+1`), true, 'Settings must fit without scrolling');
+    fs.writeFileSync(path.join(os.tmpdir(), 'karate-settings-layout.png'), (await control.webContents.capturePage()).toPNG());
     assert.deepEqual(errors, []);
-    console.log('Electron mode workflow and 1080p layout checks passed.');
+    console.log('Electron mode, advanced controls, audio sync, light theme, 1080p/720p and settings checks passed.');
     app.exit(0);
   } catch (error) { console.error(error); console.error(errors); app.exit(1); }
 });
